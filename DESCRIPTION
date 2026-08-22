@@ -1,15 +1,13 @@
 Package: vbdata
-Title: Simple volleybal data analytics
+Title: Application to encode and analyze volleyball score sheet data
 Version: 0.0.0.9000
 Authors@R: 
     person("Simon", "Gorin", , "github.com.darkness667@passmail.net", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-7462-0446"))
-Description: Provide data analytics solution for volleyball game base on
-    the data available in a score sheet.
+Description: The package provides an application to encode and extract
+    data from a volleyball score sheet. The app is powered by a Quarto
+    dashboard.
 License: MIT + file LICENSE
-Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 Imports: 
     dplyr,
     DT,
@@ -20,3 +18,6 @@ Imports:
     shiny,
     shinyjs,
     shinyvalidate
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3

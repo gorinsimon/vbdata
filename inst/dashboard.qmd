@@ -40,13 +40,11 @@ bslib::card(
     bslib::layout_columns(
       textInput(
         "home_team",
-        value = "LVBC", # TO_REMOVE
         label = tags$p(icon("house"), "Home")
       ),
       # Input to indicate the name of the "away" (or visiting) team
       textInput(
         "away_team",
-        value = "LUC", # TO_REMOVE
         label = tags$p(icon("suitcase-rolling"), "Away")
       )
     ),
@@ -79,14 +77,12 @@ bslib::card(
           fontawesome::fa("location-dot", fill = "#020618"),
           "Location"
         ),
-        value = "here" # TO_REMOVE
       ),
       # Input to indicate the date the game took place
       dateInput(
         "game_date",
         label = tags$p(fontawesome::fa("calendar", fill = "#020618"), "Date"),
-        format = "dd-mm-yyyy",
-        value = "2026-02-01" # TO_REMOVE
+        format = "dd-mm-yyyy"
       )
     ),
     bslib::layout_columns(
@@ -97,24 +93,18 @@ bslib::card(
           fontawesome::fa("location-dot", fill = "#020618"),
           "Season"
         ),
-        # choices = c(
-        #  "", vapply(2025:2000, \(x) paste0(x + 1, " - ", x), FUN.VALUE = "character")
-        # ),
         options = list(dropdownParent = "body"),
         choices = c(
+          "",
           vapply(
             2025:2000,
             \(x) paste0(x + 1, " - ", x + 2),
             FUN.VALUE = "character"
           )
-        ) # TO_REMOVE
+        )
       ),
       # Input to indicate the division/league of the two teams
-      textInput(
-        "division",
-        label = tags$p(icon("layer-group"), "Division"),
-        value = "1", # TO_REMOVE
-      )
+      textInput("division", label = tags$p(icon("layer-group"), "Division"))
     )
   )
 )
@@ -878,13 +868,9 @@ players <- reactiveValues(
     Role = character()
   ),
   away_team = data.frame(
-    # Number = character(),
-    # Name = character(),
-    # Role = character()
-    # TO_REMOVE
-    Number = c("12", "51", "15", "5", "4", "38", "1"),
-    Name = c(letters[1:7]),
-    Role = c("Setter", rep("Outside hitter", 2), rep("Middle blocker", 2), "Opposite", "Libero")
+    Number = character(),
+    Name = character(),
+    Role = character()
   )
 )
 
@@ -1400,7 +1386,7 @@ observeEvent(input$add_player_away, {
     data.frame(
       Number = as.character(input$new_player_num_away),
       Name = input$new_player_name_away,
-      Role = "a"
+      Role = input$new_player_role_away
     )
   )
   # Once the new player is added to the table, the new table is rendered

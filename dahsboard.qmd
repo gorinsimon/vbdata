@@ -2377,6 +2377,88 @@ observe({
   output$home_team_out <- renderText({ input$home_team })
   output$away_team_out <- renderText({ input$away_team })
 })
+
+# Observer preparing the data for export when their is a confirmation to go to
+# the summary tab.
+observeEvent(input$to_summary_confirm, {
+  # When the data are ready for export (i.e. when the next set button is hit
+  # and the game is over), we start the process of preparing the data for
+  # export.
+  if (data_ready_for_export()) {
+    # Create a list that will index the wrangled data for each set
+    export_dat_list <- list()
+    
+    # We loop over each set using the number of sets played stored in the
+    # reactive `n_sets()`.
+    for (i in 1:n_sets()) {
+      # We get from the app input the score by rotation for each team and assign
+      # each score vector to a named list.
+      set_scores <- get_rotation_scores_input(i, input)
+      scores <- list(
+        home = set_scores$home,
+        away = set_scores$away
+      )
+      # We set the "serving" attribute with the team (home or away) that started
+      # to serve during the set.
+      attr(scores, "serving") <- get_set_serving_team(input, i)
+      
+      # We extract from the app input the scores when time-outs where requested
+      # for each team separately (always starting with the requesting team.)
+      time_outs <- list(
+        home = get_time_out_scores(input, "home", i),
+        away = get_time_out_scores(input, "away", i)
+      )
+      # We set the "home" and "away" attributes to the `time_outs` object so
+      # we can retrieve the name of home and away teams.
+      attr(time_outs$home, "team") <- input$home_team
+      attr(time_outs$away, "team") <- input$away_team
+      
+      # We get from the app input all necessary information regarding
+      # substitutions. For each team, we get the rotation at the beginning of
+      # the set, the substitution rotation (NA when there was no substitution
+      # for the corresponding position, and a player number which did not
+      # started the set instead).
+      substitutions <- list(
+        home = list(
+          rotation = get_raw_rotation_players(input, "home", i),
+          sub = get_substitution_players(input, "home", i),
+          score_in = get_substitution_scores(input, "home", i, "in"),
+          score_out = get_substitution_scores(input, "home", i, "out")
+        ),
+        away = list(
+          rotation = get_raw_rotation_players(input, "away", i),
+          sub = get_substitution_players(input, "away", i),
+          score_in = get_substitution_scores(input, "away", i, "in"),
+          score_out = get_substitution_scores(input, "away", i, "out")
+        )
+      )
+      
+      # We set the "home" and "away" attributes to the `substitutions` object so
+      # we can retrieve the name of home and away teams.
+      attr(substitutions$home, "team") <- input$home_team
+      attr(substitutions$away, "team") <- input$away_team
+      
+      # We prepare the data export for the current set
+      export_dat_list[[i]] <- wrangle_set_data(
+        i,
+        scores,
+        time_outs,
+        substitutions
+      )
+    }
+    
+    # We bind together the wrangled data for each set
+    export_dat_list <- list_rbind(export_dat_list)
+    
+    # We make available for download the wrangled data
+    output$export_game_data <- downloadHandler(
+      filename = function() {
+        paste0("vbdata-", Sys.Date(), ".csv")
+      },
+      content = function(file) {
+        write.csv2(export_dat_list, file)
+      }
+    )
   }
 })
 

@@ -1801,6 +1801,21 @@ observe({
     shinyjs::disable("next_to_summary")
   }
 })
+
+# The `iv_*` objects are validators used to check that the format of the
+# data entered for substitutions and time-out scores is correct. It is checking
+# that the scores are entered as "XX:XX" (e.g. "05:10" or "23:12").
+iv_sub_set_1 <- set_validator_substitution(1)
+iv_to_set_1 <- set_validator_time_out(1)
+iv_sub_set_2 <- set_validator_substitution(2)
+iv_to_set_2 <- set_validator_time_out(2)
+iv_sub_set_3 <- set_validator_substitution(3)
+iv_to_set_3 <- set_validator_time_out(3)
+iv_sub_set_4 <- set_validator_substitution(4)
+iv_to_set_4 <- set_validator_time_out(4)
+iv_sub_set_5 <- set_validator_substitution(5)
+iv_to_set_5 <- set_validator_time_out(5)
+
     )
   
     )

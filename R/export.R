@@ -118,6 +118,108 @@ extract_score_series <- function(serving, receiving) {
 }
 
 
+#' Add to information about time-out to a set data frame
+#'
+#' For each score during the set, the functions flags if a time-out was
+#' requested which team requested it. The flags are added to a data frame
+#' already wrangled.
+#'
+#' @param dat Data frame with the evolution of the score for a given set, as
+#' created within the function `wrangle_set_data()`.
+#' @inheritParams wrangle_set_data
+#'
+#' @returns The data frame passed to the function (`dat`) with flags indicating
+#' for each point whether a time-out was requested or not.
+#' @keywords internal
+
+add_time_out <- function(dat, time_outs) {
+  # Retrieve the name of the "home" and "away" team saved as attributes of the
+  # "time_outs" objects. The team names are necessary to index the data frame
+  # with the scores.
+  home_t <- attr(time_outs$home, "team")
+  away_t <- attr(time_outs$away, "team")
+
+  # Checking that the time-outs are properly formatted (should not happen
+  # since it is returned by the app, but it is safer...).
+  chk_time_outs(time_outs)
+
+  # NOTE: the time-out are always assigned to the "next point". In other words,
+  # when a time-out is request at 6-6, that is, after the 12th point is over,
+  # the time-out is assigned to the next point, that is, the 13th.
+
+  # Time-out data on time-outs requested by the home are skipped if the list is
+  # NULL.
+  if (!all(is.na(unlist(time_outs$home)))) {
+    # Iterate over the time-out vectors of the home team
+    for (i in seq_along(time_outs$home)) {
+      # If the vector does not contain NA, we identify the score entry in the
+      # data and set the time-out flags accordingly. Keep in mind that the
+      # first element in the score vector is the score of the requesting team,
+      # that is, in this case, the home team.
+      if (all(!is.na(time_outs$home[[i]]))) {
+        dat <- mutate(
+          dat,
+          time_out = if_else(
+            lag(
+              dat[[home_t]] == time_outs$home[[i]][1] &
+                dat[[away_t]] == time_outs$home[[i]][2],
+              default = FALSE
+            ),
+            TRUE,
+            time_out
+          ),
+          asked_time_out = if_else(
+            lag(
+              dat[[home_t]] == time_outs$home[[i]][1] &
+                dat[[away_t]] == time_outs$home[[i]][2],
+              default = FALSE
+            ),
+            home_t,
+            asked_time_out
+          )
+        )
+      }
+    }
+  }
+
+  # Time-out data on time-outs requested by the away are skipped if the list is
+  # NULL.
+  if (any(!is.na(unlist(time_outs$away)))) {
+    # Iterate over the time-out vectors of the away team
+    for (i in seq_along(time_outs$away)) {
+      # If the vector does not contain NA, we identify the score entry in the
+      # data and set the time-out flags accordingly. Keep in mind that the
+      # first element in the score vector is the score of the requesting team,
+      # that is, in this case, the away team.
+      if (all(!is.na(time_outs$away[[i]]))) {
+        dat <- mutate(
+          dat,
+          time_out = if_else(
+            lag(
+              dat[[away_t]] == time_outs$away[[i]][1] &
+                dat[[home_t]] == time_outs$away[[i]][2],
+              default = FALSE
+            ),
+            TRUE,
+            time_out
+          ),
+          asked_time_out = if_else(
+            lag(
+              dat[[away_t]] == time_outs$away[[i]][1] &
+                dat[[home_t]] == time_outs$away[[i]][2],
+              default = FALSE
+            ),
+            away_t,
+            asked_time_out
+          )
+        )
+      }
+    }
+  }
+
+  return(dat)
+}
+
 # This file contains functions to easily access the inputs available in the app.
 # They behaviour is too simply extract the information, with only a minimum of
 # extra cleaning.

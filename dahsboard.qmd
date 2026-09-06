@@ -2256,7 +2256,6 @@ observeEvent(input$to_summary_confirm, {
 # the number of substitutions, the number of time-outs for team in each set.
 # Then, it renders the different text element displayed in the summary tab.
 observe({
-  {
   # Extract the score for each team and each set
   home_score_sets <- get_set_scores("home", input)
   away_score_sets <- get_set_scores("away", input)
@@ -2270,6 +2269,70 @@ observe({
   # Get the number of sets played
   n_sets(attr(scores, "n_sets"))
   
+  # When the scores are valid, the scores, number of substitutions, and number
+  # of time-outs for sets 1 to 3 are rendered in the summary tab.
+  if (attr(scores, "is_valid")) {
+    output$home_score_set_1 <- renderText({ scores$home[1] })
+    output$home_score_set_2 <- renderText({ scores$home[2] })
+    output$home_score_set_3 <- renderText({ scores$home[3] })
+    
+    output$away_score_set_1 <- renderText({ scores$away[1] })
+    output$away_score_set_2 <- renderText({ scores$away[2] })
+    output$away_score_set_3 <- renderText({ scores$away[3] })
+    
+    output$home_sub_set_1 <- renderText({ substitutions$home[1] })
+    output$home_sub_set_2 <- renderText({ substitutions$home[2] })
+    output$home_sub_set_3 <- renderText({ substitutions$home[3] })
+    
+    output$away_sub_set_1 <- renderText({ substitutions$away[1] })
+    output$away_sub_set_2 <- renderText({ substitutions$away[2] })
+    output$away_sub_set_3 <- renderText({ substitutions$away[3] })
+    
+    output$home_to_set_1 <- renderText({ time_outs$home[1] })
+    output$home_to_set_2 <- renderText({ time_outs$home[2] })
+    output$home_to_set_3 <- renderText({ time_outs$home[3] })
+    
+    output$away_to_set_1 <- renderText({ time_outs$away[1] })
+    output$away_to_set_2 <- renderText({ time_outs$away[2] })
+    output$away_to_set_3 <- renderText({ time_outs$away[3] })
+    
+    # If the number of sets if higher than 3, the scores, number of
+    # substitutions, and number of time-outs for set 4 are rendered in the
+    # summary tab.
+    if (n_sets() > 3) {
+      output$home_score_set_4 <- renderText({ scores$home[4] })
+      output$away_score_set_4 <- renderText({ scores$away[4] })
+      
+      output$home_sub_set_4 <- renderText({ substitutions$home[4] })
+      output$away_sub_set_4 <- renderText({ substitutions$away[4] })
+      
+      output$home_to_set_4 <- renderText({ time_outs$home[4] })
+      output$away_to_set_4 <- renderText({ time_outs$away[4] })
+    }
+    # If the number of sets if higher than 4, the scores, number of
+    # substitutions, and number of time-outs for set 4 are rendered in the
+    # summary tab.
+    if (n_sets() > 4) {
+      output$home_score_set_5 <- renderText({ scores$home[5] })
+      output$away_score_set_5 <- renderText({ scores$away[5] })
+      
+      output$home_sub_set_5 <- renderText({ substitutions$home[5] })
+      output$away_sub_set_5 <- renderText({ substitutions$away[5] })
+      
+      output$home_to_set_5 <- renderText({ time_outs$home[5] })
+      output$away_to_set_5 <- renderText({ time_outs$away[5] })
+    }
+    # Render the number of sets won by the teams in the summary tab
+    output$away_sets <- renderText({
+      sum(scores$away > scores$home, na.rm = TRUE)
+    })
+    output$home_sets <- renderText({
+      sum(scores$home > scores$away, na.rm = TRUE)
+    })
+    
+    # In case the scores are not valid, all the element on the summary tab are
+    # rendered as empty strings.
+  }
   }
 })
 

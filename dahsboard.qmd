@@ -2470,7 +2470,8 @@ observeEvent(input$close_app, {
       list(
         "The app does not save any data. Closing the app will thus cause ",
         "losing all the data imported. Make sure you downloaded the game data ",
-        "before closing the app."
+        "before closing the app. After closing the app, simply close your",
+        "browser window."
       ),
       footer = tagList(
         modalButton("Cancel"),

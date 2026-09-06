@@ -2332,7 +2332,51 @@ observe({
     
     # In case the scores are not valid, all the element on the summary tab are
     # rendered as empty strings.
+  } else {
+    
+    output$home_score_set_1 <- renderText({ "" })
+    output$home_score_set_2 <- renderText({ "" })
+    output$home_score_set_3 <- renderText({ "" })
+    output$home_score_set_4 <- renderText({ "" })
+    output$home_score_set_5 <- renderText({ "" })
+    
+    output$away_score_set_1 <- renderText({ "" })
+    output$away_score_set_2 <- renderText({ "" })
+    output$away_score_set_3 <- renderText({ "" })
+    output$away_score_set_4 <- renderText({ "" })
+    output$away_score_set_5 <- renderText({ "" })
+    
+    output$home_sub_set_1 <- renderText({ "" })
+    output$home_sub_set_2 <- renderText({ "" })
+    output$home_sub_set_3 <- renderText({ "" })
+    output$home_sub_set_4 <- renderText({ "" })
+    output$home_sub_set_5 <- renderText({ "" })
+    
+    output$away_sub_set_1 <- renderText({ "" })
+    output$away_sub_set_2 <- renderText({ "" })
+    output$away_sub_set_3 <- renderText({ "" })
+    output$away_sub_set_4 <- renderText({ "" })
+    output$away_sub_set_5 <- renderText({ "" })
+    
+    output$home_to_set_1 <- renderText({ "" })
+    output$home_to_set_2 <- renderText({ "" })
+    output$home_to_set_3 <- renderText({ "" })
+    output$home_to_set_4 <- renderText({ "" })
+    output$home_to_set_5 <- renderText({ "" })
+    
+    output$away_to_set_1 <- renderText({ "" })
+    output$away_to_set_2 <- renderText({ "" })
+    output$away_to_set_3 <- renderText({ "" })
+    output$away_to_set_4 <- renderText({ "" })
+    output$away_to_set_5 <- renderText({ "" })
+    
+    output$away_sets <- renderText({ "" })
+    output$home_sets <- renderText({ "" })
   }
+  
+  output$home_team_out <- renderText({ input$home_team })
+  output$away_team_out <- renderText({ input$away_team })
+})
   }
 })
 

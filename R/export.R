@@ -220,6 +220,65 @@ add_time_out <- function(dat, time_outs) {
   return(dat)
 }
 
+#' Checker function for time-out lists
+#'
+#' This function checks that the list of time-outs to add to a data frame with
+#' the scores are properly formatted.
+#'
+#' @inheritParams wrangle_set_data
+#'
+#' @returns Nothing is returned, it is used only for side-effect.
+#' @keywords internal
+
+chk_time_outs <- function(time_outs) {
+  if (!is.list(time_outs) && length(time_outs) != 2) {
+    stop("`time_outs` must be a list of length 2.")
+  }
+
+  if (!setequal(names(time_outs), c("home", "away"))) {
+    stop("Names of `time_outs` must be match \"home\" and \"away\"")
+  }
+
+  if (length(time_outs[["home"]]) != 2) {
+    stop("`time_outs$home` must be a list of length 2.")
+  }
+
+  if (length(time_outs[["away"]]) != 2) {
+    stop("`time_outs$away` must be a list of length 2.")
+  }
+
+  if (!all(lapply(time_outs[["home"]], length) == 2)) {
+    stop("The two vectors in `time_outs$home` must be of length 2.")
+  }
+
+  if (!all(lapply(time_outs[["away"]], length) == 2)) {
+    stop("The two vectors in `time_outs$away` must be of length 2.")
+  }
+
+  to_home_num_or_na <- lapply(
+    time_outs$home,
+    \(x) all(is.numeric(x) & !is.na(x)) | all(is.na(x))
+  )
+
+  to_away_num_or_na <- lapply(
+    time_outs$away,
+    \(x) all(is.numeric(x) & !is.na(x)) | all(is.na(x))
+  )
+
+  if (!all(unlist(to_home_num_or_na))) {
+    stop(
+      "Vectors in `time_outs$home` can contain only numeric values or only NA's."
+    )
+  }
+  if (!all(unlist(to_away_num_or_na))) {
+    stop(
+      "Vectors in `time_outs$away` can contain only numeric values or only NA's."
+    )
+  }
+
+  invisible()
+}
+
 # This file contains functions to easily access the inputs available in the app.
 # They behaviour is too simply extract the information, with only a minimum of
 # extra cleaning.

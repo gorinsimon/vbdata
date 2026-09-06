@@ -25,7 +25,7 @@ next_set_message <- function(set, input = NULL) {
           modalButton("Cancel"),
           actionButton(paste0("next_to_set_", set, "_confirm"), "Confirm"),
         ),
-        easyClose = TRUE
+        easyClose = FALSE
       )
     )
     # When a 5th set is played, the modal dialogue includes a selector to
@@ -44,7 +44,7 @@ next_set_message <- function(set, input = NULL) {
           modalButton("Cancel"),
           actionButton(paste0("next_to_set_", set, "_confirm"), "Confirm"),
         ),
-        easyClose = TRUE
+        easyClose = FALSE
       )
     )
     # If `set` is set to NULL, it means this was the last set and a different
@@ -59,7 +59,7 @@ next_set_message <- function(set, input = NULL) {
           modalButton("Cancel"),
           actionButton("to_summary_confirm", "OK"),
         ),
-        easyClose = TRUE
+        easyClose = FALSE
       )
     )
   }
@@ -93,7 +93,7 @@ go_to_player_tab_message <- function() {
           style = "background-color: #93c47d"
         ),
       ),
-      easyClose = TRUE
+      easyClose = FALSE
     )
   )
 }
@@ -125,7 +125,7 @@ go_to_set_1_tab_message <- function() {
           style = "background-color: #93c47d"
         ),
       ),
-      easyClose = TRUE
+      easyClose = FALSE
     )
   )
 }

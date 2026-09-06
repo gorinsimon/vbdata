@@ -108,14 +108,12 @@ br()
 ::: {style="font-size: 120%;"}
 ```{r}
 # Side panel button to import players (NOT IMPLEMENTED YET)
-
 fileInput("import_players_file", "Choose a file")
 actionButton(
   "import_players",
   label = "Import players",
   icon = icon("file-arrow-down")
 )
-
 ```
 :::
 
@@ -125,26 +123,25 @@ actionButton(
 
 ```{r}
 #| layout: "[[1], [1,1,1], [1], [1,1,1]]"
-
 # This page allows to enter the players of the two teams registered in the game
 # sheet. For each player, the number must be entered, as well as names and
 # roles (having names and roles mandatory is questioned). A player can be added
 # to the list by hitting "+ Add player".
-# 
+#
 # After a player has been added, it can be removed by selecting the
 # corresponding line in the players list, then hitting the "x Remove player"
 # button (several players can be removed at the same time).
-# 
+#
 # When the list of a team is complete, the user must hit "Validate players".
 # The "Set 1" tab becomes available when the players of the two teams have been
 # validated.
-# 
+#
 # A list of players can be validated when 6 players at least are entered
 # (excluding libero).
 
 h5(
   textOutput("home_team_players_tab"),
-  style="text-align: center;font-weight: bold;"
+  style = "text-align: center;font-weight: bold;"
 )
 
 # Input to indicate the name of a home player to add
@@ -214,12 +211,11 @@ dataTableOutput("home_players_tbl")
 
 ```{r}
 #| layout: "[[1], [1,1,1], [1], [1,1,1]]"
-
 # Same as above but here were are dealing with the UI to add away players
 
 h5(
   textOutput("away_team_players_tab"),
-  style="text-align: center;font-weight: bold;"
+  style = "text-align: center;font-weight: bold;"
 )
 
 # Input to indicate the name of an away player to add
@@ -309,8 +305,7 @@ each team (see code under "R/set_rotations_chunks/").
 ```{r}
 #| height: 60px
 #| padding: 0px
-
-h4(textOutput("home_team_out_1"), style="text-align: center;")
+h4(textOutput("home_team_out_1"), style = "text-align: center;")
 ```
 
 ##### Column
@@ -323,7 +318,6 @@ h4(textOutput("home_team_out_1"), style="text-align: center;")
 ```{r}
 #| height: 60px
 #| padding: 0px
-
 h4(textOutput("away_team_out_1"), style="text-align: center;")
 ```
 
@@ -337,7 +331,6 @@ h4(textOutput("away_team_out_1"), style="text-align: center;")
 ```{r}
 #| height: 40px
 #| padding: 0px
-
 # Action button to go to the next set. The button is active only when the score
 # indicates the score is over (the team with the highest score has at least 25
 # and a difference of 2 points). When button is hit, the following is checked:
@@ -365,7 +358,6 @@ actionButton(
 ```{r}
 #| height: 60px
 #| padding: 0px
-
 h4(textOutput("home_team_out_2"), style="text-align: center;")
 ```
 
@@ -379,7 +371,6 @@ h4(textOutput("home_team_out_2"), style="text-align: center;")
 ```{r}
 #| height: 60px
 #| padding: 0px
-
 h4(textOutput("away_team_out_2"), style="text-align: center;")
 ```
 
@@ -412,7 +403,6 @@ actionButton(
 ```{r}
 #| height: 60px
 #| padding: 0px
-
 h4(textOutput("home_team_out_3"), style="text-align: center;")
 ```
 
@@ -426,7 +416,6 @@ h4(textOutput("home_team_out_3"), style="text-align: center;")
 ```{r}
 #| height: 60px
 #| padding: 0px
-
 h4(textOutput("away_team_out_3"), style="text-align: center;")
 ```
 
@@ -459,7 +448,6 @@ actionButton(
 ```{r}
 #| height: 60px
 #| padding: 0px
-
 h4(textOutput("home_team_out_4"), style="text-align: center;")
 ```
 
@@ -473,7 +461,6 @@ h4(textOutput("home_team_out_4"), style="text-align: center;")
 ```{r}
 #| height: 60px
 #| padding: 0px
-
 h4(textOutput("away_team_out_4"), style="text-align: center;")
 ```
 
@@ -506,7 +493,6 @@ actionButton(
 ```{r}
 #| height: 60px
 #| padding: 0px
-
 h4(textOutput("home_team_out_5"), style="text-align: center;")
 ```
 
@@ -520,7 +506,6 @@ h4(textOutput("home_team_out_5"), style="text-align: center;")
 ```{r}
 #| height: 60px
 #| padding: 0px
-
 h4(textOutput("away_team_out_5"), style="text-align: center;")
 ```
 
@@ -672,7 +657,7 @@ bslib::value_box(
 
 
 bslib::value_box(
-  # The name of away team 
+  # The name of away team
   title = h2(
     textOutput("away_team_out"),
     style = paste0(
@@ -695,23 +680,38 @@ bslib::value_box(
   tagList(
     div(
       textOutput("away_score_set_1"),
-      style = paste0("text-align: center;", textOutput("away_score_set_1_style"))
+      style = paste0(
+        "text-align: center;",
+        textOutput("away_score_set_1_style")
+      )
     ),
     div(
       textOutput("away_score_set_2"),
-      style = paste0("text-align: center;", textOutput("away_score_set_2_style"))
+      style = paste0(
+        "text-align: center;",
+        textOutput("away_score_set_2_style")
+      )
     ),
     div(
       textOutput("away_score_set_3"),
-      style = paste0("text-align: center;", textOutput("away_score_set_3_style"))
+      style = paste0(
+        "text-align: center;",
+        textOutput("away_score_set_3_style")
+      )
     ),
     div(
       textOutput("away_score_set_4"),
-      style = paste0("text-align: center;", textOutput("away_score_set_4_style"))
+      style = paste0(
+        "text-align: center;",
+        textOutput("away_score_set_4_style")
+      )
     ),
     div(
       textOutput("away_score_set_5"),
-      style = paste0("text-align: center;", textOutput("away_score_set_5_style"))
+      style = paste0(
+        "text-align: center;",
+        textOutput("away_score_set_5_style")
+      )
     )
   )
 )

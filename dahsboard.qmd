@@ -851,185 +851,6 @@ available_players <- reactiveValues(
   set_5 = list(home = NULL, away = NULL)
 )
 
-#==============================================================================#
-#                           ---- All tabs events ----                          
-#==============================================================================#
-
-# Observer updating the list of available players (for all sets and the 2 teams)
-observe(
-  priority = 1,
-  {
-    available_players$set_1$home <- players$home_team$Number[
-      !(players$home_team$Number %in%
-        c(
-          input$set_1_home_p1,
-          input$set_1_home_p2,
-          input$set_1_home_p3,
-          input$set_1_home_p4,
-          input$set_1_home_p5,
-          input$set_1_home_p6,
-          input$set_1_home_p1_sub,
-          input$set_1_home_p2_sub,
-          input$set_1_home_p3_sub,
-          input$set_1_home_p4_sub,
-          input$set_1_home_p5_sub,
-          input$set_1_home_p6_sub
-        ))
-    ]
-    available_players$set_2$home <- players$home_team$Number[
-      !(players$home_team$Number %in%
-        c(
-          input$set_1_home_p1,
-          input$set_1_home_p2,
-          input$set_1_home_p3,
-          input$set_1_home_p4,
-          input$set_1_home_p5,
-          input$set_1_home_p6,
-          input$set_1_home_p1_sub,
-          input$set_1_home_p2_sub,
-          input$set_1_home_p3_sub,
-          input$set_1_home_p4_sub,
-          input$set_1_home_p5_sub,
-          input$set_1_home_p6_sub
-        ))
-    ]
-    available_players$set_3$home <- players$home_team$Number[
-      !(players$home_team$Number %in%
-        c(
-          input$set_1_home_p1,
-          input$set_1_home_p2,
-          input$set_1_home_p3,
-          input$set_1_home_p4,
-          input$set_1_home_p5,
-          input$set_1_home_p6,
-          input$set_1_home_p1_sub,
-          input$set_1_home_p2_sub,
-          input$set_1_home_p3_sub,
-          input$set_1_home_p4_sub,
-          input$set_1_home_p5_sub,
-          input$set_1_home_p6_sub
-        ))
-    ]
-    available_players$set_4$home <- players$home_team$Number[
-      !(players$home_team$Number %in%
-        c(
-          input$set_1_home_p1,
-          input$set_1_home_p2,
-          input$set_1_home_p3,
-          input$set_1_home_p4,
-          input$set_1_home_p5,
-          input$set_1_home_p6,
-          input$set_1_home_p1_sub,
-          input$set_1_home_p2_sub,
-          input$set_1_home_p3_sub,
-          input$set_1_home_p4_sub,
-          input$set_1_home_p5_sub,
-          input$set_1_home_p6_sub
-        ))
-    ]
-    available_players$set_5$home <- players$home_team$Number[
-      !(players$home_team$Number %in%
-        c(
-          input$set_1_home_p1,
-          input$set_1_home_p2,
-          input$set_1_home_p3,
-          input$set_1_home_p4,
-          input$set_1_home_p5,
-          input$set_1_home_p6,
-          input$set_1_home_p1_sub,
-          input$set_1_home_p2_sub,
-          input$set_1_home_p3_sub,
-          input$set_1_home_p4_sub,
-          input$set_1_home_p5_sub,
-          input$set_1_home_p6_sub
-        ))
-    ]
-    available_players$set_1$away <- players$away_team$Number[
-      !(players$away_team$Number %in%
-        c(
-          input$set_1_away_p1,
-          input$set_1_away_p2,
-          input$set_1_away_p3,
-          input$set_1_away_p4,
-          input$set_1_away_p5,
-          input$set_1_away_p6,
-          input$set_1_away_p1_sub,
-          input$set_1_away_p2_sub,
-          input$set_1_away_p3_sub,
-          input$set_1_away_p4_sub,
-          input$set_1_away_p5_sub,
-          input$set_1_away_p6_sub
-        ))
-    ]
-    available_players$set_2$away <- players$away_team$Number[
-      !(players$away_team$Number %in%
-        c(
-          input$set_1_away_p1,
-          input$set_1_away_p2,
-          input$set_1_away_p3,
-          input$set_1_away_p4,
-          input$set_1_away_p5,
-          input$set_1_away_p6,
-          input$set_1_away_p1_sub,
-          input$set_1_away_p2_sub,
-          input$set_1_away_p3_sub,
-          input$set_1_away_p4_sub,
-          input$set_1_away_p5_sub,
-          input$set_1_away_p6_sub
-        ))
-    ]
-    available_players$set_3$away <- players$away_team$Number[
-      !(players$away_team$Number %in%
-        c(
-          input$set_1_away_p1,
-          input$set_1_away_p2,
-          input$set_1_away_p3,
-          input$set_1_away_p4,
-          input$set_1_away_p5,
-          input$set_1_away_p6,
-          input$set_1_away_p1_sub,
-          input$set_1_away_p2_sub,
-          input$set_1_away_p3_sub,
-          input$set_1_away_p4_sub,
-          input$set_1_away_p5_sub,
-          input$set_1_away_p6_sub
-        ))
-    ]
-    available_players$set_4$away <- players$away_team$Number[
-      !(players$away_team$Number %in%
-        c(
-          input$set_1_away_p1,
-          input$set_1_away_p2,
-          input$set_1_away_p3,
-          input$set_1_away_p4,
-          input$set_1_away_p5,
-          input$set_1_away_p6,
-          input$set_1_away_p1_sub,
-          input$set_1_away_p2_sub,
-          input$set_1_away_p3_sub,
-          input$set_1_away_p4_sub,
-          input$set_1_away_p5_sub,
-          input$set_1_away_p6_sub
-        ))
-    ]
-    available_players$set_5$away <- players$away_team$Number[
-      !(players$away_team$Number %in%
-        c(
-          input$set_1_away_p1,
-          input$set_1_away_p2,
-          input$set_1_away_p3,
-          input$set_1_away_p4,
-          input$set_1_away_p5,
-          input$set_1_away_p6,
-          input$set_1_away_p1_sub,
-          input$set_1_away_p2_sub,
-          input$set_1_away_p3_sub,
-          input$set_1_away_p4_sub,
-          input$set_1_away_p5_sub,
-          input$set_1_away_p6_sub
-        ))
-    ]
-  }
 )
 
 #==============================================================================#
@@ -1384,9 +1205,9 @@ observeEvent(input$remove_player_away, {
  }
 })
 
-#==============================================================================#
-#                         ---- "Set 1" tab events ----                         
-#==============================================================================#
+#==============================================================================|
+#                           ---- All set events ----                          
+#==============================================================================|
 
 observe({
  all_home_pos <- unlist(lapply(1:6, \(x) input[[paste0("set_1_home_p", x)]]))
@@ -1395,6 +1216,57 @@ observe({
  } else {
   lapply(1:6, \(x) shinyjs::enable(paste0("set_1_home_p", x, "_sub")))
  }
+# Observer updating the list of available players for all sets and the two
+# teams. The goal is that any time there is an interaction with the app, the
+# observer below update the list of available players to display only the ones
+# not yet selected as options for the rotation of substitutions.
+observe(
+  # We set priority to 1 to make sure it is executed before others and avoid
+  # unwanted effects.
+  priority = 1,
+  {
+    available_players$set_1$home <- players$home_team$Number[
+      !(players$home_team$Number %in%
+          c(get_rotation(1, "home", input), get_substitutions(1, "home", input)))
+    ]
+    available_players$set_2$home <- players$home_team$Number[
+      !(players$home_team$Number %in%
+          c(get_rotation(2, "home", input), get_substitutions(2, "home", input)))
+    ]
+    available_players$set_3$home <- players$home_team$Number[
+      !(players$home_team$Number %in%
+          c(get_rotation(3, "home", input), get_substitutions(3, "home", input)))
+    ]
+    available_players$set_4$home <- players$home_team$Number[
+      !(players$home_team$Number %in%
+          c(get_rotation(4, "home", input), get_substitutions(4, "home", input)))
+    ]
+    available_players$set_5$home <- players$home_team$Number[
+      !(players$home_team$Number %in%
+          c(get_rotation(5, "home", input), get_substitutions(5, "home", input)))
+    ]
+    available_players$set_1$away <- players$away_team$Number[
+      !(players$away_team$Number %in%
+          c(get_rotation(1, "away", input), get_substitutions(1, "away", input)))
+    ]
+    available_players$set_2$away <- players$away_team$Number[
+      !(players$away_team$Number %in%
+          c(get_rotation(2, "away", input), get_substitutions(2, "away", input)))
+    ]
+    available_players$set_3$away <- players$away_team$Number[
+      !(players$away_team$Number %in%
+          c(get_rotation(3, "away", input), get_substitutions(3, "away", input)))
+    ]
+    available_players$set_4$away <- players$away_team$Number[
+      !!(players$away_team$Number %in%
+           c(get_rotation(4, "away", input), get_substitutions(4, "away", input)))
+    ]
+    available_players$set_5$away <- players$away_team$Number[
+      !!(players$away_team$Number %in%
+           c(get_rotation(5, "away", input), get_substitutions(5, "away", input)))
+    ]
+  }
+)
 })
 
 observe({

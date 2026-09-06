@@ -936,8 +936,8 @@ observe({
   }
 })
 
-# When the details in the first tab are locked, the "player" tab appears in the
-# top navbar.
+# When the elements in the first tab are locked, the "Player" tab is then made
+# available in the top navbar.
 observe({
   if (are_details_locked()) {
     shinyjs::showElement("tab-player", anim = TRUE, animType = "fade")
@@ -1078,7 +1078,7 @@ observeEvent(input$import_players_confirm, {
   dup_players_count <- table(players_home_tmp$Number)
   # Extract the duplicated players (if any)
   dup_players <- names(dup_players_count)[dup_players_count > 1]
-
+  
   # Check if the players to import have liberos and if adding them would lead
   # to having more than 2.
   if (sum(players_home_tmp$Role == "Libero") > 2) {
@@ -1197,7 +1197,7 @@ observeEvent(input$validate_player_home, {
   shinyjs::disable("new_player_num_home")
   shinyjs::disable("remove_player_home")
   shinyjs::disable("home_players_tbl")
-
+  
   output$home_players_tbl <- renderDataTable({
     datatable(
       players$home_team,
@@ -1281,7 +1281,7 @@ observeEvent(input$validate_player_away, {
   shinyjs::disable("new_player_num_away")
   shinyjs::disable("remove_player_away")
   shinyjs::disable("away_players_tbl")
-
+  
   output$away_players_tbl <- renderDataTable({
     datatable(
       players$away_team,
@@ -1348,7 +1348,7 @@ observeEvent(input$remove_player_home, {
   to_rmv <- as.numeric(input$home_players_tbl_rows_selected)
   # Remove the selected player(s) from the table
   players$home_team <- tbl[-to_rmv, ]
-
+  
   # If all players are removed (table has no row), a NULL table is rendered
   if (nrow(players$home_team) == 0) {
     output$home_players_tbl <- renderDataTable({
@@ -1423,7 +1423,7 @@ observeEvent(input$remove_player_away, {
   to_rmv <- as.numeric(input$away_players_tbl_rows_selected)
   # Remove the selected player(s) from the table
   players$away_team <- tbl[-to_rmv, ]
-
+  
   # If all players are removed (table has no row), a NULL table is rendered
   if (nrow(players$away_team) == 0) {
     output$away_players_tbl <- renderDataTable({

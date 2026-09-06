@@ -569,8 +569,7 @@ actionButton(
 ```{r}
 #| layout-align: center
 #| height: "350px"
-#| layout: "[[1,1,1,3,3,1,1,1], [5,2,5], [11, 1]]"
-br()
+#| layout: "[[-1,1,1,3,3,1,1,-1], [-12], [-10, 2]]"
 #| classes: no-border
 bslib::value_box(
   # The name of home team
@@ -829,20 +828,11 @@ bslib::value_box(
     )
   )
 )
-br()
-br()
+
 downloadButton(
   "export_game_data",
   label = "Export game data",
   icon = icon("file-export")
-)
-br()
-br()
-actionButton(
-  "close_app",
-  label = "Close app",
-  icon = icon("circle-stop"),
-  style = "background-color: #f77b7b"
 )
 ```
 
@@ -2588,34 +2578,6 @@ observeEvent(input$to_summary_confirm, {
       }
     )
   }
-})
-
-observeEvent(input$close_app, {
-  showModal(
-    modalDialog(
-      title = "Are you sure you want to close the app?",
-      # Some instructions on how to use the import tab
-      list(
-        "The app does not save any data. Closing the app will thus cause ",
-        "losing all the data imported. Make sure you downloaded the game data ",
-        "before closing the app. After closing the app, simply close your",
-        "browser window."
-      ),
-      footer = tagList(
-        modalButton("Cancel"),
-        actionButton(
-          "close_app_confirm",
-          "Confirm closing app"
-        )
-      ),
-      easyClose = FALSE,
-      size = "m"
-    )
-  )
-})
-
-observeEvent(input$close_app_confirm, {
-  session$Close()
 })
 
 ```

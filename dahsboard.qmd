@@ -1484,6 +1484,43 @@ observeEvent(list(are_players_validated$home, are_players_validated$away), {
   }
 })
 
+# When "moving to set 1", everything in the "Player" page is disabled, the
+# page is hidden while the set 1 page is shown (then moving there).
+observeEvent(input$go_to_set_1_tab, {
+  # Disable import of data
+  shinyjs::disable("import_players_file")
+  shinyjs::disable("import_players")
+  # Disable the two teams UI elements
+  disable_players_ui("home")
+  disable_players_ui("away")
+  # Disable selection of selection in the home players table
+  output$home_players_tbl <- renderDataTable({
+    datatable(
+      players$home_team,
+      options = list(paging = FALSE, searching = FALSE),
+      # Deactivate selection in the table
+      selection = "none"
+    )
+  })
+  # Disable selection of selection in the away players table
+  output$away_players_tbl <- renderDataTable({
+    datatable(
+      players$away_team,
+      options = list(paging = FALSE, searching = FALSE),
+      # Deactivate selection in the table
+      selection = "none"
+    )
+  })
+  # Hide the player page
+  shinyjs::hideElement("tab-player")
+  # Show the "Set 1" page
+  shinyjs::showElement("tab-set-1")
+  # Remove the dialogue
+  removeModal()
+  # Move to the "Set 1" page
+  shinyjs::click("tab-set-1")
+})
+
 #==============================================================================|
 #                           ---- All set events ----                          
 #==============================================================================|

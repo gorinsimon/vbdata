@@ -1,0 +1,13 @@
+Package: vbdata
+Title: Simple volleybal data analytics
+Version: 0.0.0.9000
+Authors@R: 
+    person("Simon", "Gorin", , "github.com.darkness667@passmail.net", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-7462-0446"))
+Description: Provide data analytics solution for volleyball game base on
+    the data available in a score sheet.
+License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
+    license
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3

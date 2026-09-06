@@ -952,6 +952,7 @@ observeEvent(input$lock_details, {
   shinyjs::toggleState("home_team")
   shinyjs::toggleState("away_team")
   shinyjs::toggleState("my_team")
+  shinyjs::toggleState("serving_set_1")
   shinyjs::toggleState("game_location")
   shinyjs::toggleState("game_date")
   shinyjs::toggleState("season")

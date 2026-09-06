@@ -1,3 +1,11 @@
+#' Create a validator for the time-out input
+#'
+#' @param set Integer indicating the set for which to set a validator for the
+#' time-out input.
+#'
+#' @returns A list of validators for the time-outs of the indicated set.
+#' @export
+
 set_validator_time_out <- function(set) {
   validator <- shinyvalidate::InputValidator$new()
   lapply(
@@ -22,6 +30,14 @@ set_validator_time_out <- function(set) {
   )
   return(validator)
 }
+
+#' Create a validator for the substitutions input
+#'
+#' @param set Integer indicating the set for which to set a validator for the
+#' substitutions input.
+#'
+#' @returns A list of validators for the substitutions of the indicated set.
+#' @export
 
 set_validator_substitution <- function(set) {
   validator <- shinyvalidate::InputValidator$new()

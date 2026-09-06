@@ -279,6 +279,222 @@ chk_time_outs <- function(time_outs) {
   invisible()
 }
 
+#' Add substitutions to a set data frame
+#'
+#' For each substitution made by the two teams, the function flags in the data
+#' on which point a substitution was made and the team who requested it. The
+#' players in the rotation are also updated accordingly. Note that the point for
+#' which a substitution is flagged is always the next one, meaning that when a
+#' substitution is asked after the 10th point, it is flagged in the 11th one.
+#'
+#' @inherit add_time_out dat
+#' @inheritParams wrangle_set_data
+#'
+#' @returns The data frame passed to the function (`dat`), which contains
+#' already the sequence of player numbers at each position, updated with the
+#' substitutions and flags indicating for which point a substitution happened.
+#'
+#' @keywords internal
+
+add_substitutions <- function(dat, substitutions) {
+  home_t <- attr(substitutions$home, "team")
+  away_t <- attr(substitutions$away, "team")
+
+  # NOTE: the substitutions are always assigned to the "next point". In other
+  # words, when a time-out is request at 6-6, that is, after the 12th point is
+  # over, the time-out is assigned to the next point, that is, the 13th.
+
+  # Home team substitutions
+
+  # Only update "dat" for the home team if the substitutions list is not empty
+  if (!is.null(substitutions$home)) {
+    # Going along the six substitution positions possible
+    for (i in seq_along(substitutions$home$score_in)) {
+      # If for the current position, there was no substitution, then nothing is
+      # done.
+      if (!all(is.na(substitutions$home$score_in[[i]]))) {
+        # Shorter access to the score of the first and second change (if any)
+        # for the current position.
+        s_h_in <- substitutions$home$score_in[[i]]
+        s_h_out <- substitutions$home$score_out[[i]]
+
+        # For each score, if it is equal to the home-away team score for the
+        # current change (first or second) for the position, then we set the
+        # "substitution" value to TRUE and indicate the team that asked for
+        # a substitution.
+        dat <- mutate(
+          dat,
+          substitution = case_when(
+            lag(
+              dat[[home_t]] == s_h_in[1] & dat[[away_t]] == s_h_in[2],
+              default = FALSE
+            ) ~ TRUE,
+            lag(
+              dat[[home_t]] == s_h_out[1] & dat[[away_t]] == s_h_out[2],
+              default = FALSE
+            ) ~ TRUE,
+            .default = substitution
+          ),
+          asked_substitution = case_when(
+            lag(
+              dat[[home_t]] == s_h_in[1] & dat[[away_t]] == s_h_in[2],
+              default = FALSE
+            ) ~ home_t,
+            lag(
+              dat[[home_t]] == s_h_out[1] & dat[[away_t]] == s_h_out[2],
+              default = FALSE
+            ) ~ home_t,
+            .default = asked_substitution
+          )
+        )
+
+        # Now, we make the substitution in all positions and rotations that
+        # occurred after the substitution.
+
+        # Take the subset of home team positions where the score is equal or
+        # higher to the current substitutions.
+        temp_hp <- dat[
+          lag(
+            dat[[home_t]] >= s_h_in[1] & dat[[away_t]] >= s_h_in[2],
+            default = FALSE
+          ),
+          paste0("home_P", 1:6)
+        ]
+        # Replace all instances of the played currently replaced in the temp
+        # subset of positions
+        temp_hp[
+          temp_hp == substitutions$home$rotation[i]
+        ] <- substitutions$home$sub[i]
+        # We add back the temp positions to the "dat" to include substitutions
+        dat[
+          lag(
+            dat[[home_t]] >= s_h_in[1] & dat[[away_t]] >= s_h_in[2],
+            default = FALSE
+          ),
+          paste0("home_P", 1:6)
+        ] <- temp_hp
+        # We now repeat the same but with final substitution (i.e. when a player
+        # previously substituted enter back).
+        if (!all(is.na(s_h_out))) {
+          temp_hp_2 <- dat[
+            lag(
+              dat[[home_t]] >= s_h_out[1] & dat[[away_t]] >= s_h_out[2],
+              default = FALSE
+            ),
+            paste0("home_P", 1:6)
+          ]
+
+          temp_hp_2[
+            temp_hp_2 == substitutions$home$sub[i]
+          ] <- substitutions$home$rotation[i]
+
+          dat[
+            lag(
+              dat[[home_t]] >= s_h_out[1] & dat[[away_t]] >= s_h_out[2],
+              default = FALSE
+            ),
+            paste0("home_P", 1:6)
+          ] <- temp_hp_2
+        }
+      }
+    }
+  }
+
+  # Away team substitutions
+
+  # Only update "dat" for the away team if the substitutions list is not empty
+  if (!is.null(substitutions$away)) {
+    # Going along the the six substitution positions possible
+    for (i in seq_along(substitutions$away$score_in)) {
+      # If for the current position, there was no substitution, then nothing is
+      # done.
+      if (!any(is.na(substitutions$away$score_in[[i]]))) {
+        # Shorter access to the score of the first and second change (if any)
+        # for the current position.
+        s_a_in <- substitutions$away$score_in[[i]]
+        s_a_out <- substitutions$away$score_out[[i]]
+
+        # For each score, if it is equal to the home-away team score for the
+        # current change (first or second) for the position, then we set the
+        # "substitution" value to TRUE and indicate the team that asked for
+        # a substitution.
+        dat <- mutate(
+          dat,
+          substitution = case_when(
+            lag(
+              dat[[away_t]] == s_a_in[1] & dat[[home_t]] == s_a_in[2],
+              default = FALSE
+            ) ~ TRUE,
+            lag(
+              dat[[away_t]] == s_a_out[1] & dat[[home_t]] == s_a_out[2],
+              default = FALSE
+            ) ~ TRUE,
+            .default = substitution
+          ),
+          asked_substitution = case_when(
+            lag(
+              dat[[away_t]] == s_a_in[1] & dat[[home_t]] == s_a_in[2],
+              default = FALSE
+            ) ~ away_t,
+            lag(
+              dat[[away_t]] == s_a_out[1] & dat[[home_t]] == s_a_out[2],
+              default = FALSE
+            ) ~ away_t,
+            .default = asked_substitution
+          )
+        )
+
+        # Now, we make the substitution in all positions and rotations that
+        # occurred after the substitution.
+
+        # Take the subset of away team positions where the score is equal or
+        # higher to the current substitutions.
+        temp_ap <- dat[
+          lag(
+            dat[[away_t]] >= s_a_in[1] & dat[[home_t]] >= s_a_in[2],
+            default = FALSE
+          ),
+          paste0("away_P", 1:6)
+        ]
+        # Replace all instances of the played currently replaced in the temp
+        # subset of positions
+        temp_ap[
+          temp_ap == substitutions$away$rotation[i]
+        ] <- substitutions$away$sub[i]
+        # We add back the temp positions to the "dat" to include substitutions
+        dat[
+          lag(
+            dat[[away_t]] >= s_a_in[1] & dat[[home_t]] >= s_a_in[2],
+            default = FALSE
+          ),
+          paste0("away_P", 1:6)
+        ] <- temp_ap
+        # We now repeat the same but with final substitution (i.e. when a player
+        # previously substituted enter back).
+        if (!any(is.na(s_a_out))) {
+          temp_ap_2 <- dat[
+            lag(
+              dat[[away_t]] >= s_a_out[1] & dat[[home_t]] >= s_a_out[2],
+              default = FALSE
+            ),
+            paste0("away_P", 1:6)
+          ]
+          temp_ap_2[
+            temp_ap_2 == substitutions$away$sub[i]
+          ] <- substitutions$away$rotation[i]
+          dat[
+            lag(
+              dat[[away_t]] >= s_a_out[1] & dat[[home_t]] >= s_a_out[2],
+              default = FALSE
+            ),
+            paste0("away_P", 1:6)
+          ] <- temp_ap_2
+        }
+      }
+    }
+  }
+  return(dat)
+}
 # This file contains functions to easily access the inputs available in the app.
 # They behaviour is too simply extract the information, with only a minimum of
 # extra cleaning.

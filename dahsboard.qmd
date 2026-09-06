@@ -1111,7 +1111,27 @@ observeEvent(input$import_players_confirm, {
       )
     )
     showNotification(dup_players_string, type = "error")
-  }
+  } else {
+    # If the players to import do not violate the rules above, we then update
+    # the DT table with the players in the game with the one to import.
+    players$home_team <- players_home_tmp
+    if (sum(players_in_import_sel_tmp) > 0) {
+      # Once the new player is added to the table, the new table is rendered
+      output$home_players_tbl <- renderDataTable({
+        tbl <- players$home_team
+        tbl[["Number"]] <- as.character(tbl[["Number"]])
+        datatable(
+          tbl,
+          # Since the number of players should be up to 14, we disable paging.
+          # We also do not need the searching option
+          options = list(paging = FALSE, searching = FALSE),
+          # Allow selection of multiple rows (useful to remove more than one
+          # player at once from the table.)
+          selection = "multiple"
+        )
+      })
+    }
+    removeModal()
   }
 })
 

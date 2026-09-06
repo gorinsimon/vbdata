@@ -19,7 +19,12 @@ library(dplyr)
 library(purrr)
 library(jsonlite)
 useShinyjs(rmd = TRUE)
-source("R/utils_players.R")
+source("R/scores.R")
+source("R/summary.R")
+source("R/dialogue.R")
+source("R/utils.R")
+source("R/export.R")
+source("R/validator.R")
 ```
 
 # Game

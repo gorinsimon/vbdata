@@ -20,13 +20,6 @@ library(dplyr)
 library(purrr)
 library(jsonlite)
 
-# source("R/scores.R")
-# source("R/summary.R")
-# source("R/dialogue.R")
-# source("R/utils.R")
-# source("R/export.R")
-# source("R/validator.R")
-# source("R/enabler.R")
 ```
 
 # Game

@@ -8,10 +8,9 @@
 #'
 #' @param team String ("home" or "away") indicating for which team the UI must
 #' be enabled or disabled.
-#' @returns
+#' @returns Nothing is returned, used only for side effect.
 #' @keywords internal
-#'
-#' @examples
+
 disable_players_ui <- function(team) {
   if (team == "home") {
     shinyjs::disable("new_player_name_home")
@@ -28,6 +27,8 @@ disable_players_ui <- function(team) {
     shinyjs::disable("away_players_tbl")
     shinyjs::disable("validate_player_away")
   }
+
+  invisible()
 }
 
 
@@ -49,4 +50,6 @@ enable_players_ui <- function(team) {
     shinyjs::enable("away_players_tbl")
     shinyjs::enable("validate_player_away")
   }
+
+  invisible()
 }

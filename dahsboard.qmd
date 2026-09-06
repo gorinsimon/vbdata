@@ -820,19 +820,19 @@ actionButton(
 ```{r}
 #| context: server
 
-shinyjs::hide("tab-player")
-shinyjs::hide("tab-set-1")
-shinyjs::hide("tab-set-2")
-shinyjs::hide("tab-set-3")
-shinyjs::hide("tab-set-4")
-shinyjs::hide("tab-set-5")
-shinyjs::hidden("tab-summary")
+hide("tab-player")
+hide("tab-set-1")
+hide("tab-set-2")
+hide("tab-set-3")
+hide("tab-set-4")
+hide("tab-set-5")
+hidden("tab-summary")
 
-shinyjs::disable("next_to_set_2")
-shinyjs::disable("next_to_set_3")
-shinyjs::disable("next_to_set_4")
-shinyjs::disable("next_to_set_5")
-shinyjs::disable("next_to_summary")
+disable("next_to_set_2")
+disable("next_to_set_3")
+disable("next_to_set_4")
+disable("next_to_set_5")
+disable("next_to_summary")
 
 #==============================================================================|
 #                           ---- Reactive values ----
@@ -952,9 +952,9 @@ observe({
   # Enable the "Lock details" button based on whether there is any element that
   # is empty on the corresponding page or not.
   if (!any_empty && !are_details_locked()) {
-    shinyjs::enable("lock_details")
+    enable("lock_details")
   } else if (any_empty && !are_details_locked()) {
-    shinyjs::disable("lock_details")
+    disable("lock_details")
   }
 })
 
@@ -965,19 +965,19 @@ observeEvent(input$lock_details, {
 })
 
 observeEvent(input$go_to_player_tab, {
-  shinyjs::disable("home_team")
-  shinyjs::disable("away_team")
-  shinyjs::disable("my_team")
-  shinyjs::disable("serving_set_1")
-  shinyjs::disable("game_location")
-  shinyjs::disable("game_date")
-  shinyjs::disable("season")
-  shinyjs::disable("division")
+  disable("home_team")
+  disable("away_team")
+  disable("my_team")
+  disable("serving_set_1")
+  disable("game_location")
+  disable("game_date")
+  disable("season")
+  disable("division")
   
-  shinyjs::hideElement("tab-game")
-  shinyjs::showElement("tab-player")
-  shinyjs::disable("lock_details")
-  shinyjs::click("tab-player")
+  hideElement("tab-game")
+  showElement("tab-player")
+  disable("lock_details")
+  click("tab-player")
   
   removeModal()
 })
@@ -990,9 +990,9 @@ observeEvent(input$go_to_player_tab, {
 
 observe({
   if (is.null(input$import_players_file)) {
-    shinyjs::disable("import_players")
+    disable("import_players")
   } else {
-    shinyjs::enable("import_players")
+    enable("import_players")
   }
 })
 
@@ -1171,9 +1171,9 @@ observe({
   )
   # Enable or disable the button accordingly
   if (!all(is_new_home_num_ok, is_new_home_name_ok, is_new_home_role_ok)) {
-    shinyjs::disable("add_player_home")
+    disable("add_player_home")
   } else {
-    shinyjs::enable("add_player_home")
+    enable("add_player_home")
   }
 })
 
@@ -1192,9 +1192,9 @@ observe({
   is_n_not_too_many <- n_players <= 14
   # Enable or disable the button accordingly
   if (all(is_n_enough, is_n_not_too_many)) {
-    shinyjs::enable("validate_player_home")
+    enable("validate_player_home")
   } else {
-    shinyjs::disable("validate_player_home")
+    disable("validate_player_home")
   }
 })
 
@@ -1244,9 +1244,9 @@ observe({
   )
   # Enable or disable the button accordingly
   if (!all(is_new_away_num_ok, is_new_away_name_ok, is_new_away_role_ok)) {
-    shinyjs::disable("add_player_away")
+    disable("add_player_away")
   } else {
-    shinyjs::enable("add_player_away")
+    enable("add_player_away")
   }
 })
 
@@ -1265,9 +1265,9 @@ observe({
   is_n_not_too_many <- n_players <= 14
   # Enable or disable the button accordingly
   if (all(is_n_enough, is_n_not_too_many)) {
-    shinyjs::enable("validate_player_away")
+    enable("validate_player_away")
   } else {
-    shinyjs::disable("validate_player_away")
+    disable("validate_player_away")
   }
 })
 
@@ -1325,9 +1325,9 @@ observeEvent(input$add_player_home, {
 # When no player is listed in the home team, the table listing them is not shown
 observe({
   if (is.null(input$home_players_tbl_rows_selected)) {
-    shinyjs::disable("remove_player_home")
+    disable("remove_player_home")
   } else {
-    shinyjs::enable("remove_player_home")
+    enable("remove_player_home")
   }
 })
 
@@ -1401,9 +1401,9 @@ observeEvent(input$add_player_away, {
 # When no player is listed in the away team, the table listing them is not shown
 observe({
   if (is.null(input$away_players_tbl_rows_selected)) {
-    shinyjs::disable("remove_player_away")
+    disable("remove_player_away")
   } else {
-    shinyjs::enable("remove_player_away")
+    enable("remove_player_away")
   }
 })
 
@@ -1451,8 +1451,8 @@ observeEvent(list(are_players_validated$home, are_players_validated$away), {
     are_players_validated$home <- FALSE
     are_players_validated$away <- FALSE
     # Enable selecting a file for import and importing the file
-    shinyjs::enable("import_players_file")
-    shinyjs::enable("import_players")
+    enable("import_players_file")
+    enable("import_players")
     # Enable the two teams UI elements
     enable_players_ui("home")
     enable_players_ui("away")
@@ -1485,8 +1485,8 @@ observeEvent(list(are_players_validated$home, are_players_validated$away), {
 # page is hidden while the set 1 page is shown (then moving there).
 observeEvent(input$go_to_set_1_tab, {
   # Disable import of data
-  shinyjs::disable("import_players_file")
-  shinyjs::disable("import_players")
+  disable("import_players_file")
+  disable("import_players")
   # Disable the two teams UI elements
   disable_players_ui("home")
   disable_players_ui("away")
@@ -1509,13 +1509,13 @@ observeEvent(input$go_to_set_1_tab, {
     )
   })
   # Hide the player page
-  shinyjs::hideElement("tab-player")
+  hideElement("tab-player")
   # Show the "Set 1" page
-  shinyjs::showElement("tab-set-1")
+  showElement("tab-set-1")
   # Remove the dialogue
   removeModal()
   # Move to the "Set 1" page
-  shinyjs::click("tab-set-1")
+  click("tab-set-1")
 })
 
 #==============================================================================|
@@ -1608,16 +1608,16 @@ observe(
 # (except set 5) for the team receiving the service.
 observeEvent(input$serving_set_1, {
   if (input$home_team == input$serving_set_1) {
-    shinyjs::disable("set_1_r_1_p_1_away")
-    shinyjs::disable("set_2_r_1_p_1_home")
-    shinyjs::disable("set_3_r_1_p_1_away")
-    shinyjs::disable("set_4_r_1_p_1_home")
+    disable("set_1_r_1_p_1_away")
+    disable("set_2_r_1_p_1_home")
+    disable("set_3_r_1_p_1_away")
+    disable("set_4_r_1_p_1_home")
   }
   if (input$away_team == input$serving_set_1) {
-    shinyjs::disable("set_1_r_1_p_1_home")
-    shinyjs::disable("set_2_r_1_p_1_away")
-    shinyjs::disable("set_3_r_1_p_1_home")
-    shinyjs::disable("set_4_r_1_p_1_away")
+    disable("set_1_r_1_p_1_home")
+    disable("set_2_r_1_p_1_away")
+    disable("set_3_r_1_p_1_home")
+    disable("set_4_r_1_p_1_away")
   }
 })
 
@@ -1625,10 +1625,10 @@ observeEvent(input$serving_set_1, {
 # team receiving the service.
 observeEvent(input$serving_set_5, {
   if (input$home_team == input$serving_set_5) {
-    shinyjs::disable("set_5_r_1_p_1_away")
+    disable("set_5_r_1_p_1_away")
   }
   if (input$away_team == input$serving_set_5) {
-    shinyjs::disable("set_5_r_1_p_1_home")
+    disable("set_5_r_1_p_1_home")
   }
 })
 
@@ -1649,26 +1649,26 @@ observe({
     # substitutions inputs are disabled.
     if (any(!nzchar(all_home_pos))) {
       lapply(1:6, \(x) {
-        shinyjs::disable(paste0("set_", set, "_home_p", x, "_sub"))
+        disable(paste0("set_", set, "_home_p", x, "_sub"))
       })
       # If no home team rotation returns an empty string, the substitutions
       # inputs are disabled.
     } else {
       lapply(1:6, \(x) {
-        shinyjs::enable(paste0("set_", set, "_home_p", x, "_sub"))
+        enable(paste0("set_", set, "_home_p", x, "_sub"))
       })
     }
     # If any of the away team six rotations returns an empty string, the
     # substitutions inputs are disabled.
     if (any(!nzchar(all_away_pos))) {
       lapply(1:6, \(x) {
-        shinyjs::disable(paste0("set_", set, "_away_p", x, "_sub"))
+        disable(paste0("set_", set, "_away_p", x, "_sub"))
       })
       # If no away team rotation returns an empty string, the substitutions
       # inputs are disabled.
     } else {
       lapply(1:6, \(x) {
-        shinyjs::enable(paste0("set_", set, "_away_p", x, "_sub"))
+        enable(paste0("set_", set, "_away_p", x, "_sub"))
       })
     }
   }
@@ -1687,24 +1687,24 @@ observe({
         # If the home team substitution position returns an empty string, we
         # disable the corresponding substitution score inputs.
         if (!nzchar(input[[paste0("set_", set, "_home_p", x, "_sub")]])) {
-          shinyjs::disable(paste0("set_", set, "_home_p", x, "_sub_1_score"))
-          shinyjs::disable(paste0("set_", set, "_home_p", x, "_sub_2_score"))
+          disable(paste0("set_", set, "_home_p", x, "_sub_1_score"))
+          disable(paste0("set_", set, "_home_p", x, "_sub_2_score"))
           # If the home team substitution position does not return an empty
           # string, we enable the corresponding substitution score inputs.
         } else {
-          shinyjs::enable(paste0("set_", set, "_home_p", x, "_sub_1_score"))
-          shinyjs::enable(paste0("set_", set, "_home_p", x, "_sub_2_score"))
+          enable(paste0("set_", set, "_home_p", x, "_sub_1_score"))
+          enable(paste0("set_", set, "_home_p", x, "_sub_2_score"))
         }
         # If the away team substitution position returns an empty string, we
         # disable the corresponding substitution score inputs.
         if (!nzchar(input[[paste0("set_", set, "_away_p", x, "_sub")]])) {
-          shinyjs::disable(paste0("set_", set, "_away_p", x, "_sub_1_score"))
-          shinyjs::disable(paste0("set_", set, "_away_p", x, "_sub_2_score"))
+          disable(paste0("set_", set, "_away_p", x, "_sub_1_score"))
+          disable(paste0("set_", set, "_away_p", x, "_sub_2_score"))
           # If the away team substitution position does not return an empty
           # string, we enable the corresponding substitution score inputs.
         } else {
-          shinyjs::enable(paste0("set_", set, "_away_p", x, "_sub_1_score"))
-          shinyjs::enable(paste0("set_", set, "_away_p", x, "_sub_2_score"))
+          enable(paste0("set_", set, "_away_p", x, "_sub_1_score"))
+          enable(paste0("set_", set, "_away_p", x, "_sub_2_score"))
         }
       }
     )
@@ -1819,47 +1819,47 @@ observe({
   # When the number of sets completed (based on scores) is 1, the "next set"
   # button is enabled.
   if (n_sets() == 1) {
-    shinyjs::enable("next_to_set_2")
+    enable("next_to_set_2")
   }
   # When the number of sets completed (based on scores) is 2, the "next set"
   # button is enabled.
   if (n_sets() == 2) {
-    shinyjs::enable("next_to_set_3")
+    enable("next_to_set_3")
   }
   # When the number of sets completed (based on scores) is 3, the "next set"
   # button is enabled.
   if (n_sets() == 3) {
-    shinyjs::enable("next_to_set_4")
+    enable("next_to_set_4")
   }
   # When the number of sets completed (based on scores) is 4, the "next set"
   # button is enabled.
   if (n_sets() == 4) {
-    shinyjs::enable("next_to_set_5")
+    enable("next_to_set_5")
   }
   # When the number of sets completed (based on scores) is 5, the "next set"
   # button "summary" is enabled.
   if (n_sets() == 5) {
-    shinyjs::enable("next_to_summary")
+    enable("next_to_summary")
   }
   
   # When after set 1 the next set button is pressed and confirmation to
   # continue is provided, the "Set 2" tab is displayed. Then the next set
   # button is disabled, as well as all the element on "Set 1" page.
   if (!is.null(input$next_to_set_2_confirm) && input$next_to_set_2_confirm) {
-    shinyjs::showElement("tab-set-2")
-    shinyjs::hideElement("tab-set-1")
-    shinyjs::click("tab-set-2")
-    shinyjs::disable("next_to_set_2")
+    showElement("tab-set-2")
+    hideElement("tab-set-1")
+    click("tab-set-2")
+    disable("next_to_set_2")
     
   }
   # When after set 2 the next set button is pressed and confirmation to
   # continue is provided, the "Set 3" tab is displayed. Then the next set
   # button is disabled, as well as all the element on "Set 2" page.
   if (!is.null(input$next_to_set_3_confirm) && input$next_to_set_3_confirm) {
-    shinyjs::showElement("tab-set-3")
-    shinyjs::hideElement("tab-set-2")
-    shinyjs::click("tab-set-3")
-    shinyjs::disable("next_to_set_3")
+    showElement("tab-set-3")
+    hideElement("tab-set-2")
+    click("tab-set-3")
+    disable("next_to_set_3")
     
   }
   # When after set 3 the next set button is pressed and confirmation to
@@ -1867,20 +1867,20 @@ observe({
   # not over yet or the "Summary" tab is displayed if the game is over. Then the
   # next set button is disabled, as well as all the element on the "Set 3" tab.
   if (!is.null(input$next_to_set_4_confirm) && input$next_to_set_4_confirm) {
-    shinyjs::showElement("tab-set-4")
-    shinyjs::hideElement("tab-set-3")
-    shinyjs::click("tab-set-4")
-    shinyjs::disable("next_to_set_4")
+    showElement("tab-set-4")
+    hideElement("tab-set-3")
+    click("tab-set-4")
+    disable("next_to_set_4")
   }
   # When after set 4 the next set button is pressed and confirmation to
   # continue is provided, whether the "Set 5" tab is displayed if the game is
   # not over yet or the "Summary" tab is displayed if the game is over. Then the
   # next set button is disabled, as well as all the element on the "Set 4" tab.
   if (!is.null(input$next_to_set_5_confirm) && input$next_to_set_5_confirm) {
-    shinyjs::showElement("tab-set-5")
-    shinyjs::hideElement("tab-set-4")
-    shinyjs::click("tab-set-5")
-    shinyjs::disable("next_to_set_5")
+    showElement("tab-set-5")
+    hideElement("tab-set-4")
+    click("tab-set-5")
+    disable("next_to_set_5")
   }
   # When after set 5 the next set button is pressed and confirmation to
   # continue is provided, the "Summary" tab is displayed. Then the next set
@@ -1888,15 +1888,15 @@ observe({
   # next set buttons are also disabled as the tab can be reached from Set 3, 4,
   # and 5.
   if (!is.null(input$to_summary_confirm) && input$to_summary_confirm) {
-    shinyjs::showElement("tab-summary", anim = TRUE, animType = "fade")
-    shinyjs::hideElement("tab-set-3")
-    shinyjs::hideElement("tab-set-4")
-    shinyjs::hideElement("tab-set-5")
-    shinyjs::click("tab-summary")
-    shinyjs::disable("next_to_set_3")
-    shinyjs::disable("next_to_set_4")
-    shinyjs::disable("next_to_set_5")
-    shinyjs::disable("next_to_summary")
+    showElement("tab-summary", anim = TRUE, animType = "fade")
+    hideElement("tab-set-3")
+    hideElement("tab-set-4")
+    hideElement("tab-set-5")
+    click("tab-summary")
+    disable("next_to_set_3")
+    disable("next_to_set_4")
+    disable("next_to_set_5")
+    disable("next_to_summary")
   }
 })
 

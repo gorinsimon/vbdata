@@ -34,7 +34,6 @@ source("R/enabler.R")
 #| layout: "[[1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1]]"
 # Must be called from the UI side to use `shinyjs` functions from an Rmd file
 useShinyjs(rmd = TRUE)
-
 # Input to indicate the name of the "home" team
 textInput(
   "home_team",
@@ -1219,8 +1218,7 @@ observeEvent(input$validate_player_home, {
 })
 
 
-
-## Adding new home team player -------------------------------------------------
+## Adding new away team player -------------------------------------------------
 
 # Define whether the "add_new_player_away" button should be enabled (only when a
 # number, a name, and a role is provided).

@@ -841,29 +841,14 @@ players <- reactiveValues(
   )
 )
 
-# Reactive values with the players available (i.e. not assigned to any position)
-# for the two teams and each set.
+# Initiate reactive values with the players available (i.e. not assigned to any
+# position) for the two teams and each set.
 available_players <- reactiveValues(
- set_1 = list(
-  home = NULL,
-  away = NULL
- ),
- set_2 = list(
-  home = NULL,
-  away = NULL
- ),
- set_3 = list(
-  home = NULL,
-  away = NULL
- ),
- set_4 = list(
-  home = NULL,
-  away = NULL
- ),
- set_5 = list(
-  home = NULL,
-  away = NULL
- )
+  set_1 = list(home = NULL, away = NULL),
+  set_2 = list(home = NULL, away = NULL),
+  set_3 = list(home = NULL, away = NULL),
+  set_4 = list(home = NULL, away = NULL),
+  set_5 = list(home = NULL, away = NULL)
 )
 
 #==============================================================================#

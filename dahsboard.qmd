@@ -22,13 +22,16 @@ source("R/utils_players.R")
 
 ```{r}
 #| layout: "[[1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1]]"
+# Must be called from the UI side to use `shinyjs` functions from an Rmd file
 useShinyjs(rmd = TRUE)
 
+# Input to indicate the name of the "home" team
 textInput(
  "home_team",
  value = "LVBC", # TO_REMOVE
  label = tags$p(icon("house"), "Home team")
 )
+# Input to indicate the name of the "away" (or visiting) team
 textInput(
  "away_team",
  value = "LUC", # TO_REMOVE
@@ -37,11 +40,14 @@ textInput(
 br()
 
 br()
+
+# Input to let the user indicate which of the two teams is her/his
 selectInput(
   "my_team",
   label = "Your team?",
   choices = ""
 )
+# Input to indicate which team started to serve
 selectInput(
   "serving_set_1",
   label = "Which team won the service after the toss?",
@@ -50,11 +56,13 @@ selectInput(
 br()
 
 br()
+# Input to indicate the place the game took place
 textInput(
  "game_location",
  label = tags$p(fa("location-dot", fill = "#020618"), "Location"),
  value = "here" # TO_REMOVE
 )
+# Input to indicate the date the game took place
 dateInput(
  "game_date",
  label = tags$p(fa("calendar", fill = "#020618"), "Date"),
@@ -64,6 +72,7 @@ dateInput(
 br()
 
 br()
+# Input to indicate the season during which the game was played
 selectInput(
  "season",
  label = tags$p(fa("location-dot", fill = "#020618"), "Season"),
@@ -74,6 +83,7 @@ selectInput(
   vapply(2025:2000, \(x) paste0(x + 1, " - ", x), FUN.VALUE = "character")
  ) # TO_REMOVE
 )
+# Input to indicate the division/league of the two teams
 textInput(
  "division",
  label = tags$p(icon("layer-group"), "Division"),
@@ -82,6 +92,8 @@ textInput(
 br()
 
 br()
+# Action button to lock the data entered on the "Game" page. This is the only
+# way to allow the user continuing.
 actionButton(
  "lock_details",
  label = "Lock game details",

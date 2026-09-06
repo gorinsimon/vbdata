@@ -1696,7 +1696,111 @@ observe({
 # not, influencing which "set tab" (or "summary tab") must be enabled next. The
 # format of the scores indicating when time-outs and substitutions took place is
 # also checked.
+
+# When the away and home players are validated, the set 1 tab is made available.
+# For the other sets, when the conditions are met, the "next" button is made
+# available to unlock the next set.
 observe({
+  # By default (i.e. before the two teams' players are validated), all the set
+  # tabs and the summary tab are hidden.
+  if (any(!are_players_validated$home, !are_players_validated$away)) {
+    shinyjs::hideElement("tab-set-1")
+    shinyjs::hideElement("tab-set-2")
+    shinyjs::hideElement("tab-set-3")
+    shinyjs::hideElement("tab-set-4")
+    shinyjs::hideElement("tab-set-5")
+    # shinyjs::hideElement("tab-summary") # REMOVE
+    shinyjs::disable("next_to_set_2")
+    shinyjs::disable("next_to_set_3")
+    shinyjs::disable("next_to_set_4")
+    shinyjs::disable("next_to_set_5")
+    shinyjs::disable("next_to_summary")
+  } else {
+    # When the two teams' players are validated, the set 1 tab is shown
+    shinyjs::showElement("tab-set-1", anim = TRUE, animType = "fade")
+    
+    # Regarding the `next_to_set_*` and `next_to_summary` buttons below, it is
+    # only when the buttons are pressed that it is determined if we have to go
+    # to the next set tab or the summary tab. Be aware that the name of the
+    # buttons does not mean that we go to the next set.
+    # For example, at the end of set 3, the `next_to_set_4` button is enabled.
+    # When clicked, a modal asking the user confirmation is displayed. If the
+    # game is over (i.e. a team won 3-0), the modal displayed is the
+    # `to_summary_confirm` which, when confirmed, shows the "Summary" tab and
+    # skips the "Set 4" and "Set 5" tabs. If the game is not over, the modal
+    # displayed is the `next_to_set_4_confirm` and, when confirmed, the "Set 4"
+    # tab is shown.
+    
+    # When the number of sets completed (based on scores) is 1, the "next set"
+    # button is enabled.
+    if (n_sets() == 1) {
+      shinyjs::enable("next_to_set_2")
+    }
+    # When the number of sets completed (based on scores) is 2, the "next set"
+    # button is enabled.
+    if (n_sets() == 2) {
+      shinyjs::enable("next_to_set_3")
+    }
+    # When the number of sets completed (based on scores) is 3, the "next set"
+    # button is enabled.
+    if (n_sets() == 3) {
+      shinyjs::enable("next_to_set_4")
+    }
+    # When the number of sets completed (based on scores) is 4, the "next set"
+    # button is enabled.
+    if (n_sets() == 4) {
+      shinyjs::enable("next_to_set_5")
+    }
+    # When the number of sets completed (based on scores) is 5, the "next set"
+    # button "summary" is enabled.
+    if (n_sets() == 5) {
+      shinyjs::enable("next_to_summary")
+    }
+  }
+  
+  # When after set 1 the next set button is pressed and confirmation to
+  # continue is provided, the "Set 2" tab is displayed. Then the next set
+  # button is disabled, as well as all the element on "Set 1" page.
+  if (!is.null(input$next_to_set_2_confirm) && input$next_to_set_2_confirm) {
+    shinyjs::showElement("tab-set-2", anim = TRUE, animType = "fade")
+    shinyjs::disable("next_to_set_2")
+  }
+  # When after set 2 the next set button is pressed and confirmation to
+  # continue is provided, the "Set 3" tab is displayed. Then the next set
+  # button is disabled, as well as all the element on "Set 2" page.
+  if (!is.null(input$next_to_set_3_confirm) && input$next_to_set_3_confirm) {
+    shinyjs::showElement("tab-set-3", anim = TRUE, animType = "fade")
+    shinyjs::disable("next_to_set_3")
+  }
+  # When after set 3 the next set button is pressed and confirmation to
+  # continue is provided, whether the "Set 4" tab is displayed if the game is
+  # not over yet or the "Summary" tab is displayed if the game is over. Then the
+  # next set button is disabled, as well as all the element on the "Set 3" tab.
+  if (!is.null(input$next_to_set_4_confirm) && input$next_to_set_4_confirm) {
+    shinyjs::showElement("tab-set-4", anim = TRUE, animType = "fade")
+    shinyjs::disable("next_to_set_4")
+  }
+  # When after set 4 the next set button is pressed and confirmation to
+  # continue is provided, whether the "Set 5" tab is displayed if the game is
+  # not over yet or the "Summary" tab is displayed if the game is over. Then the
+  # next set button is disabled, as well as all the element on the "Set 4" tab.
+  if (!is.null(input$next_to_set_5_confirm) && input$next_to_set_5_confirm) {
+    shinyjs::showElement("tab-set-5", anim = TRUE, animType = "fade")
+    shinyjs::disable("next_to_set_5")
+  }
+  # When after set 5 the next set button is pressed and confirmation to
+  # continue is provided, the "Summary" tab is displayed. Then the next set
+  # button is disabled, as well as all the element on the "Set 5" tab. All
+  # next set buttons are also disabled as the tab can be reached from Set 3, 4,
+  # and 5.
+  if (!is.null(input$to_summary_confirm) && input$to_summary_confirm) {
+    shinyjs::showElement("tab-summary", anim = TRUE, animType = "fade")
+    shinyjs::disable("next_to_set_3")
+    shinyjs::disable("next_to_set_4")
+    shinyjs::disable("next_to_set_5")
+    shinyjs::disable("next_to_summary")
+  }
+})
     )
   
     )

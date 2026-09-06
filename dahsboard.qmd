@@ -1571,26 +1571,41 @@ observe({
   }
 })
 
+# For each substitution score input, we disable it as long as a player is not
+# assigned to the corresponding substitution. We enable it when a player is
+# assigned.
 observe({
-  lapply(
-    1:6,
-    \(x) {
-      if (!nzchar(input[[paste0("set_1_home_p", x, "_sub")]])) {
-        shinyjs::disable(paste0("set_1_home_p", x, "_sub_1_score"))
-        shinyjs::disable(paste0("set_1_home_p", x, "_sub_2_score"))
-      } else {
-        shinyjs::enable(paste0("set_1_home_p", x, "_sub_1_score"))
-        shinyjs::enable(paste0("set_1_home_p", x, "_sub_2_score"))
+  # Loop across the five sets
+  for (set in 1:5) {
+    # Loop across all substitution positions
+    lapply(
+      1:6,
+      \(x) {
+        # If the home team substitution position returns an empty string, we
+        # disable the corresponding substitution score inputs.
+        if (!nzchar(input[[paste0("set_", set, "_home_p", x, "_sub")]])) {
+          shinyjs::disable(paste0("set_", set, "_home_p", x, "_sub_1_score"))
+          shinyjs::disable(paste0("set_", set, "_home_p", x, "_sub_2_score"))
+          # If the home team substitution position does not return an empty
+          # string, we enable the corresponding substitution score inputs.
+        } else {
+          shinyjs::enable(paste0("set_", set, "_home_p", x, "_sub_1_score"))
+          shinyjs::enable(paste0("set_", set, "_home_p", x, "_sub_2_score"))
+        }
+        # If the away team substitution position returns an empty string, we
+        # disable the corresponding substitution score inputs.
+        if (!nzchar(input[[paste0("set_", set, "_away_p", x, "_sub")]])) {
+          shinyjs::disable(paste0("set_", set, "_away_p", x, "_sub_1_score"))
+          shinyjs::disable(paste0("set_", set, "_away_p", x, "_sub_2_score"))
+          # If the away team substitution position does not return an empty
+          # string, we enable the corresponding substitution score inputs.
+        } else {
+          shinyjs::enable(paste0("set_", set, "_away_p", x, "_sub_1_score"))
+          shinyjs::enable(paste0("set_", set, "_away_p", x, "_sub_2_score"))
+        }
       }
-      if (!nzchar(input[[paste0("set_1_away_p", x, "_sub")]])) {
-        shinyjs::disable(paste0("set_1_away_p", x, "_sub_1_score"))
-        shinyjs::disable(paste0("set_1_away_p", x, "_sub_2_score"))
-      } else {
-        shinyjs::enable(paste0("set_1_away_p", x, "_sub_1_score"))
-        shinyjs::enable(paste0("set_1_away_p", x, "_sub_2_score"))
-      }
-    }
-  )
+    )
+  }
 })
 
 # Set the list of available players when "pressing" the validate button for each

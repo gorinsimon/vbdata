@@ -2228,6 +2228,25 @@ observeEvent(input$next_to_summary, {
     showNotification("Score inputs are not valid.", type = "error")
   }
 })
+
+# When the confirmation button to switch to the next set is pressed, the modal
+# asking for confirmation is removed.
+observeEvent(input$next_to_set_2_confirm, {
+  removeModal()
+})
+observeEvent(input$next_to_set_3_confirm, {
+  removeModal()
+})
+observeEvent(input$next_to_set_4_confirm, {
+  removeModal()
+})
+observeEvent(input$next_to_set_5_confirm, {
+  removeModal()
+})
+observeEvent(input$to_summary_confirm, {
+  removeModal()
+})
+
   } else {
   }
 })

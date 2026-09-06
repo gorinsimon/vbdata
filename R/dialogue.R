@@ -2,8 +2,8 @@
 #                           ---- Dialogue utils ----
 #==============================================================================|
 # This script contains functions used to prepare messages displayed in the app
-# via `shiny::showModal()`. The modals are mainly displayed at the end of a set
-# when validating its input.
+# via `shiny::showModal()`. The modals are displayed when validating a page and
+# before moving to the next page.
 
 #' Prepare message to display in modal dialogue when changing set
 #'

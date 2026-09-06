@@ -1260,6 +1260,22 @@ observe(
     ]
   }
 )
+
+# Enable or disable the first score input of the first rotation in each set
+# (except set 5) for the team receiving the service.
+observeEvent(input$serving_set_1, {
+  if (input$home_team == input$serving_set_1) {
+    shinyjs::disable("set_1_r_1_p_1_away")
+    shinyjs::disable("set_2_r_1_p_1_home")
+    shinyjs::disable("set_3_r_1_p_1_away")
+    shinyjs::disable("set_4_r_1_p_1_home")
+  }
+  if (input$away_team == input$serving_set_1) {
+    shinyjs::disable("set_1_r_1_p_1_home")
+    shinyjs::disable("set_2_r_1_p_1_away")
+    shinyjs::disable("set_3_r_1_p_1_home")
+    shinyjs::disable("set_4_r_1_p_1_away")
+  }
 })
 
 observe({

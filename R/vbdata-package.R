@@ -15,6 +15,7 @@ utils::globalVariables(c(
 ))
 #' @import shiny
 #' @import dplyr
+#' @import bslib
 #' @importFrom fontawesome fa
 #' @importFrom DT datatable DTOutput renderDT
 #' @importFrom jsonlite read_json fromJSON

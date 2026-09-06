@@ -9,6 +9,7 @@ Description: The package provides an application to encode and extract
     dashboard.
 License: MIT + file LICENSE
 Imports: 
+    bslib,
     dplyr,
     DT,
     fontawesome,

@@ -886,24 +886,28 @@ observeEvent(list(input$home_team, input$away_team), {
  output$away_team <- renderText({ input$away_team %||% "" })
 })
 
-# `any_empty` is used to define when the "Lock game details" button can be made
-# available (i.e. when all details in the "Game" tab are filled in).
+# Observer running checks on the "Game" page any time there is an interaction
+# with the app. All the input/selector on the page are checked to see if none
+# is null or empty. If they are all ok, the reactive value `any_empty_game_page`
+# is set to TRUE to allow enabling the locking button and then "Set 1" tab.
 observe({
- my_team_empty <- any(is.null(input$my_team), !nzchar(input$my_team))
- home_team_empty <- any(is.null(input$home_team), !nzchar(input$home_team))
- away_team_empty <- any(is.null(input$away_team), !nzchar(input$away_team))
- loc_empty <- any(is.null(input$game_location), !nzchar(input$game_location))
- season_empty <- any(is.null(input$season), !nzchar(input$season))
- division_empty <- any(is.null(input$division), !nzchar(input$division))
- 
- any_empty <- any(
-  my_team_empty,
-  home_team_empty,
-  away_team_empty,
-  loc_empty,
-  season_empty,
-  division_empty
- )
+  # ID of the elements to check
+  elem_to_check <- list(
+    "home_team", "away_team", "my_team", "serving_set_1", "season", "division"
+  )
+  # Check all elements in 
+  any_empty <- any(unlist(lapply(
+    elem_to_check,
+    \(x) any(is.null(input[[x]]), !nzchar(input[[x]]))
+  )))
+  
+  # Enable the "Lock details" button based on whether there is any element that
+  # is empty on the corresponding page or not.
+  if (!any_empty && !are_details_locked()) {
+    shinyjs::enable("lock_details")
+  } else if (any_empty && !are_details_locked()) {
+    shinyjs::disable("lock_details")
+  }
 })
 
 # When the details in the first tab are locked, the "player" tab appears in the

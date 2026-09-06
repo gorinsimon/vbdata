@@ -1088,6 +1088,13 @@ observeEvent(input$import_players_confirm, {
     )
     # Check if the players to import would lead to go above 12 field players
     # (excluding liberos).
+  } else if (sum(players_home_tmp$Role != "Libero") > 12) {
+    showNotification(
+      "There are already 12 non-libero players engaged for the game.",
+      type = "error"
+    )
+    # Check if importing players would lead to have duplicated numbers
+  }
   }
 })
 

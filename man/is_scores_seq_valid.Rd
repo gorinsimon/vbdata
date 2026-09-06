@@ -22,4 +22,3 @@ score ("score" attribute) and the number of rotation ("len" attribute).
 Take the input from the app and check if for a given set and team, the
 sequence of score by rotation is valid.
 }
-\keyword{internal}

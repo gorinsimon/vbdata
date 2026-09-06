@@ -23,4 +23,3 @@ Make sure that the scores of the game are valid. This is used to define
 whether to render or not the scores in the summary page. Scores are thus
 displayed only when they are valid.
 }
-\keyword{internal}

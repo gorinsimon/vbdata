@@ -19,4 +19,3 @@ Nothing is returned, used only for side effect.
 \description{
 Enable/disable UI elements in the player page
 }
-\keyword{internal}

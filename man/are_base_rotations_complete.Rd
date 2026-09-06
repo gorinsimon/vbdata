@@ -21,4 +21,3 @@ not (\code{FALSE}).
 \description{
 Check that the base rotation for the two teams are complete
 }
-\keyword{internal}

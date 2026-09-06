@@ -12,7 +12,7 @@
 #'
 #' @returns A call to `shiny::showModal()` with the message to display in the UI
 #' when changing set.
-#' @keywords internal
+#' @export
 
 next_set_message <- function(set, input = NULL) {
   # The modal dialogue displayed for set 1 to 4
@@ -70,7 +70,7 @@ next_set_message <- function(set, input = NULL) {
 #'
 #' @returns A call to `shiny::showModal()` with the message to display in the UI
 #' when validating the game page and going to the player page.
-#' @keywords internal
+#' @export
 
 go_to_player_tab_message <- function() {
   showModal(
@@ -103,7 +103,7 @@ go_to_player_tab_message <- function() {
 #'
 #' @returns A call to `shiny::showModal()` with the message to display in the UI
 #' when validating the players in the game and going to the first set page.
-#' @keywords internal
+#' @export
 
 go_to_set_1_tab_message <- function() {
   showModal(

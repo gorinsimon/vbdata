@@ -24,4 +24,3 @@ Nothing is returned, it is used only for side-effect.
 This function checks that the list of time-outs to add to a data frame with
 the scores are properly formatted.
 }
-\keyword{internal}

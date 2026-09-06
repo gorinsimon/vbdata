@@ -40,4 +40,3 @@ and prepared for further analysis.
 Based on scores, time-outs and substitutions data extracted from the app for
 a given set, the functions wrangle and prepare the data for further analysis.
 }
-\keyword{internal}

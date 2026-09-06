@@ -17,4 +17,3 @@ time-outs requested for the team in the vector name.
 \description{
 Get the number of time-outs in the game
 }
-\keyword{internal}

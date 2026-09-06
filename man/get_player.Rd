@@ -33,4 +33,3 @@ The function retrieves for the position and team indicated the sequence of
 player numbers that played at that position. Note that the substitutions
 are not considered here.
 }
-\keyword{internal}

@@ -32,4 +32,3 @@ Based on the type argument ("in" or "ou"), the functions extracts the scores
 when substitutions took place. The scores are expected to be in a format
 "XX:XX" (e.g. "10:05").
 }
-\keyword{internal}

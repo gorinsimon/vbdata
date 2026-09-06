@@ -27,4 +27,3 @@ Extract from the app the score of time-outs
 \details{
 The scores are expected to be in a format "XX:XX" (e.g. "10:05").
 }
-\keyword{internal}

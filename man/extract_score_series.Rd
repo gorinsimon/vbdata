@@ -25,4 +25,3 @@ The function takes the scores of the two team at the end of each rotation and
 create for each team a numeric vector with the score of the team after each
 point played.
 }
-\keyword{internal}

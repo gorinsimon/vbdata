@@ -18,4 +18,3 @@ when changing set.
 \description{
 Prepare message to display in modal dialogue when changing set
 }
-\keyword{internal}

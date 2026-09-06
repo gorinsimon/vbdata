@@ -18,4 +18,3 @@ serving for the set indicated.
 \description{
 Extract from the app the team that started the set serving
 }
-\keyword{internal}

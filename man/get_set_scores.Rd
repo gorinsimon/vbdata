@@ -18,4 +18,3 @@ An integer vector with the score of the team across all sets.
 This is a rapper around \code{calculate_score()} that extract the score of a team
 for a given set.
 }
-\keyword{internal}

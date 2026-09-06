@@ -8,7 +8,7 @@
 #' first vector is always the "serving" team, while the second is the
 #' "receiving" team. The "serving" team is the one that starts serving in the
 #' set.
-#' @keywords internal
+#' @export
 
 get_rotation_scores_input <- function(set, input) {
   serving <- get_set_serving_team(input, set)
@@ -56,7 +56,7 @@ get_rotation_scores_input <- function(set, input) {
 #' @returns A list with two numeric vector. The first numeric vector contains
 #' the score of the serving team for each point played in the set. The second
 #' vector contains the score of the receiving team for each point played.
-#' @keywords internal
+#' @export
 
 extract_score_series <- function(serving, receiving) {
   receiving[1] <- 0
@@ -122,7 +122,7 @@ extract_score_series <- function(serving, receiving) {
 #'
 #' @returns The data frame passed to the function (`dat`) with flags indicating
 #' for each point whether a time-out was requested or not.
-#' @keywords internal
+#' @export
 
 add_time_out <- function(dat, time_outs) {
   # Retrieve the name of the "home" and "away" team saved as attributes of the
@@ -220,7 +220,7 @@ add_time_out <- function(dat, time_outs) {
 #' @inheritParams wrangle_set_data
 #'
 #' @returns Nothing is returned, it is used only for side-effect.
-#' @keywords internal
+#' @export
 
 chk_time_outs <- function(time_outs) {
   if (!is.list(time_outs) && length(time_outs) != 2) {
@@ -286,7 +286,7 @@ chk_time_outs <- function(time_outs) {
 #' already the sequence of player numbers at each position, updated with the
 #' substitutions and flags indicating for which point a substitution happened.
 #'
-#' @keywords internal
+#' @export
 
 add_substitutions <- function(dat, substitutions) {
   home_t <- attr(substitutions$home, "team")
@@ -503,7 +503,7 @@ add_substitutions <- function(dat, substitutions) {
 #' @returns The data frame passed to the function (`dat`) with new columns
 #' for each time containing the sequence of player numbers at each position for
 #' each point in the set.
-#' @keywords internal
+#' @export
 
 add_rotations <- function(dat, substitutions, rotations) {
   dat |>
@@ -537,7 +537,7 @@ add_rotations <- function(dat, substitutions, rotations) {
 #' @inheritParams add_rotations
 #'
 #' @returns A vector with the player numbers.
-#' @keywords internal
+#' @export
 
 get_player <- function(team, substitutions, position, rotations) {
   unlist(
@@ -588,7 +588,7 @@ get_player <- function(team, substitutions, position, rotations) {
 #'
 #' @returns A data frame with the data for a given set extracted from the app
 #' and prepared for further analysis.
-#' @keywords internal
+#' @export
 
 wrangle_set_data <- function(set, scores, time_outs, substitutions) {
   # Based on attributes present in the "score" object, define the home and
@@ -752,12 +752,12 @@ wrangle_set_data <- function(set, scores, time_outs, substitutions) {
 #' @param team A scalar string indicating the team for which extract the scores.
 #' Only "home" or "away" are accepted.
 #' @param set An integer scalar with the set for which extract the scores.
-#' @param n_rotation
+#' @param n_rotation THe number of rotation in the UI (default to 8).
 #'
 #' @returns A raw vector with the score at the end of each rotation for the team
 #' and set indicated. NULL values are replaced by NA's to maintain the mapping
 #' between score and rotation.
-#' @keywords internal
+#' @export
 
 get_raw_rotation_scores <- function(input, team, set, n_rotation = 8) {
   unlist(

@@ -29,4 +29,3 @@ For each score during the set, the functions flags if a time-out was
 requested which team requested it. The flags are added to a data frame
 already wrangled.
 }
-\keyword{internal}

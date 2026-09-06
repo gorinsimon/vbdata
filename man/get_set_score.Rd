@@ -21,4 +21,3 @@ Extract from the list of score-position pairs in the UI the score of the
 indicated team for the given set. When all inputs are empty, the score is
 set to NA.
 }
-\keyword{internal}

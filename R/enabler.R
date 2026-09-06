@@ -9,7 +9,7 @@
 #' @param team String ("home" or "away") indicating for which team the UI must
 #' be enabled or disabled.
 #' @returns Nothing is returned, used only for side effect.
-#' @keywords internal
+#' @export
 
 disable_players_ui <- function(team) {
   if (team == "home") {

@@ -33,4 +33,3 @@ at position 1 to 6 for each point played. The function use the rotation at
 the beginning of the set, and rotate based on the current rotation number. Be
 aware that substitutions are not added at this stage.
 }
-\keyword{internal}

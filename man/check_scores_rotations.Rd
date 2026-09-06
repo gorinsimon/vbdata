@@ -20,4 +20,3 @@ The function checks that the score by rotation for each team is valid by
 running \code{is_scores_seq_valid()}. Then, it is checked if the number of
 rotations and the end score of the team that won the set are valid.
 }
-\keyword{internal}

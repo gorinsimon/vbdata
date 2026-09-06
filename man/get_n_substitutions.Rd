@@ -17,4 +17,3 @@ substitutions requested for the team in the vector name.
 \description{
 Get the number of substitutions in the game
 }
-\keyword{internal}

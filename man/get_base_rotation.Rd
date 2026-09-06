@@ -22,4 +22,3 @@ between score and rotation.
 \description{
 Extract from the app the base rotation (players' starting position)
 }
-\keyword{internal}

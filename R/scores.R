@@ -15,7 +15,7 @@
 #'
 #' @returns Logical indicating if the scores are coherent (`TRUE`) or not
 #' (`FALSE`).
-#' @keywords internal
+#' @export
 
 check_scores_rotations <- function(set, input) {
   # Check if the scores entered for the two teams are valid
@@ -78,7 +78,7 @@ check_scores_rotations <- function(set, input) {
 #' @returns A logical indicating whether the scores are valid (`TRUE`) or not
 #' (`FALSE`). The logical also has attributes indicating what is the final
 #' score ("score" attribute) and the number of rotation ("len" attribute).
-#' @keywords internal
+#' @export
 
 is_scores_seq_valid <- function(set, team, input) {
   # Access all scores input for the given set and team
@@ -183,7 +183,7 @@ is_scores_seq_valid <- function(set, team, input) {
 #'
 #' @returns Logical indicating if the scores are missing (`TRUE`) or not
 #' (`FALSE`).
-#' @keywords internal
+#' @export
 
 is_sub_score_missing <- function(team, set, input) {
   # Access each substitution input and corresponding score, then check if the

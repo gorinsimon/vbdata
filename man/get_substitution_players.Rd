@@ -28,4 +28,3 @@ line. If a sub player is indicated under the player in the second position of
 the base rotation, this means the sub player replaced the player that started
 at the second position in the base rotation.
 }
-\keyword{internal}

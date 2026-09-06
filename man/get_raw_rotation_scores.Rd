@@ -14,7 +14,7 @@ Only "home" or "away" are accepted.}
 
 \item{set}{An integer scalar with the set for which extract the scores.}
 
-\item{n_rotation}{}
+\item{n_rotation}{THe number of rotation in the UI (default to 8).}
 }
 \value{
 A raw vector with the score at the end of each rotation for the team
@@ -24,4 +24,3 @@ between score and rotation.
 \description{
 Extract from the app the score input by rotation
 }
-\keyword{internal}

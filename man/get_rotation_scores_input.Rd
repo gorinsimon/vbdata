@@ -21,4 +21,3 @@ set.
 \description{
 Get the two team scores at the end of each rotation for a given set
 }
-\keyword{internal}

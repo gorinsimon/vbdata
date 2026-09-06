@@ -13,4 +13,3 @@ when validating the players in the game and going to the first set page.
 \description{
 Prepare message to display in modal dialogue when going to the first set page
 }
-\keyword{internal}

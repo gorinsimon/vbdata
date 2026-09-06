@@ -23,4 +23,3 @@ substitution is indicated in the UI (the player entering the court is
 indicated), but the corresponding score when the substitution happened is
 empty.
 }
-\keyword{internal}

@@ -15,7 +15,7 @@
 #' @returns A raw vector with the score at the end of each rotation for the team
 #' and set indicated. NULL values are replaced by NA's to maintain the mapping
 #' between score and rotation.
-#' @keywords internal
+#' @export
 
 get_base_rotation <- function(input, team, set) {
   unlist(
@@ -41,7 +41,7 @@ get_base_rotation <- function(input, team, set) {
 #' @returns A raw vector with the score at the end of each rotation for the team
 #' and set indicated. NULL values are replaced by NA's to maintain the mapping
 #' between score and rotation.
-#' @keywords internal
+#' @export
 
 get_substitution_players <- function(input, team, set) {
   unlist(
@@ -70,7 +70,7 @@ get_substitution_players <- function(input, team, set) {
 #' element in these vectors is always the score of the team that requested the
 #' substitution. Positions in the list match the positions of the base rotation
 #' and substitution players in the UI.
-#' @keywords internal
+#' @export
 
 get_substitution_scores <- function(input, team, set, type) {
   # "in" corresponds to the score when the player on the bench replaced a player
@@ -126,7 +126,7 @@ get_substitution_scores <- function(input, team, set, type) {
 #' element in these vectors is always the score of the team that requested the
 #' substitution. Positions in the list match the positions of the base rotation
 #' and substitution players in the UI.
-#' @keywords internal
+#' @export
 
 get_time_out_scores <- function(input, team, set) {
   lapply(
@@ -148,7 +148,7 @@ get_time_out_scores <- function(input, team, set) {
 #'
 #' @returns A string with the name ("home" or "away") of the team that started
 #' serving for the set indicated.
-#' @keywords internal
+#' @export
 
 get_set_serving_team <- function(input, set) {
   # First let's determine which teeam started serving in set 1
@@ -189,7 +189,7 @@ get_set_serving_team <- function(input, set) {
 #'
 #' @returns A logical indicating if the base rotations are completed (`TRUE`) or
 #' not (`FALSE`).
-#' @keywords internal
+#' @export
 
 are_base_rotations_complete <- function(input, team, set) {
   all(nzchar(get_base_rotation(input, team, set)))

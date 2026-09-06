@@ -31,4 +31,3 @@ players in the rotation are also updated accordingly. Note that the point for
 which a substitution is flagged is always the next one, meaning that when a
 substitution is asked after the 10th point, it is flagged in the 11th one.
 }
-\keyword{internal}

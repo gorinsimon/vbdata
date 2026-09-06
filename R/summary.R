@@ -15,7 +15,7 @@
 #' @inheritParams get_set_score
 #'
 #' @returns An integer vector with the score of the team across all sets.
-#' @keywords internal
+#' @export
 
 get_set_scores <- function(team, input) {
   unlist(lapply(1:5, \(x) get_set_score(x, team, input)))
@@ -32,7 +32,7 @@ get_set_scores <- function(team, input) {
 #' @param input The input from the (Shiny) app.
 #'
 #' @returns An integer scalar with the score of the team in the given set.
-#' @keywords internal
+#' @export
 
 get_set_score <- function(set, team, input) {
   # Access all scores input for the set and team parameters, this over the eight
@@ -78,7 +78,7 @@ get_set_score <- function(set, team, input) {
 #' @returns A named list of length two ("home" and "away") with the current score
 #' by set for the two team. Each element in the list is a vector with the score
 #' by team for the team in the vector name.
-#' @keywords internal
+#' @export
 
 validate_set_scores <- function(home, away) {
   # Default for the `scores` object to return
@@ -142,7 +142,7 @@ validate_set_scores <- function(home, away) {
 #' @returns A named list containing two vectors of a length equal to the number
 #' of sets played in the game. The vector contains for each set the number of
 #' time-outs requested for the team in the vector name.
-#' @keywords internal
+#' @export
 
 get_n_time_out <- function(input) {
   # Access the time-out inputs across all sets for the home team and get the sum
@@ -182,7 +182,7 @@ get_n_time_out <- function(input) {
 #' @returns A named list containing two vectors of a length equal to the number
 #' of sets played in the game. The vector contains for each set the number of
 #' substitutions requested for the team in the vector name.
-#' @keywords internal
+#' @export
 
 get_n_substitutions <- function(input) {
   # Access the substitutions input across all sets for the home team and get the

@@ -13,4 +13,3 @@ when validating the game page and going to the player page.
 \description{
 Prepare message to display in modal dialogue when going to the player page
 }
-\keyword{internal}

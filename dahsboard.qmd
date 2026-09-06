@@ -1697,40 +1697,14 @@ observe({
 # format of the scores indicating when time-outs and substitutions took place is
 # also checked.
 observe({
-  home_score_set_1 <- unlist(
-    lapply(
-      1:8,
-      \(x) unlist(
-       lapply(1:6, \(y) input[[paste0("set_1_r_", x, "_p_", y, "_home")]])
-      )
     )
-  )
   
-  away_score_set_1 <- unlist(
-    lapply(
-      1:8,
-      \(x) unlist(
-       lapply(1:6, \(y) input[[paste0("set_1_r_", x, "_p_", y, "_away")]])
-      )
     )
-  )
   
-  home_length <- length(home_score_set_1[!is.na(home_score_set_1)])
-  away_length <- length(away_score_set_1[!is.na(away_score_set_1)])
 
-  away_home_diff <- abs(
-    max(home_score_set_1, na.rm = TRUE) - max(away_score_set_1, na.rm = TRUE)
-  )
-  max_score <- max(
-    c(max(home_score_set_1, na.rm = TRUE), max(away_score_set_1, na.rm = TRUE))
-  )
   
-  length_diff <- abs(home_length - away_length)
 
-  if (away_home_diff >= 2 && max_score >= 25 && length_diff <= 1) {
-    shinyjs::showElement("tab-set-2", anim = TRUE, animType = "fade")
   } else {
-    shinyjs::hideElement("tab-set-2")
   }
 })
 

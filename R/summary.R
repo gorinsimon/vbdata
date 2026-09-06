@@ -5,7 +5,6 @@
 # substitutions and time-outs, by the two teams during the game. These will be
 # used to populate the "Summary" tab.
 
-
 ## Scores ----------------------------------------------------------------------
 
 #' Get the score of a team across all sets
@@ -52,7 +51,7 @@ get_set_score <- function(set, team, input) {
     }
   )
   # Clean scores input by replacing all NA (empty inputs) with 0's
-  scores <- unlist(replace(scores, is.na(scores), 0))
+  scores <- replace(unlist(scores), is.na(unlist(scores)), 0)
 
   # If all scores are 0's, it means they are all empty and score is set to NA
   if (all(scores == 0)) {

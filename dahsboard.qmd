@@ -851,7 +851,16 @@ available_players <- reactiveValues(
   set_5 = list(home = NULL, away = NULL)
 )
 
+# Initiate a reactive value with the number of player available in the list of
+# players to import.
+in_import <- reactiveValues(
+  players = NULL,
+  selected = NULL
 )
+import_player_dt_tbl <- reactiveVal(NULL)
+# players_in_import_sel <- reactiveValues(NULL)
+# players_in_import_df <- reactiveVal(NULL)
+# n_players_in_import <- reactiveVal(0)
 
 #==============================================================================#
 #                          ---- "Game" tab events ----

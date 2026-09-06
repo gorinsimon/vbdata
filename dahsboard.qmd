@@ -939,45 +939,45 @@ observe({
 # When the details in the first tab are locked, the "player" tab appears in the
 # top navbar.
 observe({
- if (are_details_locked()) {
-  shinyjs::showElement("tab-player", anim = TRUE, animType = "fade")
- } else {
-  shinyjs::hideElement("tab-player")
- }
+  if (are_details_locked()) {
+    shinyjs::showElement("tab-player", anim = TRUE, animType = "fade")
+  } else {
+    shinyjs::hideElement("tab-player")
+  }
 })
 
 # When clicking the lock/unlock game details button, update the state of the
 # game details inputs.
 observeEvent(input$lock_details, {
- shinyjs::toggleState("home_team")
- shinyjs::toggleState("away_team")
- shinyjs::toggleState("my_team")
- shinyjs::toggleState("game_location")
- shinyjs::toggleState("game_date")
- shinyjs::toggleState("season")
- shinyjs::toggleState("division")
- 
- if (are_details_locked()) {
-  # When the details are locked we switch to unlocked state when the button is
-  # clicked.
-  updateActionButton(
-   inputId = "lock_details",
-   label = "Lock game details",
-   icon = icon("lock")
-  )
-  # Details are unlocked
-  are_details_locked(FALSE)
- } else {
-  # When the details are unlocked we switch to locked state when the button is
-  # clicked.
-  updateActionButton(
-   inputId = "lock_details",
-   label = "Unlock game details",
-   icon = icon("lock-open")
-  )
-  # Details are locked
-  are_details_locked(TRUE)
- }
+  shinyjs::toggleState("home_team")
+  shinyjs::toggleState("away_team")
+  shinyjs::toggleState("my_team")
+  shinyjs::toggleState("game_location")
+  shinyjs::toggleState("game_date")
+  shinyjs::toggleState("season")
+  shinyjs::toggleState("division")
+  
+  if (are_details_locked()) {
+    # When the details are locked we switch to unlocked state when the button is
+    # clicked.
+    updateActionButton(
+      inputId = "lock_details",
+      label = "Lock game details",
+      icon = icon("lock")
+    )
+    # Details are unlocked
+    are_details_locked(FALSE)
+  } else {
+    # When the details are unlocked we switch to locked state when the button is
+    # clicked.
+    updateActionButton(
+      inputId = "lock_details",
+      label = "Unlock game details",
+      icon = icon("lock-open")
+    )
+    # Details are locked
+    are_details_locked(TRUE)
+  }
 })
 
 #==============================================================================#

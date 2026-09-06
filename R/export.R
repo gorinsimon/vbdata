@@ -495,6 +495,42 @@ add_substitutions <- function(dat, substitutions) {
   }
   return(dat)
 }
+
+#' Add player per position for each rotation in a set data frame
+#'
+#' For each home and team away, the function add a new column with the player
+#' at position 1 to 6 for each point played. The function use the rotation at
+#' the beginning of the set, and rotate based on the current rotation number. Be
+#' aware that substitutions are not added at this stage.
+#'
+#' @inherit add_time_out dat
+#' @inheritParams wrangle_set_data
+#' @param rotations An integer vector with the current rotation number for each
+#' point played in the set, as created within the function `wrangle_set_data()`.
+#'
+#' @returns The data frame passed to the function (`dat`) with new columns
+#' for each time containing the sequence of player numbers at each position for
+#' each point in the set.
+#' @keywords internal
+
+add_rotations <- function(dat, substitutions, rotations) {
+  dat |>
+    mutate(
+      home_P1 = get_player("home", substitutions, 1, rotations),
+      home_P2 = get_player("home", substitutions, 2, rotations),
+      home_P3 = get_player("home", substitutions, 3, rotations),
+      home_P4 = get_player("home", substitutions, 4, rotations),
+      home_P5 = get_player("home", substitutions, 5, rotations),
+      home_P6 = get_player("home", substitutions, 6, rotations),
+      away_P1 = get_player("away", substitutions, 1, rotations),
+      away_P2 = get_player("away", substitutions, 2, rotations),
+      away_P3 = get_player("away", substitutions, 3, rotations),
+      away_P4 = get_player("away", substitutions, 4, rotations),
+      away_P5 = get_player("away", substitutions, 5, rotations),
+      away_P6 = get_player("away", substitutions, 6, rotations)
+    )
+}
+
 # This file contains functions to easily access the inputs available in the app.
 # They behaviour is too simply extract the information, with only a minimum of
 # extra cleaning.

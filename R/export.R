@@ -9,9 +9,6 @@
 #' "receiving" team. The "serving" team is the one that starts serving in the
 #' set.
 #' @keywords internal
-#'
-#' @examples
-#' \donotrun{get_rotation_scores_input(1, input)}
 
 get_rotation_scores_input <- function(set, input) {
   serving <- get_set_serving_team(input, set)
@@ -60,11 +57,6 @@ get_rotation_scores_input <- function(set, input) {
 #' the score of the serving team for each point played in the set. The second
 #' vector contains the score of the receiving team for each point played.
 #' @keywords internal
-#'
-#' @examples
-#' serving_scores <- c(0, 5, 12, 17, 25)
-#' receiving_scores <- c(4, 10, 11, 15)
-#' set_scores <- extract_score_series(serving_scores, receiving_scores)
 
 extract_score_series <- function(serving, receiving) {
   receiving[1] <- 0
@@ -766,11 +758,6 @@ wrangle_set_data <- function(set, scores, time_outs, substitutions) {
 #' and set indicated. NULL values are replaced by NA's to maintain the mapping
 #' between score and rotation.
 #' @keywords internal
-#'
-#' @examples
-#' \dontrun{
-#' get_raw_rotation_scores(input, "home", 1)
-#' }
 
 get_raw_rotation_scores <- function(input, team, set, n_rotation = 8) {
   unlist(

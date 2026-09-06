@@ -1209,13 +1209,6 @@ observeEvent(input$remove_player_away, {
 #                           ---- All set events ----                          
 #==============================================================================|
 
-observe({
- all_home_pos <- unlist(lapply(1:6, \(x) input[[paste0("set_1_home_p", x)]]))
- if (any(!nzchar(all_home_pos))) {
-  lapply(1:6, \(x) shinyjs::disable(paste0("set_1_home_p", x, "_sub")))
- } else {
-  lapply(1:6, \(x) shinyjs::enable(paste0("set_1_home_p", x, "_sub")))
- }
 # Observer updating the list of available players for all sets and the two
 # teams. The goal is that any time there is an interaction with the app, the
 # observer below update the list of available players to display only the ones
@@ -1270,12 +1263,43 @@ observe(
 })
 
 observe({
- all_away_pos <- unlist(lapply(1:6, \(x) input[[paste0("set_1_away_p", x)]]))
- if (any(!nzchar(all_away_pos))) {
-  lapply(1:6, \(x) shinyjs::disable(paste0("set_1_away_p", x, "_sub")))
- } else {
-  lapply(1:6, \(x) shinyjs::enable(paste0("set_1_away_p", x, "_sub")))
- }
+  # Loop across the five sets
+  for (set in 1:5) {
+    # Get the list of players assigned to the home team base rotation
+    all_home_pos <- unlist(lapply(1:6, \(x) {
+      input[[paste0("set_", set, "_home_p", x)]]
+    }))
+    # Get the list of players assigned to the away team base rotation
+    all_away_pos <- unlist(lapply(1:6, \(x) {
+      input[[paste0("set_", set, "_away_p", x)]]
+    }))
+    # If any of the home team six rotations returns an empty string, the
+    # substitutions inputs are disabled.
+    if (any(!nzchar(all_home_pos))) {
+      lapply(1:6, \(x) {
+        shinyjs::disable(paste0("set_", set, "_home_p", x, "_sub"))
+      })
+      # If no home team rotation returns an empty string, the substitutions
+      # inputs are disabled.
+    } else {
+      lapply(1:6, \(x) {
+        shinyjs::enable(paste0("set_", set, "_home_p", x, "_sub"))
+      })
+    }
+    # If any of the away team six rotations returns an empty string, the
+    # substitutions inputs are disabled.
+    if (any(!nzchar(all_away_pos))) {
+      lapply(1:6, \(x) {
+        shinyjs::disable(paste0("set_", set, "_away_p", x, "_sub"))
+      })
+      # If no away team rotation returns an empty string, the substitutions
+      # inputs are disabled.
+    } else {
+      lapply(1:6, \(x) {
+        shinyjs::enable(paste0("set_", set, "_away_p", x, "_sub"))
+      })
+    }
+  }
 })
 
 observe({

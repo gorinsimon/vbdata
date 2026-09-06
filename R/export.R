@@ -1,7 +1,7 @@
 #' Get the two team scores at the end of each rotation for a given set
 #'
 #' @param set Numeric scalar indicating the set for which to extract the scores.
-#' @inherit make_score_rotation_input input
+#' @param input The app input object.
 #'
 #' @returns A list with two numeric vectors containing the score of each team at
 #' the end of each rotation. The vector are named ("home" and "away") and the
@@ -279,7 +279,7 @@ chk_time_outs <- function(time_outs) {
 #' which a substitution is flagged is always the next one, meaning that when a
 #' substitution is asked after the 10th point, it is flagged in the 11th one.
 #'
-#' @inherit add_time_out dat
+#' @inheritParams add_time_out
 #' @inheritParams wrangle_set_data
 #'
 #' @returns The data frame passed to the function (`dat`), which contains
@@ -495,7 +495,7 @@ add_substitutions <- function(dat, substitutions) {
 #' the beginning of the set, and rotate based on the current rotation number. Be
 #' aware that substitutions are not added at this stage.
 #'
-#' @inherit add_time_out dat
+#' @inheritParams add_time_out
 #' @inheritParams wrangle_set_data
 #' @param rotations An integer vector with the current rotation number for each
 #' point played in the set, as created within the function `wrangle_set_data()`.
@@ -531,10 +531,10 @@ add_rotations <- function(dat, substitutions, rotations) {
 #'
 #' @param team String indicating the team ("home" or "away") for which to
 #' retrieve the player.
-#' @inherit add_substitutions substitutions
+#' @inheritParams add_substitutions
 #' @param position Integer between 1 and 6 indicating the position for which to
 #' retrieve the player.
-#' @inherit add_rotations rotations
+#' @inheritParams add_rotations
 #'
 #' @returns A vector with the player numbers.
 #' @keywords internal

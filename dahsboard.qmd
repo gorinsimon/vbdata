@@ -1054,6 +1054,16 @@ observeEvent(input$import_players, {
   )
 })
 
+observeEvent(input$import_player_dt_out_cell_edit, {
+  # Get the edits from the table
+  edit_dat <- input$import_player_dt_out_cell_edit
+  # Table has 0-indexing for columns so we need to add one to its index
+  edit_dat[, "col"] <- edit_dat[, "col"] + 1
+  # Update the reactive with the data underlying the DT table with players to
+  # import to take into consideration the changes.
+  in_import$players <- editData(in_import$players, edit_dat)
+})
+
 ## Adding new home team player -------------------------------------------------
 
 # Define whether the "add_new_player_home" button should be enabled (only when a

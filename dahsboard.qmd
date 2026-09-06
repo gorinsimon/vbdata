@@ -25,6 +25,7 @@ source("R/dialogue.R")
 source("R/utils.R")
 source("R/export.R")
 source("R/validator.R")
+source("R/enabler.R")
 ```
 
 # Game
@@ -1202,12 +1203,8 @@ observe({
 # When the home players are validated, then all the buttons in the corresponding
 # card and the table with the list of players are disabled.
 observeEvent(input$validate_player_home, {
-  shinyjs::disable("new_player_name_home")
-  shinyjs::disable("new_player_role_home")
-  shinyjs::disable("new_player_num_home")
-  shinyjs::disable("remove_player_home")
-  shinyjs::disable("home_players_tbl")
-  
+  # Disable the UI elements in the home team section of the palyer page
+  disable_players_ui("home")
   output$home_players_tbl <- renderDataTable({
     datatable(
       players$home_team,
@@ -1218,7 +1215,7 @@ observeEvent(input$validate_player_home, {
   })
   # Update the "home" element in the reactive value `are_players_validated`
   are_players_validated$home <- TRUE
-  shinyjs::disable("validate_player_home")
+  
 })
 
 observeEvent(list(are_players_validated$home, are_players_validated$away), {
@@ -1286,12 +1283,7 @@ observe({
 # When the away players are validated, then all the buttons in the corresponding
 # card and the table with the list of players are disabled.
 observeEvent(input$validate_player_away, {
-  shinyjs::disable("new_player_name_away")
-  shinyjs::disable("new_player_role_away")
-  shinyjs::disable("new_player_num_away")
-  shinyjs::disable("remove_player_away")
-  shinyjs::disable("away_players_tbl")
-  
+  disable_players_ui("away")  
   output$away_players_tbl <- renderDataTable({
     datatable(
       players$away_team,
@@ -1302,7 +1294,6 @@ observeEvent(input$validate_player_away, {
   })
   # Update the "away" element in the reactive value `are_players_validated`
   are_players_validated$away <- TRUE
-  shinyjs::disable("validate_player_away")
 })
 
 ## Home team players table -----------------------------------------------------

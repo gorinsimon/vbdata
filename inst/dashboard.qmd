@@ -20,6 +20,7 @@ library(dplyr)
 library(purrr)
 library(jsonlite)
 
+useShinyjs(rmd = TRUE)
 ```
 
 # Game

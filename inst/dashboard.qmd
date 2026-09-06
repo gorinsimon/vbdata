@@ -355,6 +355,7 @@ h4(textOutput("away_team_out_1"), style="text-align: center;")
 ```{r}
 #| height: 40px
 #| padding: 0px
+#| layout: "[-11, 1]"
 #| classes: no-border
 # Action button to go to the next set. The button is active only when the score
 # indicates the score is over (the team with the highest score has at least 25
@@ -411,6 +412,7 @@ h4(textOutput("away_team_out_2"), style="text-align: center;")
 ```{r}
 #| height: 40px
 #| padding: 0px
+#| layout: "[-11, 1]"
 #| classes: no-border
 actionButton(
   "next_to_set_3",
@@ -459,6 +461,7 @@ h4(textOutput("away_team_out_3"), style="text-align: center;")
 ```{r}
 #| height: 40px
 #| padding: 0px
+#| layout: "[-11, 1]"
 #| classes: no-border
 actionButton(
   "next_to_set_4",
@@ -507,6 +510,7 @@ h4(textOutput("away_team_out_4"), style="text-align: center;")
 ```{r}
 #| height: 40px
 #| padding: 0px
+#| layout: "[-11, 1]"
 #| classes: no-border
 actionButton(
   "next_to_set_5",
@@ -555,6 +559,7 @@ h4(textOutput("away_team_out_5"), style="text-align: center;")
 ```{r}
 #| height: 40px
 #| padding: 0px
+#| layout: "[-11, 1]"
 #| classes: no-border
 actionButton(
   "next_to_summary",

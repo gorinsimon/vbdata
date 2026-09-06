@@ -1825,8 +1825,8 @@ observeEvent(input$next_to_set_2, {
   iv_sub_set_1$enable()
   iv_to_set_1$enable()
   # Check that a player has been assigned to each position in the base rotation
-  has_base_rotation_home_6 <- check_rotation_completeness(1, "home", input)
-  has_base_rotation_away_6 <- check_rotation_completeness(1, "away", input)
+  has_base_rotation_home_6 <- are_base_rotations_complete(input, "home", 1)
+  has_base_rotation_away_6 <- are_base_rotations_complete(input, "away", 1)
   
   # If all the checks ran above returned `TRUE`, the message asking
   # confirmation to switch to the next set is displayed.
@@ -1905,8 +1905,8 @@ observeEvent(input$next_to_set_3, {
   iv_sub_set_2$enable()
   iv_to_set_2$enable()
   # Check that a player has been assigned to each position in the base rotation
-  has_base_rotation_home_6 <- check_rotation_completeness(2, "home", input)
-  has_base_rotation_away_6 <- check_rotation_completeness(2, "away", input)
+  has_base_rotation_home_6 <- are_base_rotations_complete(input, "home", 2)
+  has_base_rotation_away_6 <- are_base_rotations_complete(input, "away", 2)
   
   # If all the checks ran above returned `TRUE`, the message asking
   # confirmation to switch to the next set is displayed.
@@ -1985,8 +1985,8 @@ observeEvent(input$next_to_set_4, {
   iv_sub_set_3$enable()
   iv_to_set_3$enable()
   # Check that a player has been assigned to each position in the base rotation
-  has_base_rotation_home_6 <- check_rotation_completeness(3, "home", input)
-  has_base_rotation_away_6 <- check_rotation_completeness(3, "away", input)
+  has_base_rotation_home_6 <- are_base_rotations_complete(input, "home", 3)
+  has_base_rotation_away_6 <- are_base_rotations_complete(input, "away", 3)
   
   # If all the checks ran above returned `TRUE`, the message asking
   # confirmation to switch to the next set is displayed.
@@ -2070,8 +2070,8 @@ observeEvent(input$next_to_set_5, {
   iv_sub_set_4$enable()
   iv_to_set_4$enable()
   # Check that a player has been assigned to each position in the base rotation
-  has_base_rotation_home_6 <- check_rotation_completeness(4, "home", input)
-  has_base_rotation_away_6 <- check_rotation_completeness(4, "away", input)
+  has_base_rotation_home_6 <- are_base_rotations_complete(input, "home", 4)
+  has_base_rotation_away_6 <- are_base_rotations_complete(input, "away", 4)
   
   # If all the checks ran above returned `TRUE`, the message asking
   # confirmation to switch to the next set is displayed.
@@ -2156,8 +2156,8 @@ observeEvent(input$next_to_summary, {
   iv_sub_set_5$enable()
   iv_to_set_5$enable()
   # Check that a player has been assigned to each position in the base rotation
-  has_base_rotation_home_6 <- check_rotation_completeness(5, "home", input)
-  has_base_rotation_away_6 <- check_rotation_completeness(5, "away", input)
+  has_base_rotation_home_6 <- are_base_rotations_complete(input, "home", 5)
+  has_base_rotation_away_6 <- are_base_rotations_complete(input, "away", 5)
   
   # If all the checks ran above returned `TRUE`, the message asking
   # confirmation to switch to the next set is displayed.
@@ -2420,13 +2420,13 @@ observeEvent(input$to_summary_confirm, {
       # started the set instead).
       substitutions <- list(
         home = list(
-          rotation = get_raw_rotation_players(input, "home", i),
+          rotation = get_base_rotation(input, "home", i),
           sub = get_substitution_players(input, "home", i),
           score_in = get_substitution_scores(input, "home", i, "in"),
           score_out = get_substitution_scores(input, "home", i, "out")
         ),
         away = list(
-          rotation = get_raw_rotation_players(input, "away", i),
+          rotation = get_base_rotation(input, "away", i),
           sub = get_substitution_players(input, "away", i),
           score_in = get_substitution_scores(input, "away", i, "in"),
           score_out = get_substitution_scores(input, "away", i, "out")

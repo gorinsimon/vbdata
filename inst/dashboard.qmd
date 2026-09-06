@@ -10,6 +10,15 @@ fontsize: "14px"
 ```{r}
 #| context: setup
 #| include: false
+
+library(conflicted)
+
+conflict_prefer("DT::DTOutput", "shiny")
+conflict_prefer("DT::renderDT", "shiny")
+conflict_prefer("validate", "shiny")
+conflict_prefer("runExample", "shiny")
+conflict_prefer("flatten", "jsonlite")
+
 library(shiny)
 library(shinyjs)
 library(shinyvalidate)
@@ -18,13 +27,14 @@ library(fontawesome)
 library(dplyr)
 library(purrr)
 library(jsonlite)
-source("R/scores.R")
-source("R/summary.R")
-source("R/dialogue.R")
-source("R/utils.R")
-source("R/export.R")
-source("R/validator.R")
-source("R/enabler.R")
+
+# source("R/scores.R")
+# source("R/summary.R")
+# source("R/dialogue.R")
+# source("R/utils.R")
+# source("R/export.R")
+# source("R/validator.R")
+# source("R/enabler.R")
 ```
 
 # Game
@@ -212,7 +222,7 @@ actionButton(
 
 ```{r}
 # Table listing the players entered for the home team
-dataTableOutput("home_players_tbl")
+DT::DTOutput("home_players_tbl")
 ```
 
 ## Row
@@ -286,7 +296,7 @@ actionButton(
 
 ```{r}
 # Table listing the players entered for the home team
-dataTableOutput("away_players_tbl")
+DT::DTOutput("away_players_tbl")
 ```
 
 <!--
@@ -820,13 +830,13 @@ actionButton(
 ```{r}
 #| context: server
 
-hide("tab-player")
-hide("tab-set-1")
-hide("tab-set-2")
-hide("tab-set-3")
-hide("tab-set-4")
-hide("tab-set-5")
-hidden("tab-summary")
+hideElement("tab-player")
+hideElement("tab-set-1")
+hideElement("tab-set-2")
+hideElement("tab-set-3")
+hideElement("tab-set-4")
+hideElement("tab-set-5")
+hideElement("tab-summary")
 
 disable("next_to_set_2")
 disable("next_to_set_3")
@@ -1011,7 +1021,7 @@ observeEvent(input$import_players, {
   # import_player_dt_tbl(cbind(check_buttons, in_import$players))
   
   # Render the DT table with the players to import... with some settings
-  output$import_player_dt_out <- renderDataTable(
+  output$import_player_dt_out <- DT::renderDT(
     datatable(
       in_import$players,
       # We do not need the "check" buttons column to be named, but
@@ -1058,7 +1068,7 @@ observeEvent(input$import_players, {
       ),
       easyClose = FALSE,
       size = "l",
-      dataTableOutput("import_player_dt_out")
+      DT::DTOutput("import_player_dt_out")
     )
   )
 })
@@ -1126,7 +1136,7 @@ observeEvent(input$import_players_confirm, {
     players$home_team <- players_home_tmp
     if (sum(players_in_import_sel_tmp) > 0) {
       # Once the new player is added to the table, the new table is rendered
-      output$home_players_tbl <- renderDataTable({
+      output$home_players_tbl <- DT::renderDT({
         tbl <- players$home_team
         tbl[["Number"]] <- as.character(tbl[["Number"]])
         datatable(
@@ -1203,7 +1213,7 @@ observe({
 observeEvent(input$validate_player_home, {
   # Disable the UI elements in the home team section of the palyer page
   disable_players_ui("home")
-  output$home_players_tbl <- renderDataTable({
+  output$home_players_tbl <- DT::renderDT({
     datatable(
       players$home_team,
       options = list(paging = FALSE, searching = FALSE),
@@ -1275,7 +1285,7 @@ observe({
 # card and the table with the list of players are disabled.
 observeEvent(input$validate_player_away, {
   disable_players_ui("away")  
-  output$away_players_tbl <- renderDataTable({
+  output$away_players_tbl <- DT::renderDT({
     datatable(
       players$away_team,
       options = list(paging = FALSE, searching = FALSE),
@@ -1303,7 +1313,7 @@ observeEvent(input$add_player_home, {
     )
   )
   # Once the new player is added to the table, the new table is rendered
-  output$home_players_tbl <- renderDataTable({
+  output$home_players_tbl <- DT::renderDT({
     tbl <- players$home_team
     tbl[["Number"]] <- as.character(tbl[["Number"]])
     datatable(
@@ -1343,12 +1353,12 @@ observeEvent(input$remove_player_home, {
   
   # If all players are removed (table has no row), a NULL table is rendered
   if (nrow(players$home_team) == 0) {
-    output$home_players_tbl <- renderDataTable({
+    output$home_players_tbl <- DT::renderDT({
       NULL
     })
     # If at least one player remains in the table, it is rendered again
   } else {
-    output$home_players_tbl <- renderDataTable({
+    output$home_players_tbl <- DT::renderDT({
       datatable(
         players$home_team,
         # Since the number of players should be up to 14, we disable paging. We
@@ -1379,7 +1389,7 @@ observeEvent(input$add_player_away, {
     )
   )
   # Once the new player is added to the table, the new table is rendered
-  output$away_players_tbl <- renderDataTable({
+  output$away_players_tbl <- DT::renderDT({
     tbl <- players$away_team
     tbl[["Number"]] <- as.character(tbl[["Number"]])
     datatable(
@@ -1419,12 +1429,12 @@ observeEvent(input$remove_player_away, {
   
   # If all players are removed (table has no row), a NULL table is rendered
   if (nrow(players$away_team) == 0) {
-    output$away_players_tbl <- renderDataTable({
+    output$away_players_tbl <- DT::renderDT({
       NULL
     })
     # If at least one player remains in the table, it is rendered again
   } else {
-    output$away_players_tbl <- renderDataTable({
+    output$away_players_tbl <- DT::renderDT({
       datatable(
         players$away_team,
         # Since the number of players should be up to 14, we disable paging. We
@@ -1457,7 +1467,7 @@ observeEvent(list(are_players_validated$home, are_players_validated$away), {
     enable_players_ui("home")
     enable_players_ui("away")
     # Allow selection in the home players table
-    output$home_players_tbl <- renderDataTable({
+    output$home_players_tbl <- DT::renderDT({
       datatable(
         players$home_team,
         options = list(paging = FALSE, searching = FALSE),
@@ -1466,7 +1476,7 @@ observeEvent(list(are_players_validated$home, are_players_validated$away), {
       )
     })
     # Allow selection in the away players table
-    output$away_players_tbl <- renderDataTable({
+    output$away_players_tbl <- DT::renderDT({
       datatable(
         players$away_team,
         options = list(paging = FALSE, searching = FALSE),
@@ -1491,7 +1501,7 @@ observeEvent(input$go_to_set_1_tab, {
   disable_players_ui("home")
   disable_players_ui("away")
   # Disable selection of selection in the home players table
-  output$home_players_tbl <- renderDataTable({
+  output$home_players_tbl <- DT::renderDT({
     datatable(
       players$home_team,
       options = list(paging = FALSE, searching = FALSE),
@@ -1500,7 +1510,7 @@ observeEvent(input$go_to_set_1_tab, {
     )
   })
   # Disable selection of selection in the away players table
-  output$away_players_tbl <- renderDataTable({
+  output$away_players_tbl <- DT::renderDT({
     datatable(
       players$away_team,
       options = list(paging = FALSE, searching = FALSE),

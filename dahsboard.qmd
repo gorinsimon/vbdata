@@ -1687,6 +1687,15 @@ observe({
   )
 })
 
+#==============================================================================|
+#                          ---- End of set events ----
+#==============================================================================|
+
+# At the end of each set, different events are checked. Based on the number of
+# sets completed, it is determined if the last set played is the last one or
+# not, influencing which "set tab" (or "summary tab") must be enabled next. The
+# format of the scores indicating when time-outs and substitutions took place is
+# also checked.
 observe({
   home_score_set_1 <- unlist(
     lapply(

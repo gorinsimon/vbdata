@@ -97,3 +97,34 @@ go_to_player_tab_message <- function() {
   )
 }
 
+
+#' Prepare message to display in modal dialogue when going to the first set page
+#'
+#' @returns A call to `shiny::showModal()` with the message to display in the UI
+#' when validating the players in the game and going to the first set page.
+#' @keywords internal
+
+go_to_set_1_tab_message <- function() {
+  showModal(
+    modalDialog(
+      title = "Move to set 1?",
+      tagList(
+        HTML(
+          "The list of players has been validated for the two teams. Once",
+          "confirmed, no further modifications are possible.",
+          "<br><br>Click <code>Confirm</code> to move to the \"Set 1\" page.",
+          "<br>Click <code>Cancel</code> to make modifications."
+        )
+      ),
+      footer = tagList(
+        modalButton("Cancel"),
+        actionButton(
+          "go_to_set_1_tab",
+          "Confirm",
+          style = "background-color: #93c47d"
+        ),
+      ),
+      easyClose = TRUE
+    )
+  )
+}

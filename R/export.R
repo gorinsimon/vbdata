@@ -531,6 +531,42 @@ add_rotations <- function(dat, substitutions, rotations) {
     )
 }
 
+#' Retrieve the sequence of player at a given position
+#'
+#' The function retrieves for the position and team indicated the sequence of
+#' player numbers that played at that position. Note that the substitutions
+#' are not considered here.
+#'
+#' @param team String indicating the team ("home" or "away") for which to
+#' retrieve the player.
+#' @inherit add_substitutions substitutions
+#' @param position Integer between 1 and 6 indicating the position for which to
+#' retrieve the player.
+#' @inherit add_rotations rotations
+#'
+#' @returns A vector with the player numbers.
+#' @keywords internal
+
+get_player <- function(team, substitutions, position, rotations) {
+  unlist(
+    lapply(
+      # The vector of rotation number for each point played
+      rotations,
+      \(x) {
+        # To identify which player was at which position during the set, the
+        # trick here is to repeat two times the base rotation (set beginning),
+        # then we index from the selected position (any of 1 to 6) and move by
+        # modulo 6 of the rotation (replacing the result of modulo by 6 when it
+        # is 0).
+        c(
+          substitutions[[team]]$rotation,
+          substitutions[[team]]$rotation
+        )[[position + ifelse(x %% 6 == 0, 6, x %% 6) - 1]]
+      }
+    )
+  )
+}
+
 # This file contains functions to easily access the inputs available in the app.
 # They behaviour is too simply extract the information, with only a minimum of
 # extra cleaning.

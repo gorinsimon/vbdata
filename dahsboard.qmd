@@ -27,15 +27,15 @@ useShinyjs(rmd = TRUE)
 
 # Input to indicate the name of the "home" team
 textInput(
- "home_team",
- value = "LVBC", # TO_REMOVE
- label = tags$p(icon("house"), "Home team")
+  "home_team",
+  value = "LVBC", # TO_REMOVE
+  label = tags$p(icon("house"), "Home team")
 )
 # Input to indicate the name of the "away" (or visiting) team
 textInput(
- "away_team",
- value = "LUC", # TO_REMOVE
- label = tags$p(icon("suitcase-rolling"), "Away team")
+  "away_team",
+  value = "LUC", # TO_REMOVE
+  label = tags$p(icon("suitcase-rolling"), "Away team")
 )
 br()
 
@@ -58,36 +58,36 @@ br()
 br()
 # Input to indicate the place the game took place
 textInput(
- "game_location",
- label = tags$p(fa("location-dot", fill = "#020618"), "Location"),
- value = "here" # TO_REMOVE
+  "game_location",
+  label = tags$p(fa("location-dot", fill = "#020618"), "Location"),
+  value = "here" # TO_REMOVE
 )
 # Input to indicate the date the game took place
 dateInput(
- "game_date",
- label = tags$p(fa("calendar", fill = "#020618"), "Date"),
- format = "dd-mm-yyyy",
- value = "2026-02-01" # TO_REMOVE
+  "game_date",
+  label = tags$p(fa("calendar", fill = "#020618"), "Date"),
+  format = "dd-mm-yyyy",
+  value = "2026-02-01" # TO_REMOVE
 )
 br()
 
 br()
 # Input to indicate the season during which the game was played
 selectInput(
- "season",
- label = tags$p(fa("location-dot", fill = "#020618"), "Season"),
- # choices = c(
- #  "", vapply(2025:2000, \(x) paste0(x + 1, " - ", x), FUN.VALUE = "character")
- # ),
+  "season",
+  label = tags$p(fa("location-dot", fill = "#020618"), "Season"),
+  # choices = c(
+  #  "", vapply(2025:2000, \(x) paste0(x + 1, " - ", x), FUN.VALUE = "character")
+  # ),
   choices = c(
-  vapply(2025:2000, \(x) paste0(x + 1, " - ", x), FUN.VALUE = "character")
- ) # TO_REMOVE
+    vapply(2025:2000, \(x) paste0(x + 1, " - ", x), FUN.VALUE = "character")
+  ) # TO_REMOVE
 )
 # Input to indicate the division/league of the two teams
 textInput(
- "division",
- label = tags$p(icon("layer-group"), "Division"),
- value = "1", # TO_REMOVE
+  "division",
+  label = tags$p(icon("layer-group"), "Division"),
+  value = "1", # TO_REMOVE
 )
 br()
 
@@ -95,462 +95,740 @@ br()
 # Action button to lock the data entered on the "Game" page. This is the only
 # way to allow the user continuing.
 actionButton(
- "lock_details",
- label = "Lock game details",
- icon = icon("lock")
+  "lock_details",
+  label = "Lock game details",
+  icon = icon("lock")
 )
 br()
 ```
 
 # Player
 
-## {.sidebar}
+## {.sidebar width=200px}
 ::: {style="font-size: 120%;"}
 ```{r}
+# Side panel button to import players (NOT IMPLEMENTED YET)
+
+fileInput("import_players_file", "Choose a file")
 actionButton(
- "import_players",
- label = "Import players",
- icon = icon("file-arrow-down")
+  "import_players",
+  label = "Import players",
+  icon = icon("file-arrow-down")
 )
-br()
-actionButton(
- "save_players",
- label = "Save players",
- icon = icon("floppy-disk")
-)
+
 ```
 :::
 
-## Row {heigh=40%}
+## Row
 
 ### Column {width=50%}
 
 ```{r}
-#| expandable: false
-#| layout-ncol: 3
+#| layout: "[[1], [1,1,1], [1], [1,1,1]]"
 
-observeEvent(input$import_players, {
- runGadget()
-})
+# This page allows to enter the players of the two teams registered in the game
+# sheet. For each player, the number must be entered, as well as names and
+# roles (having names and roles mandatory is questioned). A player can be added
+# to the list by hitting "+ Add player".
+# 
+# After a player has been added, it can be removed by selecting the
+# corresponding line in the players list, then hitting the "x Remove player"
+# button (several players can be removed at the same time).
+# 
+# When the list of a team is complete, the user must hit "Validate players".
+# The "Set 1" tab becomes available when the players of the two teams have been
+# validated.
+# 
+# A list of players can be validated when 6 players at least are entered
+# (excluding libero).
 
-observe(
- if (all(!is.null(input$home_team) || nzchar(input$home_team))) {
-  home_team_title <- renderText({ h3(input$home_team) })
- }
+h5(
+  textOutput("home_team_players_tab"),
+  style="text-align: center;font-weight: bold;"
 )
 
+# Input to indicate the name of a home player to add
 textInput(
- "new_player_name_home",
- label = tags$p(icon("address-card"), "Player name")
+  "new_player_name_home",
+  label = tags$p(icon("address-card"), "Player name")
 )
+# Input to indicate the role of a home player to add
 selectInput(
- "new_player_role_home",
- label = tags$p(icon("gear"), "Player role"),
- choices = c(
-  "",
-  "Setter",
-  "Outside hitter",
-  "Middle blocker",
-  "Opposite",
-  "Libero"
- ),
- width = "280px"
+  "new_player_role_home",
+  label = tags$p(icon("gear"), "Player role"),
+  choices = c(
+    "",
+    "Setter",
+    "Outside hitter",
+    "Middle blocker",
+    "Opposite",
+    "Libero"
+  ),
+  width = "280px"
 )
+# Input to indicate the number of a home player to add (between 1 and 99)
 numericInput(
- "new_player_num_home",
- label = tags$p(icon("shirt"), "Player #"),
- value = NULL,
- min = 1,
- max = 99,
- width = "100px"
+  "new_player_num_home",
+  label = tags$p(icon("shirt"), "Player #"),
+  value = NULL,
+  min = 1,
+  max = 99
 )
+
+br()
+
+# Action button to add a home player (name, role and number must be valid for
+# the button to be active).
 actionButton(
- "add_player_home",
- label = tags$p(icon("plus"), "Add player"),
- disabled = TRUE
+  "add_player_home",
+  label = tags$p(icon("plus"), "Add player"),
+  disabled = TRUE
 )
+# Action button to validate all home players already added (the button is active
+# only if at least 6 numbers are listed, excluding libero).
 actionButton(
- "validate_player_home",
- label = tags$p(icon("circle-check"), "Validate players"),
- disabled = TRUE,
- style = "background-color: #93c47d"
+  "validate_player_home",
+  label = tags$p(icon("circle-check"), "Validate players"),
+  disabled = TRUE,
+  style = "background-color: #93c47d"
 )
+# Action button to remove all the home players in the `home_players_tbl` that
+# are active (active means that the player(s) corresponding row(s) are
+# selected).
 actionButton(
- "remove_player_home",
- label = tags$p(icon("circle-xmark"), "Remove player"),
- disabled = TRUE,
- style = "background-color: #f77b7b"
+  "remove_player_home",
+  label = tags$p(icon("circle-xmark"), "Remove player"),
+  disabled = TRUE,
+  style = "background-color: #f77b7b"
 )
 ```
 
-### Column {width=50%}
+### Column {width=50%, height=65%}
 
 ```{r}
+# Table listing the players entered for the home team
 dataTableOutput("home_players_tbl")
 ```
 
 ## Row
 
 ```{r}
-#| expandable: false
-#| layout-ncol: 3
+#| layout: "[[1], [1,1,1], [1], [1,1,1]]"
 
+# Same as above but here were are dealing with the UI to add away players
+
+h5(
+  textOutput("away_team_players_tab"),
+  style="text-align: center;font-weight: bold;"
+)
+
+# Input to indicate the name of an away player to add
 textInput(
- "new_player_name_away",
- label = tags$p(icon("address-card"), "Player name")
+  "new_player_name_away",
+  label = tags$p(icon("address-card"), "Player name")
 )
+# Input to indicate the role of an away player to add
 selectInput(
- "new_player_role_away",
- label = tags$p(icon("gear"), "Player role"),
- choices = c(
-  "",
-  "Setter",
-  "Outside hitter",
-  "Middle blocker",
-  "Opposite",
-  "Libero"
- ),
- width = "280px"
+  "new_player_role_away",
+  label = tags$p(icon("gear"), "Player role"),
+  choices = c(
+    "",
+    "Setter",
+    "Outside hitter",
+    "Middle blocker",
+    "Opposite",
+    "Libero"
+  ),
+  width = "280px"
 )
+# Input to indicate the number of an away player to add (between 1 and 99)
 numericInput(
- "new_player_num_away",
- label = tags$p(icon("shirt"), "Player #"),
- value = NULL,
- min = 1,
- max = 99,
- width = "100px"
+  "new_player_num_away",
+  label = tags$p(icon("shirt"), "Player #"),
+  value = NULL,
+  min = 1,
+  max = 99
 )
+
+br()
+
+# Action button to add an away player (name, role and number must be valid for
+# the button to be active).
 actionButton(
- "add_player_away",
- label = tags$p(icon("plus"), "Add player"),
- disabled = TRUE
+  "add_player_away",
+  label = tags$p(icon("plus"), "Add player"),
+  disabled = TRUE
 )
+# Action button to validate all away players already added (the button is
+# active only if at least 6 numbers are listed, excluding libero).
 actionButton(
- "validate_player_away",
- label = tags$p(icon("circle-check"), "Validate players"),
- disabled = TRUE,
- style = "background-color: #93c47d"
+  "validate_player_away",
+  label = tags$p(icon("circle-check"), "Validate players"),
+  disabled = TRUE,
+  style = "background-color: #93c47d"
 )
+# Action button to remove all the away players in the `home_players_tbl` that
+# are active (active means that the player(s) corresponding row(s) are
+# selected).
 actionButton(
- "remove_player_away",
- label = tags$p(icon("circle-xmark"), "Remove player"),
- disabled = TRUE,
- style = "background-color: #f77b7b"
+  "remove_player_away",
+  label = tags$p(icon("circle-xmark"), "Remove player"),
+  disabled = TRUE,
+  style = "background-color: #f77b7b"
 )
 ```
 
+### Column {width=50%, height=65%}
+
 ```{r}
+# Table listing the players entered for the home team
 dataTableOutput("away_players_tbl")
 ```
 
+<!--
+The UI for a set page is a page composed of two tabsets ("home" and "away").
+Each tabset has two parts. The left part with the interface to enter base
+rotation, substitutions, and time-outs. The right part contains the interface
+to add the score at the end of each rotation (i.e the end of each team series
+of service).
+
+For simplicity, the code chunks for the left part UI is sourced from .qmd files,
+one for each set and each team (see code under "R/positions_chunks/"). The code
+chunks for for right part UI is sourced from .qmd files, one for each set and
+each team (see code under "R/set_rotations_chunks/").
+-->
+
 # Set 1
+
+## Row {.tabset}
+
+### Home
+
+#### Row
+
+```{r}
+#| height: 60px
+#| padding: 0px
+
+h4(textOutput("home_team_out_1"), style="text-align: center;")
+```
+
+##### Column
+
+{{< include R/position_chunks/set_1_home_positions.qmd >}}
+{{< include R/score_rotations_chunks/set_1_home_rotations.qmd >}}
+
+### Away
+
+```{r}
+#| height: 60px
+#| padding: 0px
+
+h4(textOutput("away_team_out_1"), style="text-align: center;")
+```
+
+#### Column
+
+{{< include R/position_chunks/set_1_away_positions.qmd >}}
+{{< include R/score_rotations_chunks/set_1_away_rotations.qmd >}}
 
 ## Row
 
-### Column
-
-{{< include R/position_chunks/set_1_home_positions.qmd >}}
-
 ```{r}
-#| content: card-sidebar
-#| width: 100px
-#| fill: true
-#| toggle-position: left
+#| height: 40px
+#| padding: 0px
 
-p("", style="text-align: center; font-size: 120%;")
-p("", style="text-align: center; font-size: 120%;")
-h6("Rotation", style="text-align: center; font-size: 120%;")
-p("1", style="text-align: center; font-size: 120%;")
-p("2", style="text-align: center; font-size: 120%;")
-p("3", style="text-align: center; font-size: 120%;")
-p("4", style="text-align: center; font-size: 120%;")
-p("5", style="text-align: center; font-size: 120%;")
-p("6", style="text-align: center; font-size: 120%;")
-p("7", style="text-align: center; font-size: 120%;")
-p("8", style="text-align: center; font-size: 120%;")
-br()
+# Action button to go to the next set. The button is active only when the score
+# indicates the score is over (the team with the highest score has at least 25
+# and a difference of 2 points). When button is hit, the following is checked:
+#   - completeness of rotations
+#   - if a score is entered when a substitution is also entered
+#   - the format of substitution scores (XX:XX)
+#   - the format of time-outs (XX:XX)
 
+actionButton(
+  "next_to_set_2",
+  label = "Next set",
+  icon = icon("arrow-right"),
+  style = "height: 40px;width: 100px, align-self: center;"
+)
 ```
-
-{{< include R/score_rotations_chunks/set_1_home_rotations.qmd >}}
-
-### Column
-
-{{< include R/position_chunks/set_1_away_positions.qmd >}}
-
-```{r}
-#| content: card-sidebar
-#| width: 100px
-#| fill: true
-
-p("", style="text-align: center; font-size: 120%;")
-p("", style="text-align: center; font-size: 120%;")
-h6("Rotation", style="text-align: center; font-size: 120%;")
-p("1", style="text-align: center; font-size: 120%;")
-p("2", style="text-align: center; font-size: 120%;")
-p("3", style="text-align: center; font-size: 120%;")
-p("4", style="text-align: center; font-size: 120%;")
-p("5", style="text-align: center; font-size: 120%;")
-p("6", style="text-align: center; font-size: 120%;")
-p("7", style="text-align: center; font-size: 120%;")
-p("8", style="text-align: center; font-size: 120%;")
-br()
-
-```
-
-{{< include R/score_rotations_chunks/set_1_away_rotations.qmd >}}
 
 # Set 2
 
-## Row
+## Row {.tabset}
 
-### Column
+### Home
+
+#### Row
+
+```{r}
+#| height: 60px
+#| padding: 0px
+
+h4(textOutput("home_team_out_2"), style="text-align: center;")
+```
+
+##### Column
 
 {{< include R/position_chunks/set_2_home_positions.qmd >}}
-
-```{r}
-#| content: card-sidebar
-#| width: 100px
-#| fill: true
-#| toggle-position: left
-
-p("", style="text-align: center; font-size: 120%;")
-p("", style="text-align: center; font-size: 120%;")
-h6("Rotation", style="text-align: center; font-size: 120%;")
-p("1", style="text-align: center; font-size: 120%;")
-p("2", style="text-align: center; font-size: 120%;")
-p("3", style="text-align: center; font-size: 120%;")
-p("4", style="text-align: center; font-size: 120%;")
-p("5", style="text-align: center; font-size: 120%;")
-p("6", style="text-align: center; font-size: 120%;")
-p("7", style="text-align: center; font-size: 120%;")
-p("8", style="text-align: center; font-size: 120%;")
-br()
-
-```
-
 {{< include R/score_rotations_chunks/set_2_home_rotations.qmd >}}
 
-### Column
-
-{{< include R/position_chunks/set_2_away_positions.qmd >}}
+### Away
 
 ```{r}
-#| content: card-sidebar
-#| width: 100px
-#| fill: true
+#| height: 60px
+#| padding: 0px
 
-p("", style="text-align: center; font-size: 120%;")
-p("", style="text-align: center; font-size: 120%;")
-h6("Rotation", style="text-align: center; font-size: 120%;")
-p("1", style="text-align: center; font-size: 120%;")
-p("2", style="text-align: center; font-size: 120%;")
-p("3", style="text-align: center; font-size: 120%;")
-p("4", style="text-align: center; font-size: 120%;")
-p("5", style="text-align: center; font-size: 120%;")
-p("6", style="text-align: center; font-size: 120%;")
-p("7", style="text-align: center; font-size: 120%;")
-p("8", style="text-align: center; font-size: 120%;")
-br()
-
+h4(textOutput("away_team_out_2"), style="text-align: center;")
 ```
 
+##### Column
+
+{{< include R/position_chunks/set_2_away_positions.qmd >}}
 {{< include R/score_rotations_chunks/set_2_away_rotations.qmd >}}
+
+## Row
+
+```{r}
+#| height: 40px
+#| padding: 0px
+actionButton(
+  "next_to_set_3",
+  label = "Next set",
+  icon = icon("arrow-right"),
+  style = "height: 40px;width: 100px, align-self: center;"
+)
+```
 
 # Set 3
 
-## Row
+## Row {.tabset}
 
-### Column
+### Home
+
+#### Row
+
+```{r}
+#| height: 60px
+#| padding: 0px
+
+h4(textOutput("home_team_out_3"), style="text-align: center;")
+```
+
+##### Column
 
 {{< include R/position_chunks/set_3_home_positions.qmd >}}
-
-```{r}
-#| content: card-sidebar
-#| width: 100px
-#| fill: true
-#| toggle-position: left
-
-p("", style="text-align: center; font-size: 120%;")
-p("", style="text-align: center; font-size: 120%;")
-h6("Rotation", style="text-align: center; font-size: 120%;")
-p("1", style="text-align: center; font-size: 120%;")
-p("2", style="text-align: center; font-size: 120%;")
-p("3", style="text-align: center; font-size: 120%;")
-p("4", style="text-align: center; font-size: 120%;")
-p("5", style="text-align: center; font-size: 120%;")
-p("6", style="text-align: center; font-size: 120%;")
-p("7", style="text-align: center; font-size: 120%;")
-p("8", style="text-align: center; font-size: 120%;")
-br()
-
-```
-
 {{< include R/score_rotations_chunks/set_3_home_rotations.qmd >}}
 
-### Column
-
-{{< include R/position_chunks/set_3_away_positions.qmd >}}
+### Away
 
 ```{r}
-#| content: card-sidebar
-#| width: 100px
-#| fill: true
+#| height: 60px
+#| padding: 0px
 
-p("", style="text-align: center; font-size: 120%;")
-p("", style="text-align: center; font-size: 120%;")
-h6("Rotation", style="text-align: center; font-size: 120%;")
-p("1", style="text-align: center; font-size: 120%;")
-p("2", style="text-align: center; font-size: 120%;")
-p("3", style="text-align: center; font-size: 120%;")
-p("4", style="text-align: center; font-size: 120%;")
-p("5", style="text-align: center; font-size: 120%;")
-p("6", style="text-align: center; font-size: 120%;")
-p("7", style="text-align: center; font-size: 120%;")
-p("8", style="text-align: center; font-size: 120%;")
-br()
-
+h4(textOutput("away_team_out_3"), style="text-align: center;")
 ```
 
+##### Column
+
+{{< include R/position_chunks/set_3_away_positions.qmd >}}
 {{< include R/score_rotations_chunks/set_3_away_rotations.qmd >}}
+
+## Row
+
+```{r}
+#| height: 40px
+#| padding: 0px
+actionButton(
+  "next_to_set_4",
+  label = "Next set",
+  icon = icon("arrow-right"),
+  style = "height: 40px;width: 100px, align-self: center;"
+)
+```
 
 # Set 4
 
-## Row
+## Row {.tabset}
 
-### Column
+### Home
+
+#### Row
+
+```{r}
+#| height: 60px
+#| padding: 0px
+
+h4(textOutput("home_team_out_4"), style="text-align: center;")
+```
+
+##### Column
 
 {{< include R/position_chunks/set_4_home_positions.qmd >}}
-
-```{r}
-#| content: card-sidebar
-#| width: 100px
-#| fill: true
-#| toggle-position: left
-
-p("", style="text-align: center; font-size: 120%;")
-p("", style="text-align: center; font-size: 120%;")
-h6("Rotation", style="text-align: center; font-size: 120%;")
-p("1", style="text-align: center; font-size: 120%;")
-p("2", style="text-align: center; font-size: 120%;")
-p("3", style="text-align: center; font-size: 120%;")
-p("4", style="text-align: center; font-size: 120%;")
-p("5", style="text-align: center; font-size: 120%;")
-p("6", style="text-align: center; font-size: 120%;")
-p("7", style="text-align: center; font-size: 120%;")
-p("8", style="text-align: center; font-size: 120%;")
-br()
-
-```
-
 {{< include R/score_rotations_chunks/set_4_home_rotations.qmd >}}
 
-### Column
-
-{{< include R/position_chunks/set_4_away_positions.qmd >}}
+### Away
 
 ```{r}
-#| content: card-sidebar
-#| width: 100px
-#| fill: true
+#| height: 60px
+#| padding: 0px
 
-p("", style="text-align: center; font-size: 120%;")
-p("", style="text-align: center; font-size: 120%;")
-h6("Rotation", style="text-align: center; font-size: 120%;")
-p("1", style="text-align: center; font-size: 120%;")
-p("2", style="text-align: center; font-size: 120%;")
-p("3", style="text-align: center; font-size: 120%;")
-p("4", style="text-align: center; font-size: 120%;")
-p("5", style="text-align: center; font-size: 120%;")
-p("6", style="text-align: center; font-size: 120%;")
-p("7", style="text-align: center; font-size: 120%;")
-p("8", style="text-align: center; font-size: 120%;")
-br()
-
+h4(textOutput("away_team_out_4"), style="text-align: center;")
 ```
 
+##### Column
+
+{{< include R/position_chunks/set_4_away_positions.qmd >}}
 {{< include R/score_rotations_chunks/set_4_away_rotations.qmd >}}
+
+## Row
+
+```{r}
+#| height: 40px
+#| padding: 0px
+actionButton(
+  "next_to_set_5",
+  label = "Next set",
+  icon = icon("arrow-right"),
+  style = "height: 40px;width: 100px, align-self: center;"
+)
+```
 
 # Set 5
 
-## Row
+## Row {.tabset}
 
-### Column
+### Home
+
+#### Row
+
+```{r}
+#| height: 60px
+#| padding: 0px
+
+h4(textOutput("home_team_out_5"), style="text-align: center;")
+```
+
+##### Column
 
 {{< include R/position_chunks/set_5_home_positions.qmd >}}
-
-```{r}
-#| content: card-sidebar
-#| width: 100px
-#| fill: true
-#| toggle-position: left
-
-p("", style="text-align: center; font-size: 120%;")
-p("", style="text-align: center; font-size: 120%;")
-h6("Rotation", style="text-align: center; font-size: 120%;")
-p("1", style="text-align: center; font-size: 120%;")
-p("2", style="text-align: center; font-size: 120%;")
-p("3", style="text-align: center; font-size: 120%;")
-p("4", style="text-align: center; font-size: 120%;")
-p("5", style="text-align: center; font-size: 120%;")
-p("6", style="text-align: center; font-size: 120%;")
-p("7", style="text-align: center; font-size: 120%;")
-p("8", style="text-align: center; font-size: 120%;")
-br()
-
-```
-
 {{< include R/score_rotations_chunks/set_5_home_rotations.qmd >}}
 
-### Column
-
-{{< include R/position_chunks/set_5_away_positions.qmd >}}
+### Away
 
 ```{r}
-#| content: card-sidebar
-#| width: 100px
-#| fill: true
+#| height: 60px
+#| padding: 0px
 
-p("", style="text-align: center; font-size: 120%;")
-p("", style="text-align: center; font-size: 120%;")
-h6("Rotation", style="text-align: center; font-size: 120%;")
-p("1", style="text-align: center; font-size: 120%;")
-p("2", style="text-align: center; font-size: 120%;")
-p("3", style="text-align: center; font-size: 120%;")
-p("4", style="text-align: center; font-size: 120%;")
-p("5", style="text-align: center; font-size: 120%;")
-p("6", style="text-align: center; font-size: 120%;")
-p("7", style="text-align: center; font-size: 120%;")
-p("8", style="text-align: center; font-size: 120%;")
-br()
-
+h4(textOutput("away_team_out_5"), style="text-align: center;")
 ```
 
+##### Column
+
+{{< include R/position_chunks/set_5_away_positions.qmd >}}
 {{< include R/score_rotations_chunks/set_5_away_rotations.qmd >}}
+
+## Row
+
+```{r}
+#| height: 40px
+#| padding: 0px
+actionButton(
+  "next_to_summary",
+  label = "Next set",
+  icon = icon("arrow-right"),
+  style = "height: 40px;width: 100px, align-self: center;"
+)
+```
+
+# Summary
+
+```{r}
+#| layout-align: center
+#| height: "350px"
+#| layout: "[[1,1,1,3,3,1,1,1], [5,2,5], [11, 1]]"
+br()
+bslib::value_box(
+  # The name of home team
+  title = div(
+    icon("repeat"),
+    style = paste0(
+      "text-align: center;",
+      "font-weight: bold;",
+      "font-size: 20px;",
+      "border-bottom: 1px solid 'white';",
+      "padding-bottom: 0.5rem"
+    )
+  ),
+  fill = FALSE,
+  value = div(style = "font-size: 30px;"),
+  tagList(
+    div(
+      textOutput("home_sub_set_1"),
+      style = paste0("text-align: center;font-size:14px")
+    ),
+    div(
+      textOutput("home_sub_set_2"),
+      style = paste0("text-align: center;font-size:14px")
+    ),
+    div(
+      textOutput("home_sub_set_3"),
+      style = paste0("text-align: center;font-size:14px")
+    ),
+    div(
+      textOutput("home_sub_set_4"),
+      style = paste0("text-align: center;font-size:14px")
+    ),
+    div(
+      textOutput("home_sub_set_5"),
+      style = paste0("text-align: center;font-size:14px")
+    )
+  )
+)
+
+bslib::value_box(
+  # The name of home team
+  title = div(
+    icon("stopwatch"),
+    style = paste0(
+      "text-align: center;",
+      "font-weight: bold;",
+      "font-size: 20px;",
+      "border-bottom: 1px solid 'white';",
+      "padding-bottom: 0.5rem"
+    )
+  ),
+  fill = FALSE,
+  value = div(style = "font-size: 30px;"),
+  tagList(
+    div(
+      textOutput("home_to_set_1"),
+      style = paste0("text-align: center;font-size:14px")
+    ),
+    div(
+      textOutput("home_to_set_2"),
+      style = paste0("text-align: center;font-size:14px")
+    ),
+    div(
+      textOutput("home_to_set_3"),
+      style = paste0("text-align: center;font-size:14px")
+    ),
+    div(
+      textOutput("home_to_set_4"),
+      style = paste0("text-align: center;font-size:14px")
+    ),
+    div(
+      textOutput("home_to_set_5"),
+      style = paste0("text-align: center;font-size:14px")
+    )
+  )
+)
+
+bslib::value_box(
+  # The name of home team
+  title = h2(
+    textOutput("home_team_out"),
+    style = paste0(
+      "text-align: center;",
+      "font-weight: bold;",
+      "font-size: 20px;",
+      "border-bottom: 1px solid;",
+      "padding-bottom: 0.5rem"
+    )
+  ),
+  fill = FALSE,
+  # Number of sets won by the home team
+  value = div(
+    textOutput("home_sets"),
+    style = "text-align: center;font-size: 30px;"
+  ),
+  theme = bslib::value_box_theme(bg = "#517699", fg = "#e6f2fd"),
+  class = "border",
+  # Points won by the home team in each set
+  tagList(
+    div(
+      textOutput("home_score_set_1"),
+      style = paste0("text-align: center;font-size:14px")
+    ),
+    div(
+      textOutput("home_score_set_2"),
+      style = paste0("text-align: center;")
+    ),
+    div(
+      textOutput("home_score_set_3"),
+      style = paste0("text-align: center;")
+    ),
+    div(
+      textOutput("home_score_set_4"),
+      style = paste0("text-align: center;")
+    ),
+    div(
+      textOutput("home_score_set_5"),
+      style = paste0("text-align: center;")
+    )
+  )
+)
+
+
+bslib::value_box(
+  # The name of away team 
+  title = h2(
+    textOutput("away_team_out"),
+    style = paste0(
+      "text-align: center;",
+      "font-weight: bold;",
+      "font-size: 20px;",
+      "border-bottom: 1px solid;",
+      "padding-bottom: 0.5rem"
+    )
+  ),
+  fill = FALSE,
+  # Number of sets won by the away team
+  value = div(
+    textOutput("away_sets"),
+    style = "text-align: center;font-size: 30px;"
+  ),
+  theme = bslib::value_box_theme(bg = "#517699", fg = "#e6f2fd"),
+  class = "border",
+  # Points won by the home team in each set
+  tagList(
+    div(
+      textOutput("away_score_set_1"),
+      style = paste0("text-align: center;", textOutput("away_score_set_1_style"))
+    ),
+    div(
+      textOutput("away_score_set_2"),
+      style = paste0("text-align: center;", textOutput("away_score_set_2_style"))
+    ),
+    div(
+      textOutput("away_score_set_3"),
+      style = paste0("text-align: center;", textOutput("away_score_set_3_style"))
+    ),
+    div(
+      textOutput("away_score_set_4"),
+      style = paste0("text-align: center;", textOutput("away_score_set_4_style"))
+    ),
+    div(
+      textOutput("away_score_set_5"),
+      style = paste0("text-align: center;", textOutput("away_score_set_5_style"))
+    )
+  )
+)
+
+bslib::value_box(
+  # The name of home team
+  title = div(
+    icon("stopwatch"),
+    style = paste0(
+      "text-align: center;",
+      "font-weight: bold;",
+      "font-size: 20px;",
+      "border-bottom: 1px solid 'white';",
+      "padding-bottom: 0.5rem"
+    )
+  ),
+  fill = FALSE,
+  value = div(style = "font-size: 30px;"),
+  tagList(
+    div(
+      textOutput("away_to_set_1"),
+      style = paste0("text-align: center;font-size:14px")
+    ),
+    div(
+      textOutput("away_to_set_2"),
+      style = paste0("text-align: center;font-size:14px")
+    ),
+    div(
+      textOutput("away_to_set_3"),
+      style = paste0("text-align: center;font-size:14px")
+    ),
+    div(
+      textOutput("away_to_set_4"),
+      style = paste0("text-align: center;font-size:14px")
+    ),
+    div(
+      textOutput("away_to_set_5"),
+      style = paste0("text-align: center;font-size:14px")
+    )
+  )
+)
+
+bslib::value_box(
+  # The name of home team
+  title = div(
+    icon("repeat"),
+    style = paste0(
+      "text-align: center;",
+      "font-weight: bold;",
+      "font-size: 20px;",
+      "border-bottom: 1px solid 'white';",
+      "padding-bottom: 0.5rem"
+    )
+  ),
+  fill = FALSE,
+  value = div(style = "font-size: 30px;"),
+  tagList(
+    div(
+      textOutput("away_sub_set_1"),
+      style = paste0("text-align: center;font-size:14px")
+    ),
+    div(
+      textOutput("away_sub_set_2"),
+      style = paste0("text-align: center;font-size:14px")
+    ),
+    div(
+      textOutput("away_sub_set_3"),
+      style = paste0("text-align: center;font-size:14px")
+    ),
+    div(
+      textOutput("away_sub_set_4"),
+      style = paste0("text-align: center;font-size:14px")
+    ),
+    div(
+      textOutput("away_sub_set_5"),
+      style = paste0("text-align: center;font-size:14px")
+    )
+  )
+)
+br()
+br()
+downloadButton(
+  "export_game_data",
+  label = "Export game data",
+  icon = icon("file-export")
+)
+br()
+br()
+actionButton(
+  "close_app",
+  label = "Close app",
+  icon = icon("circle-stop"),
+  style = "background-color: #f77b7b"
+)
+```
+
 
 ```{r}
 #| context: server
-#==============================================================================#
+
+#==============================================================================|
 #                           ---- Reactive values ----
-#==============================================================================#
+#==============================================================================|
 
 # Reactive value defining whether the game details input should be locked or not
 are_details_locked <- reactiveVal(FALSE)
 
 # Define whether home and away players have been validated by the users allowing
-# then to active set 1 tab.
+# then to make the "Set 1" tab active.
 are_players_validated <- reactiveValues(home = FALSE, away = FALSE)
 
 # The data frames with the list of home and away players
 players <- reactiveValues(
   home_team = data.frame(
-    # Number = character(),
-    # Name = character(),
-    # Role = character()
-    # TO_REMOVE
-    Number = c("2", "5", "3", "7", "14", "83", "1"),
-    Name = c(letters[1:7]),
-    Role = c("Setter", rep("Outside hitter", 2), rep("Middle blocker", 2), "Opposite", "Libero")
+    Number = character(),
+    Name = character(),
+    Role = character()
   ),
   away_team = data.frame(
     # Number = character(),

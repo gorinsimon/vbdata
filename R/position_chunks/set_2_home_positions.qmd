@@ -1,0 +1,101 @@
+```{r}
+#| layout: "[[1], [1], [1,1,1,1,1,1], [1], [1], [1,1,1,1,1,1], [1], [1], [1,1,1,1,1,1], [1,1,1,1,1,1], [1], [1], [1,1]]"
+#| fill: false
+p(
+  icon("flag-checkered"),
+  "Starting players",
+  style="text-align: center;"
+)
+br()
+
+selectInput(
+  "set_2_home_p1",
+  label = div("P1", style = "text-align: center;font-size:0.85rem"),
+  choices = c("", as.character(1:6))
+)
+selectInput(
+  "set_2_home_p2",
+  label = div("P2", style = "text-align: center;font-size:0.85rem"),
+  choices = c("", as.character(1:6))
+)
+selectInput(
+  "set_2_home_p3",
+  label = div("P3", style = "text-align: center;font-size:0.85rem"),
+  choices = c("", as.character(1:6))
+)
+selectInput(
+  "set_2_home_p4",
+  label = div("P4", style = "text-align: center;font-size:0.85rem"),
+  choices = c("", as.character(1:6))
+)
+selectInput(
+  "set_2_home_p5",
+  label = div("P5", style = "text-align: center;font-size:0.85rem"),
+  choices = c("", as.character(1:6))
+)
+selectInput(
+  "set_2_home_p6",
+  label = div("P6", style = "text-align: center;font-size:0.85rem"),
+  choices = c("", as.character(1:6))
+)
+
+
+br()
+p(
+  icon("repeat"),
+  "Substitutions",
+  style="text-align: center;"
+)
+
+
+selectInput("set_2_home_p1_sub", label = "", choices = c("", as.character(1:6)))
+selectInput("set_2_home_p2_sub", label = "", choices = c("", as.character(1:6)))
+selectInput("set_2_home_p3_sub", label = "", choices = c("", as.character(1:6)))
+selectInput("set_2_home_p4_sub", label = "", choices = c("", as.character(1:6)))
+selectInput("set_2_home_p5_sub", label = "", choices = c("", as.character(1:6)))
+selectInput("set_2_home_p6_sub", label = "", choices = c("", as.character(1:6)))
+
+
+br()
+p(
+  icon("list-ol"),
+  "Score",
+  style="text-align: center;"
+)
+
+
+textInput("set_2_home_p1_sub_1_score", label = "")
+textInput("set_2_home_p2_sub_1_score", label = "")
+textInput("set_2_home_p3_sub_1_score", label = "")
+textInput("set_2_home_p4_sub_1_score", label = "")
+textInput("set_2_home_p5_sub_1_score", label = "")
+textInput("set_2_home_p6_sub_1_score", label = "")
+textInput("set_2_home_p1_sub_2_score", label = "")
+textInput("set_2_home_p2_sub_2_score", label = "")
+textInput("set_2_home_p3_sub_2_score", label = "")
+textInput("set_2_home_p4_sub_2_score", label = "")
+textInput("set_2_home_p5_sub_2_score", label = "")
+textInput("set_2_home_p6_sub_2_score", label = "")
+
+br()
+p(
+  icon("stopwatch"),
+  "Time-out",
+  style="text-align: center;"
+)
+
+div(
+  textInput(
+    "set_2_home_to_1",
+    label = ""
+  ),
+  style = "width: 100px;align-self: flex-end;"
+)
+div(
+  textInput(
+    "set_2_home_to_2",
+    label = ""
+  ),
+  style = "width: 100px;align-self: flex-start;"
+)
+```

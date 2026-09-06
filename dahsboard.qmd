@@ -874,16 +874,42 @@ data_ready_for_export <- reactiveVal(FALSE)
 
 #==============================================================================|
 #                          ---- "Game" tab events ----
-#==============================================================================#
+#==============================================================================|
 
-# When informing any of the team names, the "my_team" selector is updated
+# When any of the two teams' name is updated, it is updated accordingly anywhere
+# the names are used.
 observeEvent(list(input$home_team, input$away_team), {
- updateSelectInput(
-  inputId = "my_team",
-  choices = c("", input$home_team %||% "", input$away_team %||% "")
- )
- output$home_team <- renderText({ input$home_team %||% "" })
- output$away_team <- renderText({ input$away_team %||% "" })
+  # Update the "my_team" selector
+  updateSelectInput(
+    inputId = "my_team",
+    choices = c("", input$home_team %||% "", input$away_team %||% "")
+  )
+  # Update the output with the name of the teams for each set tab
+  lapply(
+    1:6,
+    \(x) {
+      output[[paste0("home_team_out_", x)]] <- renderText({
+        input$home_team %||% ""
+      })
+      output[[paste0("away_team_out_", x)]] <- renderText({
+        input$away_team %||% ""
+      })
+    }
+  )
+  output$home_team_players_tab <- renderText({ input$home_team %||% "" })
+  output$away_team_players_tab <- renderText({ input$away_team %||% "" })
+  # Update the selector allowing to indicate which team started to serve in the
+  # game.
+  updateSelectInput(
+    inputId = "serving_set_1",
+    choices = c("", input$home_team %||% "", input$away_team %||% "")
+  )
+  # Update the selector allowing to indicate which team started to serve in the
+  # fifth set. The selector is displayed only when a fifth set is played.
+  updateSelectInput(
+    inputId = "serving_set_5",
+    choices = c("", input$home_team %||% "", input$away_team %||% "")
+  )
 })
 
 # Observer running checks on the "Game" page any time there is an interaction

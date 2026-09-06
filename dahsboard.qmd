@@ -1,6 +1,8 @@
 ---
 title: "Volleyball game encoder"
-format: dashboard
+format:
+  dashboard:
+    expandable: false
 server: shiny
 fontsize: "14px"
 ---

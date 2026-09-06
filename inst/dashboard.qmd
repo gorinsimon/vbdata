@@ -328,8 +328,8 @@ h4(textOutput("home_team_out_1"), style = "text-align: center;")
 
 ##### Column
 
-{{< include R/position_chunks/set_1_home_positions.qmd >}}
-{{< include R/score_rotations_chunks/set_1_home_rotations.qmd >}}
+{{< include position_chunks/_set_1_home_positions.qmd >}}
+{{< include score_rotations_chunks/_set_1_home_rotations.qmd >}}
 
 ### Away
 
@@ -341,8 +341,8 @@ h4(textOutput("away_team_out_1"), style="text-align: center;")
 
 #### Column
 
-{{< include R/position_chunks/set_1_away_positions.qmd >}}
-{{< include R/score_rotations_chunks/set_1_away_rotations.qmd >}}
+{{< include position_chunks/_set_1_away_positions.qmd >}}
+{{< include score_rotations_chunks/_set_1_away_rotations.qmd >}}
 
 ## Row
 
@@ -381,8 +381,8 @@ h4(textOutput("home_team_out_2"), style="text-align: center;")
 
 ##### Column
 
-{{< include R/position_chunks/set_2_home_positions.qmd >}}
-{{< include R/score_rotations_chunks/set_2_home_rotations.qmd >}}
+{{< include position_chunks/_set_2_home_positions.qmd >}}
+{{< include score_rotations_chunks/_set_2_home_rotations.qmd >}}
 
 ### Away
 
@@ -394,8 +394,8 @@ h4(textOutput("away_team_out_2"), style="text-align: center;")
 
 ##### Column
 
-{{< include R/position_chunks/set_2_away_positions.qmd >}}
-{{< include R/score_rotations_chunks/set_2_away_rotations.qmd >}}
+{{< include position_chunks/_set_2_away_positions.qmd >}}
+{{< include score_rotations_chunks/_set_2_away_rotations.qmd >}}
 
 ## Row
 
@@ -426,8 +426,8 @@ h4(textOutput("home_team_out_3"), style="text-align: center;")
 
 ##### Column
 
-{{< include R/position_chunks/set_3_home_positions.qmd >}}
-{{< include R/score_rotations_chunks/set_3_home_rotations.qmd >}}
+{{< include position_chunks/_set_3_home_positions.qmd >}}
+{{< include score_rotations_chunks/_set_3_home_rotations.qmd >}}
 
 ### Away
 
@@ -439,8 +439,8 @@ h4(textOutput("away_team_out_3"), style="text-align: center;")
 
 ##### Column
 
-{{< include R/position_chunks/set_3_away_positions.qmd >}}
-{{< include R/score_rotations_chunks/set_3_away_rotations.qmd >}}
+{{< include position_chunks/_set_3_away_positions.qmd >}}
+{{< include score_rotations_chunks/_set_3_away_rotations.qmd >}}
 
 ## Row
 
@@ -471,8 +471,8 @@ h4(textOutput("home_team_out_4"), style="text-align: center;")
 
 ##### Column
 
-{{< include R/position_chunks/set_4_home_positions.qmd >}}
-{{< include R/score_rotations_chunks/set_4_home_rotations.qmd >}}
+{{< include position_chunks/_set_4_home_positions.qmd >}}
+{{< include score_rotations_chunks/_set_4_home_rotations.qmd >}}
 
 ### Away
 
@@ -484,8 +484,8 @@ h4(textOutput("away_team_out_4"), style="text-align: center;")
 
 ##### Column
 
-{{< include R/position_chunks/set_4_away_positions.qmd >}}
-{{< include R/score_rotations_chunks/set_4_away_rotations.qmd >}}
+{{< include position_chunks/_set_4_away_positions.qmd >}}
+{{< include score_rotations_chunks/_set_4_away_rotations.qmd >}}
 
 ## Row
 
@@ -516,8 +516,8 @@ h4(textOutput("home_team_out_5"), style="text-align: center;")
 
 ##### Column
 
-{{< include R/position_chunks/set_5_home_positions.qmd >}}
-{{< include R/score_rotations_chunks/set_5_home_rotations.qmd >}}
+{{< include position_chunks/_set_5_home_positions.qmd >}}
+{{< include score_rotations_chunks/_set_5_home_rotations.qmd >}}
 
 ### Away
 
@@ -529,8 +529,8 @@ h4(textOutput("away_team_out_5"), style="text-align: center;")
 
 ##### Column
 
-{{< include R/position_chunks/set_5_away_positions.qmd >}}
-{{< include R/score_rotations_chunks/set_5_away_rotations.qmd >}}
+{{< include position_chunks/_set_5_away_positions.qmd >}}
+{{< include score_rotations_chunks/_set_5_away_rotations.qmd >}}
 
 ## Row
 

@@ -21,8 +21,7 @@ source("R/utils_players.R")
 # Game
 
 ```{r}
-#| layout: "[[1,1,1,1], [1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1]]"
-#| expandable: false
+#| layout: "[[1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1]]"
 useShinyjs(rmd = TRUE)
 
 textInput(
@@ -39,9 +38,14 @@ br()
 
 br()
 selectInput(
- "my_team",
- label = "Your team?",
- choices = ""
+  "my_team",
+  label = "Your team?",
+  choices = ""
+)
+selectInput(
+  "serving_set_1",
+  label = "Which team won the service after the toss?",
+  choices = ""
 )
 br()
 

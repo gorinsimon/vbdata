@@ -1610,91 +1610,82 @@ observe({
 
 # Set the list of available players when "pressing" the validate button for each
 # team.
-observeEvent(
-  list(
-    input$validate_player_away,
-    input$validate_player_home,
-    input$set_1_home_p1,
-    input$set_1_home_p2,
-    input$set_1_home_p3,
-    input$set_1_home_p4,
-    input$set_1_home_p5,
-    input$set_1_home_p6,
-    input$set_1_home_p1_sub,
-    input$set_1_home_p2_sub,
-    input$set_1_home_p3_sub,
-    input$set_1_home_p4_sub,
-    input$set_1_home_p5_sub,
-    input$set_1_home_p6_sub
-  ),
-  {
+observe({
+  # Loop across the 5 sets
+  lapply(
+    1:5, \(s)
     lapply(
+      # Loop across the 6 base rotations
       c(1:6),
       \(x) {
-        current_p <- paste0("set_1_home_p", x)
-        current_p_sub <- paste0("set_1_home_p", x, "_sub")
+        # Create the string to access the current rotation (and the
+        # corresponding substitution position) for the home team in the app
+        # input.
+        current_p_h <- paste0("set_", s, "_home_p", x)
+        current_p_sub_h <- paste0("set_", s, "_home_p", x, "_sub")
+        # Create the string to access the current rotation (and the
+        # corresponding substitution position) for the away team in the app
+        # input.
+        current_p_a <- paste0("set_", s, "_away_p", x)
+        current_p_sub_a <- paste0("set_", s, "_away_p", x, "_sub")
+        
+        # Update input for the current position in the rotation for the home
+        # team.
         updateSelectInput(
-          inputId = current_p,
-          choices = c(input[[current_p]], sort(available_players$set_1$home)),
-          selected = input[[current_p]]
+          # Access the input selector for the current rotation position
+          inputId = current_p_h,
+          # Update for the choices with a vector starting with the current
+          # player selected (can be empty string) and the sorted remaining
+          # players.
+          choices = c(
+            input[[current_p_h]],
+            sort(available_players[[paste0("set_", s)]]$home)
+          ),
+          selected = input[[current_p_h]]
         )
-        if (!is.null(input[[current_p]]) && nzchar(input[[current_p]])) {
+        # Same for the corresponding substitution position, but only if the
+        # current position rotation is not empty.
+        if (!is.null(input[[current_p_h]]) && nzchar(input[[current_p_h]])) {
           updateSelectInput(
-            inputId = current_p_sub,
+            inputId = current_p_sub_h,
             choices = c(
-              input[[current_p_sub]],
-              sort(available_players$set_1$home)
+              input[[current_p_sub_h]],
+              sort(available_players[[paste0("set_", s)]]$home)
             ),
-            selected = input[[current_p_sub]]
+            selected = input[[current_p_sub_h]]
+          )
+        }
+        
+        # Update input for the current position in the rotation for the away
+        # team.
+        updateSelectInput(
+          # Access the input selector for the current rotation position
+          inputId = current_p_a,
+          # Update for the choices with a vector starting with the current
+          # player selected (can be empty string) and the sorted remaining
+          # players.
+          choices = c(
+            input[[current_p_a]],
+            sort(available_players[[paste0("set_", s)]]$away)
+          ),
+          selected = input[[current_p_a]]
+        )
+        # Same for the corresponding substitution position, but only if the
+        # current position rotation is not empty.
+        if (!is.null(input[[current_p_a]]) && nzchar(input[[current_p_a]])) {
+          updateSelectInput(
+            inputId = current_p_sub_a,
+            choices = c(
+              input[[current_p_sub_a]],
+              sort(available_players[[paste0("set_", s)]]$away)
+            ),
+            selected = input[[current_p_sub_a]]
           )
         }
       }
     )
-  }
-)
-
-observeEvent(
-  list(
-    input$validate_player_away,
-    input$validate_player_home,
-    input$set_1_away_p1,
-    input$set_1_away_p2,
-    input$set_1_away_p3,
-    input$set_1_away_p4,
-    input$set_1_away_p5,
-    input$set_1_away_p6,
-    input$set_1_away_p1_sub,
-    input$set_1_away_p2_sub,
-    input$set_1_away_p3_sub,
-    input$set_1_away_p4_sub,
-    input$set_1_away_p5_sub,
-    input$set_1_away_p6_sub
-  ),
-  {
-    lapply(
-      c(1:6),
-      \(x) {
-        current_p <- paste0("set_1_away_p", x)
-        current_p_sub <- paste0("set_1_away_p", x, "_sub")
-        updateSelectInput(
-          inputId = current_p,
-          choices = c(input[[current_p]], sort(available_players$set_1$away)),
-          selected = input[[current_p]]
-        )
-        if (!is.null(input[[current_p]]) && nzchar(input[[current_p]])) {
-          updateSelectInput(
-            inputId = current_p_sub,
-            choices = c(
-              input[[current_p_sub]],
-              sort(available_players$set_1$away)
-            ),
-            selected = input[[current_p_sub]]
-          )
-        }
-      }
-    )
-  }
-)
+  )
+})
 
 observe({
   home_score_set_1 <- unlist(

@@ -1073,6 +1073,22 @@ observeEvent(input$import_players_confirm, {
   # Combine the players already added to the game with the ones currently
   # selected to import.
   players_home_tmp <- rbind(players$home_team, players_to_import)
+  # From the players already added and those to import, count the number of the
+  # players to identify duplicates.
+  dup_players_count <- table(players_home_tmp$Number)
+  # Extract the duplicated players (if any)
+  dup_players <- names(dup_players_count)[dup_players_count > 1]
+
+  # Check if the players to import have liberos and if adding them would lead
+  # to having more than 2.
+  if (sum(players_home_tmp$Role == "Libero") > 2) {
+    showNotification(
+      "There are already two liberos engaged for the game.",
+      type = "error"
+    )
+    # Check if the players to import would lead to go above 12 field players
+    # (excluding liberos).
+  }
 })
 
 ## Adding new home team player -------------------------------------------------

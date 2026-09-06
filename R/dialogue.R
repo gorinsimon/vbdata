@@ -19,11 +19,11 @@ next_set_message <- function(set, input = NULL) {
   if (set %in% 1:4) {
     showModal(
       modalDialog(
-        title = paste0("Proceed to set ", set, "?"),
+        title = paste0("Go to set ", set, " page?"),
         "No further modifications are possible after starting the next set.",
         footer = tagList(
           modalButton("Cancel"),
-          actionButton(paste0("next_to_set_", set, "_confirm"), "OK"),
+          actionButton(paste0("next_to_set_", set, "_confirm"), "Confirm"),
         ),
         easyClose = TRUE
       )
@@ -33,7 +33,7 @@ next_set_message <- function(set, input = NULL) {
   } else if (set == 5) {
     showModal(
       modalDialog(
-        title = paste0("Proceed to set ", set, "?"),
+        title = paste0("Go to set ", set, " page?"),
         "No further modifications are possible after starting the next set.",
         selectInput(
           "serving_set_5",
@@ -42,7 +42,7 @@ next_set_message <- function(set, input = NULL) {
         ),
         footer = tagList(
           modalButton("Cancel"),
-          actionButton(paste0("next_to_set_", set, "_confirm"), "OK"),
+          actionButton(paste0("next_to_set_", set, "_confirm"), "Confirm"),
         ),
         easyClose = TRUE
       )
@@ -52,8 +52,9 @@ next_set_message <- function(set, input = NULL) {
   } else if (set == "summary") {
     showModal(
       modalDialog(
-        title = paste0("Proceed to summary page?"),
-        "No further modifications are possible after starting the next set.",
+        title = paste0("Go to summary page?"),
+        "No further modifications are possible after reaching the summary ",
+        "page.",
         footer = tagList(
           modalButton("Cancel"),
           actionButton("to_summary_confirm", "OK"),

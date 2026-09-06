@@ -1,5 +1,5 @@
 set_validator_time_out <- function(set) {
-  validator <- InputValidator$new()
+  validator <- shinyvalidate::InputValidator$new()
   lapply(
     c("home", "away"),
     \(t) {
@@ -7,7 +7,7 @@ set_validator_time_out <- function(set) {
         1:2,
         \(to) {
           val <- paste0("set_", set, "_", t, "_to_", to)
-          validator$add_rule(val, sv_optional())
+          validator$add_rule(val, shinyvalidate::sv_optional())
           validator$add_rule(
             val,
             \(v) {
@@ -24,7 +24,7 @@ set_validator_time_out <- function(set) {
 }
 
 set_validator_substitution <- function(set) {
-  validator <- InputValidator$new()
+  validator <- shinyvalidate::InputValidator$new()
   lapply(
     c("home", "away"),
     \(t) {
@@ -35,7 +35,7 @@ set_validator_substitution <- function(set) {
             1:2,
             \(n) {
               val <- paste0("set_", set, "_", t, "_p", p, "_sub_", n, "_score")
-              validator$add_rule(val, sv_optional())
+              validator$add_rule(val, shinyvalidate::sv_optional())
               validator$add_rule(
                 val,
                 \(v) {

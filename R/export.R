@@ -674,7 +674,7 @@ wrangle_set_data <- function(set, scores, time_outs, substitutions) {
   # a column with the score of the home team, and another with the score of the
   # receiving team. Then, everything is bound by row to create a single tibble
   # with the score evolution of the entire set.
-  dat <- pmap(
+  dat <- purrr::pmap(
     list(
       team_s_scores,
       team_r_scores,
@@ -682,7 +682,7 @@ wrangle_set_data <- function(set, scores, time_outs, substitutions) {
     ),
     \(a, b, c, d) tibble(serving = a, receiving = b, rotation = c)
   ) |>
-    list_rbind() |>
+    purrr::list_rbind() |>
     # Add additional data:
     #   - point number
     #   - point winner

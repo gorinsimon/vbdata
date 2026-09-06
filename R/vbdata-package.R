@@ -13,5 +13,10 @@ utils::globalVariables(c(
   "point",
   "rotation"
 ))
+#' @import shiny
+#' @import dplyr
+#' @importFrom fontawesome fa
+#' @importFrom DT datatable DTOutput renderDT
+#' @importFrom jsonlite read_json fromJSON
 ## usethis namespace: end
 NULL

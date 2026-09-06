@@ -1094,6 +1094,23 @@ observeEvent(input$import_players_confirm, {
       type = "error"
     )
     # Check if importing players would lead to have duplicated numbers
+  } else if (length(dup_players) > 0) {
+    # Display a notification indicating which numbers already exist in the
+    # players already added to the game.
+    dup_players_string <- switch(
+      as.character(length(dup_players)),
+      "1" = paste0(
+        "There is already a player engaged with the number ",
+        dup_players,
+        "."
+      ),
+      paste0(
+        "There are already players engaged with the following numbers: ",
+        paste0(dup_players, collapse = ", "),
+        "."
+      )
+    )
+    showNotification(dup_players_string, type = "error")
   }
   }
 })

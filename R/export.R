@@ -43,3 +43,44 @@ get_rotation_scores_input <- function(set, input) {
   return(scores)
 }
 
+
+# This file contains functions to easily access the inputs available in the app.
+# They behaviour is too simply extract the information, with only a minimum of
+# extra cleaning.
+
+#' Extract from the app the score input by rotation
+#'
+#' @param input The app input object.
+#' @param team A scalar string indicating the team for which extract the scores.
+#' Only "home" or "away" are accepted.
+#' @param set An integer scalar with the set for which extract the scores.
+#' @param n_rotation
+#'
+#' @returns A raw vector with the score at the end of each rotation for the team
+#' and set indicated. NULL values are replaced by NA's to maintain the mapping
+#' between score and rotation.
+#' @keywords internal
+#'
+#' @examples
+#' \dontrun{
+#' get_raw_rotation_scores(input, "home", 1)
+#' }
+
+get_raw_rotation_scores <- function(input, team, set, n_rotation = 8) {
+  unlist(
+    lapply(
+      1:n_rotation,
+      \(x) {
+        unlist(
+          lapply(
+            1:6,
+            \(y) {
+              input[[paste0("set_", set, "_r_", x, "_p_", y, "_", team)]] %||%
+                NA
+            }
+          )
+        )
+      }
+    )
+  )
+}

@@ -11,14 +11,6 @@ fontsize: "14px"
 #| context: setup
 #| include: false
 
-library(conflicted)
-
-conflict_prefer("DT::DTOutput", "shiny")
-conflict_prefer("DT::renderDT", "shiny")
-conflict_prefer("validate", "shiny")
-conflict_prefer("runExample", "shiny")
-conflict_prefer("flatten", "jsonlite")
-
 library(shiny)
 library(shinyjs)
 library(shinyvalidate)

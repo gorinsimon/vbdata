@@ -19,7 +19,7 @@ next_set_message <- function(set, input = NULL) {
   if (set %in% 1:4) {
     showModal(
       modalDialog(
-        title = paste0("Go to set ", set, " page?"),
+        title = HTML("Go to the <i>Set", set, "</i> page?"),
         "No further modifications are possible after starting the next set.",
         footer = tagList(
           modalButton("Cancel"),
@@ -33,7 +33,7 @@ next_set_message <- function(set, input = NULL) {
   } else if (set == 5) {
     showModal(
       modalDialog(
-        title = paste0("Go to set ", set, " page?"),
+        title = HTML("Go to the <i>Set", set, "</i> page?"),
         "No further modifications are possible after starting the next set.",
         selectInput(
           "serving_set_5",
@@ -52,7 +52,7 @@ next_set_message <- function(set, input = NULL) {
   } else if (set == "summary") {
     showModal(
       modalDialog(
-        title = paste0("Go to summary page?"),
+        title = HTML("Go to the <i>Summary</i> page?"),
         "No further modifications are possible after reaching the summary ",
         "page.",
         footer = tagList(
@@ -75,12 +75,12 @@ next_set_message <- function(set, input = NULL) {
 go_to_player_tab_message <- function() {
   showModal(
     modalDialog(
-      title = "Go to the \"Player\" page ?",
+      title = tagList(HTML("Go to the <i>Player</i> page?")),
       tagList(
         HTML(
           "No further modifications are possible once the game details are ",
           "locked.",
-          "<br><nr>Click <code>Confirm</code> to lock the game details and ",
+          "<br><br>Click <code>Confirm</code> to lock the game details and ",
           "go to the next page.",
           "<br>Click <code>Cancel</code> to make modifications."
         )
@@ -108,13 +108,13 @@ go_to_player_tab_message <- function() {
 go_to_set_1_tab_message <- function() {
   showModal(
     modalDialog(
-      title = "Move to set 1?",
+      title = tagList(HTML("Go to the <i>Set 1</i> page?")),
       tagList(
         HTML(
           "The list of players has been validated for the two teams. Once",
           "confirmed, no further modifications are possible.",
-          "<br><br>Click <code>Confirm</code> to move to the \"Set 1\" page.",
-          "<br>Click <code>Cancel</code> to make modifications."
+          "<br><br>Click <code>Confirm</code> to move to the <i>Set 1</i> ",
+          "page.<br>Click <code>Cancel</code> to make modifications."
         )
       ),
       footer = tagList(

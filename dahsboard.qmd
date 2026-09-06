@@ -989,6 +989,14 @@ observeEvent(input$go_to_player_tab, {
 
 ## Import players -------------------------------------------------------------
 
+observe({
+  if (is.null(input$import_players_file)) {
+    shinyjs::disable("import_players")
+  } else {
+    shinyjs::enable("import_players")
+  }
+})
+
 observeEvent(input$import_players, {
   # Read the list of potential players to import from the provided file
   json_players <- read_json(

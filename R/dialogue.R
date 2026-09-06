@@ -63,3 +63,37 @@ next_set_message <- function(set, input = NULL) {
     )
   }
 }
+
+
+#' Prepare message to display in modal dialogue when going to the player page
+#'
+#' @returns A call to `shiny::showModal()` with the message to display in the UI
+#' when validating the game page and going to the player page.
+#' @keywords internal
+
+go_to_player_tab_message <- function() {
+  showModal(
+    modalDialog(
+      title = "Go to the \"Player\" page ?",
+      tagList(
+        HTML(
+          "No further modifications are possible once the game details are ",
+          "locked.",
+          "<br><nr>Click <code>Confirm</code> to lock the game details and ",
+          "go to the next page.",
+          "<br>Click <code>Cancel</code> to make modifications."
+        )
+      ),
+      footer = tagList(
+        modalButton("Cancel"),
+        actionButton(
+          "go_to_player_tab",
+          "Confirm",
+          style = "background-color: #93c47d"
+        ),
+      ),
+      easyClose = TRUE
+    )
+  )
+}
+

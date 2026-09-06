@@ -181,7 +181,8 @@ is_scores_seq_valid <- function(set, team, input) {
 #' @inheritParams check_scores_rotations
 #' @inheritParams is_scores_seq_valid
 #'
-#' @returns
+#' @returns Logical indicating if the scores are missing (`TRUE`) or not
+#' (`FALSE`).
 #' @keywords internal
 
 is_sub_score_missing <- function(team, set, input) {

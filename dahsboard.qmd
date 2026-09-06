@@ -2462,4 +2462,31 @@ observeEvent(input$to_summary_confirm, {
   }
 })
 
+observeEvent(input$close_app, {
+  showModal(
+    modalDialog(
+      title = "Are you sure you want to close the app?",
+      # Some instructions on how to use the import tab
+      list(
+        "The app does not save any data. Closing the app will thus cause ",
+        "losing all the data imported. Make sure you downloaded the game data ",
+        "before closing the app."
+      ),
+      footer = tagList(
+        modalButton("Cancel"),
+        actionButton(
+          "close_app_confirm",
+          "Confirm closing app"
+        )
+      ),
+      easyClose = FALSE,
+      size = "m"
+    )
+  )
+})
+
+observeEvent(input$close_app_confirm, {
+  stopApp()
+})
+
 ```

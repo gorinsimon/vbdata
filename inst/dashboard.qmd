@@ -18,6 +18,7 @@ fontsize: "14px"
 #| context: setup
 #| include: false
 
+library(vbdata)
 library(shiny)
 library(dplyr)
 

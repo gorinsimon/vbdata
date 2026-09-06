@@ -1182,11 +1182,11 @@ observeEvent(input$add_player_home, {
 
 # When no player is listed in the home team, the table listing them is not shown
 observe({
- if (is.null(input$home_players_tbl_rows_selected)) {
-  shinyjs::disable("remove_player_home")
- } else {
-  shinyjs::enable("remove_player_home")
- }
+  if (is.null(input$home_players_tbl_rows_selected)) {
+    shinyjs::disable("remove_player_home")
+  } else {
+    shinyjs::enable("remove_player_home")
+  }
 })
 
 # Take care to remove from the home players table the one(s) selected when the
@@ -1244,11 +1244,11 @@ observeEvent(input$add_player_away, {
 
 # When no player is listed in the away team, the table listing them is not shown
 observe({
- if (is.null(input$away_players_tbl_rows_selected)) {
-  shinyjs::disable("remove_player_away")
- } else {
-  shinyjs::enable("remove_player_away")
- }
+  if (is.null(input$away_players_tbl_rows_selected)) {
+    shinyjs::disable("remove_player_away")
+  } else {
+    shinyjs::enable("remove_player_away")
+  }
 })
 
 # Take care to remove from the away players table the one(s) selected when the

@@ -2487,7 +2487,7 @@ observeEvent(input$close_app, {
 })
 
 observeEvent(input$close_app_confirm, {
-  stopApp()
+  session$Close()
 })
 
 ```

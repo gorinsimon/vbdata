@@ -1,0 +1,1276 @@
+---
+title: "Volleyball game encoder"
+format: dashboard
+server: shiny
+fontsize: "14px"
+---
+
+```{r}
+#| context: setup
+#| include: false
+library(shiny)
+library(shinyjs)
+library(DT)
+library(fontawesome)
+useShinyjs(rmd = TRUE)
+source("R/utils_players.R")
+```
+
+# Game
+
+```{r}
+#| layout: "[[1,1,1,1], [1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1]]"
+#| expandable: false
+useShinyjs(rmd = TRUE)
+
+textInput(
+ "home_team",
+ value = "LVBC", # TO_REMOVE
+ label = tags$p(icon("house"), "Home team")
+)
+textInput(
+ "away_team",
+ value = "LUC", # TO_REMOVE
+ label = tags$p(icon("suitcase-rolling"), "Away team")
+)
+br()
+
+br()
+selectInput(
+ "my_team",
+ label = "Your team?",
+ choices = ""
+)
+br()
+
+br()
+textInput(
+ "game_location",
+ label = tags$p(fa("location-dot", fill = "#020618"), "Location"),
+ value = "here" # TO_REMOVE
+)
+dateInput(
+ "game_date",
+ label = tags$p(fa("calendar", fill = "#020618"), "Date"),
+ format = "dd-mm-yyyy",
+ value = "2026-02-01" # TO_REMOVE
+)
+br()
+
+br()
+selectInput(
+ "season",
+ label = tags$p(fa("location-dot", fill = "#020618"), "Season"),
+ # choices = c(
+ #  "", vapply(2025:2000, \(x) paste0(x + 1, " - ", x), FUN.VALUE = "character")
+ # ),
+  choices = c(
+  vapply(2025:2000, \(x) paste0(x + 1, " - ", x), FUN.VALUE = "character")
+ ) # TO_REMOVE
+)
+textInput(
+ "division",
+ label = tags$p(icon("layer-group"), "Division"),
+ value = "1", # TO_REMOVE
+)
+br()
+
+br()
+actionButton(
+ "lock_details",
+ label = "Lock game details",
+ icon = icon("lock")
+)
+br()
+```
+
+# Player
+
+## {.sidebar}
+::: {style="font-size: 120%;"}
+```{r}
+actionButton(
+ "import_players",
+ label = "Import players",
+ icon = icon("file-arrow-down")
+)
+br()
+actionButton(
+ "save_players",
+ label = "Save players",
+ icon = icon("floppy-disk")
+)
+```
+:::
+
+## Row {heigh=40%}
+
+### Column {width=50%}
+
+```{r}
+#| expandable: false
+#| layout-ncol: 3
+
+observeEvent(input$import_players, {
+ runGadget()
+})
+
+observe(
+ if (all(!is.null(input$home_team) || nzchar(input$home_team))) {
+  home_team_title <- renderText({ h3(input$home_team) })
+ }
+)
+
+textInput(
+ "new_player_name_home",
+ label = tags$p(icon("address-card"), "Player name")
+)
+selectInput(
+ "new_player_role_home",
+ label = tags$p(icon("gear"), "Player role"),
+ choices = c(
+  "",
+  "Setter",
+  "Outside hitter",
+  "Middle blocker",
+  "Opposite",
+  "Libero"
+ ),
+ width = "280px"
+)
+numericInput(
+ "new_player_num_home",
+ label = tags$p(icon("shirt"), "Player #"),
+ value = NULL,
+ min = 1,
+ max = 99,
+ width = "100px"
+)
+actionButton(
+ "add_player_home",
+ label = tags$p(icon("plus"), "Add player"),
+ disabled = TRUE
+)
+actionButton(
+ "validate_player_home",
+ label = tags$p(icon("circle-check"), "Validate players"),
+ disabled = TRUE,
+ style = "background-color: #93c47d"
+)
+actionButton(
+ "remove_player_home",
+ label = tags$p(icon("circle-xmark"), "Remove player"),
+ disabled = TRUE,
+ style = "background-color: #f77b7b"
+)
+```
+
+### Column {width=50%}
+
+```{r}
+dataTableOutput("home_players_tbl")
+```
+
+## Row
+
+```{r}
+#| expandable: false
+#| layout-ncol: 3
+
+textInput(
+ "new_player_name_away",
+ label = tags$p(icon("address-card"), "Player name")
+)
+selectInput(
+ "new_player_role_away",
+ label = tags$p(icon("gear"), "Player role"),
+ choices = c(
+  "",
+  "Setter",
+  "Outside hitter",
+  "Middle blocker",
+  "Opposite",
+  "Libero"
+ ),
+ width = "280px"
+)
+numericInput(
+ "new_player_num_away",
+ label = tags$p(icon("shirt"), "Player #"),
+ value = NULL,
+ min = 1,
+ max = 99,
+ width = "100px"
+)
+actionButton(
+ "add_player_away",
+ label = tags$p(icon("plus"), "Add player"),
+ disabled = TRUE
+)
+actionButton(
+ "validate_player_away",
+ label = tags$p(icon("circle-check"), "Validate players"),
+ disabled = TRUE,
+ style = "background-color: #93c47d"
+)
+actionButton(
+ "remove_player_away",
+ label = tags$p(icon("circle-xmark"), "Remove player"),
+ disabled = TRUE,
+ style = "background-color: #f77b7b"
+)
+```
+
+```{r}
+dataTableOutput("away_players_tbl")
+```
+
+# Set 1
+
+## Row
+
+### Column
+
+{{< include R/position_chunks/set_1_home_positions.qmd >}}
+
+```{r}
+#| content: card-sidebar
+#| width: 100px
+#| fill: true
+#| toggle-position: left
+
+p("", style="text-align: center; font-size: 120%;")
+p("", style="text-align: center; font-size: 120%;")
+h6("Rotation", style="text-align: center; font-size: 120%;")
+p("1", style="text-align: center; font-size: 120%;")
+p("2", style="text-align: center; font-size: 120%;")
+p("3", style="text-align: center; font-size: 120%;")
+p("4", style="text-align: center; font-size: 120%;")
+p("5", style="text-align: center; font-size: 120%;")
+p("6", style="text-align: center; font-size: 120%;")
+p("7", style="text-align: center; font-size: 120%;")
+p("8", style="text-align: center; font-size: 120%;")
+br()
+
+```
+
+{{< include R/score_rotations_chunks/set_1_home_rotations.qmd >}}
+
+### Column
+
+{{< include R/position_chunks/set_1_away_positions.qmd >}}
+
+```{r}
+#| content: card-sidebar
+#| width: 100px
+#| fill: true
+
+p("", style="text-align: center; font-size: 120%;")
+p("", style="text-align: center; font-size: 120%;")
+h6("Rotation", style="text-align: center; font-size: 120%;")
+p("1", style="text-align: center; font-size: 120%;")
+p("2", style="text-align: center; font-size: 120%;")
+p("3", style="text-align: center; font-size: 120%;")
+p("4", style="text-align: center; font-size: 120%;")
+p("5", style="text-align: center; font-size: 120%;")
+p("6", style="text-align: center; font-size: 120%;")
+p("7", style="text-align: center; font-size: 120%;")
+p("8", style="text-align: center; font-size: 120%;")
+br()
+
+```
+
+{{< include R/score_rotations_chunks/set_1_away_rotations.qmd >}}
+
+# Set 2
+
+## Row
+
+### Column
+
+{{< include R/position_chunks/set_2_home_positions.qmd >}}
+
+```{r}
+#| content: card-sidebar
+#| width: 100px
+#| fill: true
+#| toggle-position: left
+
+p("", style="text-align: center; font-size: 120%;")
+p("", style="text-align: center; font-size: 120%;")
+h6("Rotation", style="text-align: center; font-size: 120%;")
+p("1", style="text-align: center; font-size: 120%;")
+p("2", style="text-align: center; font-size: 120%;")
+p("3", style="text-align: center; font-size: 120%;")
+p("4", style="text-align: center; font-size: 120%;")
+p("5", style="text-align: center; font-size: 120%;")
+p("6", style="text-align: center; font-size: 120%;")
+p("7", style="text-align: center; font-size: 120%;")
+p("8", style="text-align: center; font-size: 120%;")
+br()
+
+```
+
+{{< include R/score_rotations_chunks/set_2_home_rotations.qmd >}}
+
+### Column
+
+{{< include R/position_chunks/set_2_away_positions.qmd >}}
+
+```{r}
+#| content: card-sidebar
+#| width: 100px
+#| fill: true
+
+p("", style="text-align: center; font-size: 120%;")
+p("", style="text-align: center; font-size: 120%;")
+h6("Rotation", style="text-align: center; font-size: 120%;")
+p("1", style="text-align: center; font-size: 120%;")
+p("2", style="text-align: center; font-size: 120%;")
+p("3", style="text-align: center; font-size: 120%;")
+p("4", style="text-align: center; font-size: 120%;")
+p("5", style="text-align: center; font-size: 120%;")
+p("6", style="text-align: center; font-size: 120%;")
+p("7", style="text-align: center; font-size: 120%;")
+p("8", style="text-align: center; font-size: 120%;")
+br()
+
+```
+
+{{< include R/score_rotations_chunks/set_2_away_rotations.qmd >}}
+
+# Set 3
+
+## Row
+
+### Column
+
+{{< include R/position_chunks/set_3_home_positions.qmd >}}
+
+```{r}
+#| content: card-sidebar
+#| width: 100px
+#| fill: true
+#| toggle-position: left
+
+p("", style="text-align: center; font-size: 120%;")
+p("", style="text-align: center; font-size: 120%;")
+h6("Rotation", style="text-align: center; font-size: 120%;")
+p("1", style="text-align: center; font-size: 120%;")
+p("2", style="text-align: center; font-size: 120%;")
+p("3", style="text-align: center; font-size: 120%;")
+p("4", style="text-align: center; font-size: 120%;")
+p("5", style="text-align: center; font-size: 120%;")
+p("6", style="text-align: center; font-size: 120%;")
+p("7", style="text-align: center; font-size: 120%;")
+p("8", style="text-align: center; font-size: 120%;")
+br()
+
+```
+
+{{< include R/score_rotations_chunks/set_3_home_rotations.qmd >}}
+
+### Column
+
+{{< include R/position_chunks/set_3_away_positions.qmd >}}
+
+```{r}
+#| content: card-sidebar
+#| width: 100px
+#| fill: true
+
+p("", style="text-align: center; font-size: 120%;")
+p("", style="text-align: center; font-size: 120%;")
+h6("Rotation", style="text-align: center; font-size: 120%;")
+p("1", style="text-align: center; font-size: 120%;")
+p("2", style="text-align: center; font-size: 120%;")
+p("3", style="text-align: center; font-size: 120%;")
+p("4", style="text-align: center; font-size: 120%;")
+p("5", style="text-align: center; font-size: 120%;")
+p("6", style="text-align: center; font-size: 120%;")
+p("7", style="text-align: center; font-size: 120%;")
+p("8", style="text-align: center; font-size: 120%;")
+br()
+
+```
+
+{{< include R/score_rotations_chunks/set_3_away_rotations.qmd >}}
+
+# Set 4
+
+## Row
+
+### Column
+
+{{< include R/position_chunks/set_4_home_positions.qmd >}}
+
+```{r}
+#| content: card-sidebar
+#| width: 100px
+#| fill: true
+#| toggle-position: left
+
+p("", style="text-align: center; font-size: 120%;")
+p("", style="text-align: center; font-size: 120%;")
+h6("Rotation", style="text-align: center; font-size: 120%;")
+p("1", style="text-align: center; font-size: 120%;")
+p("2", style="text-align: center; font-size: 120%;")
+p("3", style="text-align: center; font-size: 120%;")
+p("4", style="text-align: center; font-size: 120%;")
+p("5", style="text-align: center; font-size: 120%;")
+p("6", style="text-align: center; font-size: 120%;")
+p("7", style="text-align: center; font-size: 120%;")
+p("8", style="text-align: center; font-size: 120%;")
+br()
+
+```
+
+{{< include R/score_rotations_chunks/set_4_home_rotations.qmd >}}
+
+### Column
+
+{{< include R/position_chunks/set_4_away_positions.qmd >}}
+
+```{r}
+#| content: card-sidebar
+#| width: 100px
+#| fill: true
+
+p("", style="text-align: center; font-size: 120%;")
+p("", style="text-align: center; font-size: 120%;")
+h6("Rotation", style="text-align: center; font-size: 120%;")
+p("1", style="text-align: center; font-size: 120%;")
+p("2", style="text-align: center; font-size: 120%;")
+p("3", style="text-align: center; font-size: 120%;")
+p("4", style="text-align: center; font-size: 120%;")
+p("5", style="text-align: center; font-size: 120%;")
+p("6", style="text-align: center; font-size: 120%;")
+p("7", style="text-align: center; font-size: 120%;")
+p("8", style="text-align: center; font-size: 120%;")
+br()
+
+```
+
+{{< include R/score_rotations_chunks/set_4_away_rotations.qmd >}}
+
+# Set 5
+
+## Row
+
+### Column
+
+{{< include R/position_chunks/set_5_home_positions.qmd >}}
+
+```{r}
+#| content: card-sidebar
+#| width: 100px
+#| fill: true
+#| toggle-position: left
+
+p("", style="text-align: center; font-size: 120%;")
+p("", style="text-align: center; font-size: 120%;")
+h6("Rotation", style="text-align: center; font-size: 120%;")
+p("1", style="text-align: center; font-size: 120%;")
+p("2", style="text-align: center; font-size: 120%;")
+p("3", style="text-align: center; font-size: 120%;")
+p("4", style="text-align: center; font-size: 120%;")
+p("5", style="text-align: center; font-size: 120%;")
+p("6", style="text-align: center; font-size: 120%;")
+p("7", style="text-align: center; font-size: 120%;")
+p("8", style="text-align: center; font-size: 120%;")
+br()
+
+```
+
+{{< include R/score_rotations_chunks/set_5_home_rotations.qmd >}}
+
+### Column
+
+{{< include R/position_chunks/set_5_away_positions.qmd >}}
+
+```{r}
+#| content: card-sidebar
+#| width: 100px
+#| fill: true
+
+p("", style="text-align: center; font-size: 120%;")
+p("", style="text-align: center; font-size: 120%;")
+h6("Rotation", style="text-align: center; font-size: 120%;")
+p("1", style="text-align: center; font-size: 120%;")
+p("2", style="text-align: center; font-size: 120%;")
+p("3", style="text-align: center; font-size: 120%;")
+p("4", style="text-align: center; font-size: 120%;")
+p("5", style="text-align: center; font-size: 120%;")
+p("6", style="text-align: center; font-size: 120%;")
+p("7", style="text-align: center; font-size: 120%;")
+p("8", style="text-align: center; font-size: 120%;")
+br()
+
+```
+
+{{< include R/score_rotations_chunks/set_5_away_rotations.qmd >}}
+
+```{r}
+#| context: server
+#==============================================================================#
+#                           ---- Reactive values ----
+#==============================================================================#
+
+# Reactive value defining whether the game details input should be locked or not
+are_details_locked <- reactiveVal(FALSE)
+
+# Define whether home and away players have been validated by the users allowing
+# then to active set 1 tab.
+are_players_validated <- reactiveValues(home = FALSE, away = FALSE)
+
+# The data frames with the list of home and away players
+players <- reactiveValues(
+  home_team = data.frame(
+    # Number = character(),
+    # Name = character(),
+    # Role = character()
+    # TO_REMOVE
+    Number = c("2", "5", "3", "7", "14", "83", "1"),
+    Name = c(letters[1:7]),
+    Role = c("Setter", rep("Outside hitter", 2), rep("Middle blocker", 2), "Opposite", "Libero")
+  ),
+  away_team = data.frame(
+    # Number = character(),
+    # Name = character(),
+    # Role = character()
+    # TO_REMOVE
+    Number = c("12", "51", "15", "5", "4", "38", "1"),
+    Name = c(letters[1:7]),
+    Role = c("Setter", rep("Outside hitter", 2), rep("Middle blocker", 2), "Opposite", "Libero")
+  )
+)
+
+# Reactive values with the players available (i.e. not assigned to any position)
+# for the two teams and each set.
+available_players <- reactiveValues(
+ set_1 = list(
+  home = NULL,
+  away = NULL
+ ),
+ set_2 = list(
+  home = NULL,
+  away = NULL
+ ),
+ set_3 = list(
+  home = NULL,
+  away = NULL
+ ),
+ set_4 = list(
+  home = NULL,
+  away = NULL
+ ),
+ set_5 = list(
+  home = NULL,
+  away = NULL
+ )
+)
+
+#==============================================================================#
+#                           ---- All tabs events ----                          
+#==============================================================================#
+
+# Observer updating the list of available players (for all sets and the 2 teams)
+observe(
+  priority = 1,
+  {
+    available_players$set_1$home <- players$home_team$Number[
+      !(players$home_team$Number %in%
+        c(
+          input$set_1_home_p1,
+          input$set_1_home_p2,
+          input$set_1_home_p3,
+          input$set_1_home_p4,
+          input$set_1_home_p5,
+          input$set_1_home_p6,
+          input$set_1_home_p1_sub,
+          input$set_1_home_p2_sub,
+          input$set_1_home_p3_sub,
+          input$set_1_home_p4_sub,
+          input$set_1_home_p5_sub,
+          input$set_1_home_p6_sub
+        ))
+    ]
+    available_players$set_2$home <- players$home_team$Number[
+      !(players$home_team$Number %in%
+        c(
+          input$set_1_home_p1,
+          input$set_1_home_p2,
+          input$set_1_home_p3,
+          input$set_1_home_p4,
+          input$set_1_home_p5,
+          input$set_1_home_p6,
+          input$set_1_home_p1_sub,
+          input$set_1_home_p2_sub,
+          input$set_1_home_p3_sub,
+          input$set_1_home_p4_sub,
+          input$set_1_home_p5_sub,
+          input$set_1_home_p6_sub
+        ))
+    ]
+    available_players$set_3$home <- players$home_team$Number[
+      !(players$home_team$Number %in%
+        c(
+          input$set_1_home_p1,
+          input$set_1_home_p2,
+          input$set_1_home_p3,
+          input$set_1_home_p4,
+          input$set_1_home_p5,
+          input$set_1_home_p6,
+          input$set_1_home_p1_sub,
+          input$set_1_home_p2_sub,
+          input$set_1_home_p3_sub,
+          input$set_1_home_p4_sub,
+          input$set_1_home_p5_sub,
+          input$set_1_home_p6_sub
+        ))
+    ]
+    available_players$set_4$home <- players$home_team$Number[
+      !(players$home_team$Number %in%
+        c(
+          input$set_1_home_p1,
+          input$set_1_home_p2,
+          input$set_1_home_p3,
+          input$set_1_home_p4,
+          input$set_1_home_p5,
+          input$set_1_home_p6,
+          input$set_1_home_p1_sub,
+          input$set_1_home_p2_sub,
+          input$set_1_home_p3_sub,
+          input$set_1_home_p4_sub,
+          input$set_1_home_p5_sub,
+          input$set_1_home_p6_sub
+        ))
+    ]
+    available_players$set_5$home <- players$home_team$Number[
+      !(players$home_team$Number %in%
+        c(
+          input$set_1_home_p1,
+          input$set_1_home_p2,
+          input$set_1_home_p3,
+          input$set_1_home_p4,
+          input$set_1_home_p5,
+          input$set_1_home_p6,
+          input$set_1_home_p1_sub,
+          input$set_1_home_p2_sub,
+          input$set_1_home_p3_sub,
+          input$set_1_home_p4_sub,
+          input$set_1_home_p5_sub,
+          input$set_1_home_p6_sub
+        ))
+    ]
+    available_players$set_1$away <- players$away_team$Number[
+      !(players$away_team$Number %in%
+        c(
+          input$set_1_away_p1,
+          input$set_1_away_p2,
+          input$set_1_away_p3,
+          input$set_1_away_p4,
+          input$set_1_away_p5,
+          input$set_1_away_p6,
+          input$set_1_away_p1_sub,
+          input$set_1_away_p2_sub,
+          input$set_1_away_p3_sub,
+          input$set_1_away_p4_sub,
+          input$set_1_away_p5_sub,
+          input$set_1_away_p6_sub
+        ))
+    ]
+    available_players$set_2$away <- players$away_team$Number[
+      !(players$away_team$Number %in%
+        c(
+          input$set_1_away_p1,
+          input$set_1_away_p2,
+          input$set_1_away_p3,
+          input$set_1_away_p4,
+          input$set_1_away_p5,
+          input$set_1_away_p6,
+          input$set_1_away_p1_sub,
+          input$set_1_away_p2_sub,
+          input$set_1_away_p3_sub,
+          input$set_1_away_p4_sub,
+          input$set_1_away_p5_sub,
+          input$set_1_away_p6_sub
+        ))
+    ]
+    available_players$set_3$away <- players$away_team$Number[
+      !(players$away_team$Number %in%
+        c(
+          input$set_1_away_p1,
+          input$set_1_away_p2,
+          input$set_1_away_p3,
+          input$set_1_away_p4,
+          input$set_1_away_p5,
+          input$set_1_away_p6,
+          input$set_1_away_p1_sub,
+          input$set_1_away_p2_sub,
+          input$set_1_away_p3_sub,
+          input$set_1_away_p4_sub,
+          input$set_1_away_p5_sub,
+          input$set_1_away_p6_sub
+        ))
+    ]
+    available_players$set_4$away <- players$away_team$Number[
+      !(players$away_team$Number %in%
+        c(
+          input$set_1_away_p1,
+          input$set_1_away_p2,
+          input$set_1_away_p3,
+          input$set_1_away_p4,
+          input$set_1_away_p5,
+          input$set_1_away_p6,
+          input$set_1_away_p1_sub,
+          input$set_1_away_p2_sub,
+          input$set_1_away_p3_sub,
+          input$set_1_away_p4_sub,
+          input$set_1_away_p5_sub,
+          input$set_1_away_p6_sub
+        ))
+    ]
+    available_players$set_5$away <- players$away_team$Number[
+      !(players$away_team$Number %in%
+        c(
+          input$set_1_away_p1,
+          input$set_1_away_p2,
+          input$set_1_away_p3,
+          input$set_1_away_p4,
+          input$set_1_away_p5,
+          input$set_1_away_p6,
+          input$set_1_away_p1_sub,
+          input$set_1_away_p2_sub,
+          input$set_1_away_p3_sub,
+          input$set_1_away_p4_sub,
+          input$set_1_away_p5_sub,
+          input$set_1_away_p6_sub
+        ))
+    ]
+  }
+)
+
+#==============================================================================#
+#                          ---- "Game" tab events ----
+#==============================================================================#
+
+# When informing any of the team names, the "my_team" selector is updated
+observeEvent(list(input$home_team, input$away_team), {
+ updateSelectInput(
+  inputId = "my_team",
+  choices = c("", input$home_team %||% "", input$away_team %||% "")
+ )
+ output$home_team <- renderText({ input$home_team %||% "" })
+ output$away_team <- renderText({ input$away_team %||% "" })
+})
+
+# `any_empty` is used to define when the "Lock game details" button can be made
+# available (i.e. when all details in the "Game" tab are filled in).
+observe({
+ my_team_empty <- any(is.null(input$my_team), !nzchar(input$my_team))
+ home_team_empty <- any(is.null(input$home_team), !nzchar(input$home_team))
+ away_team_empty <- any(is.null(input$away_team), !nzchar(input$away_team))
+ loc_empty <- any(is.null(input$game_location), !nzchar(input$game_location))
+ season_empty <- any(is.null(input$season), !nzchar(input$season))
+ division_empty <- any(is.null(input$division), !nzchar(input$division))
+ 
+ any_empty <- any(
+  my_team_empty,
+  home_team_empty,
+  away_team_empty,
+  loc_empty,
+  season_empty,
+  division_empty
+ )
+})
+
+# When the details in the first tab are locked, the "player" tab appears in the
+# top navbar.
+observe({
+ if (are_details_locked()) {
+  shinyjs::showElement("tab-player", anim = TRUE, animType = "fade")
+ } else {
+  shinyjs::hideElement("tab-player")
+ }
+})
+
+# When clicking the lock/unlock game details button, update the state of the
+# game details inputs.
+observeEvent(input$lock_details, {
+ shinyjs::toggleState("home_team")
+ shinyjs::toggleState("away_team")
+ shinyjs::toggleState("my_team")
+ shinyjs::toggleState("game_location")
+ shinyjs::toggleState("game_date")
+ shinyjs::toggleState("season")
+ shinyjs::toggleState("division")
+ 
+ if (are_details_locked()) {
+  # When the details are locked we switch to unlocked state when the button is
+  # clicked.
+  updateActionButton(
+   inputId = "lock_details",
+   label = "Lock game details",
+   icon = icon("lock")
+  )
+  # Details are unlocked
+  are_details_locked(FALSE)
+ } else {
+  # When the details are unlocked we switch to locked state when the button is
+  # clicked.
+  updateActionButton(
+   inputId = "lock_details",
+   label = "Unlock game details",
+   icon = icon("lock-open")
+  )
+  # Details are locked
+  are_details_locked(TRUE)
+ }
+})
+
+#==============================================================================#
+#                        ---- "Players" tab events ----
+#==============================================================================#
+
+# Define whether the "add_new_player_home" button should be enabled (only when a
+# number and a name is provided).
+observe({
+ is_new_home_num_ok <- all(
+  # Cannot be NULL
+  !is.null(input$new_player_num_home),
+  # Cannot be one already used number
+  !(input$new_player_num_home %in% as.numeric(players$home_team[["Number"]])),
+  # Cannot be outside the 1 to 99 range
+  input$new_player_num_home %in% 1:99
+ )
+ is_new_home_name_ok <- all(
+  # Cannot be NULL
+  !is.null(input$new_player_name_home),
+  # Cannot be empty
+  input$new_player_name_home != ""
+ )
+ is_new_home_role_ok <- all(
+  # Cannot be NULL
+  !is.null(input$new_player_role_home),
+  # Cannot be empty
+  input$new_player_role_home != ""
+ )
+ 
+ if (!all(is_new_home_num_ok, is_new_home_name_ok, is_new_home_role_ok)) {
+  shinyjs::disable("add_player_home")
+ } else {
+  shinyjs::enable("add_player_home")
+ }
+})
+
+# Define whether the "add_new_player_away" button should be enabled (only when a
+# number and a name is provided).
+observe({
+ is_new_away_num_ok <- all(
+  # Cannot be NULL
+  !is.null(input$new_player_num_away),
+  # Cannot be one already used number
+  !(input$new_player_num_away %in% as.numeric(players$away_team[["Number"]])),
+  # Cannot be outside the 1 to 99 range
+  input$new_player_num_away %in% 1:99
+ )
+ is_new_away_name_ok <- all(
+  # Cannot be NULL
+  !is.null(input$new_player_name_away),
+  # Cannot be empty
+  input$new_player_name_away != ""
+ )
+ is_new_away_role_ok <- all(
+  # Cannot be NULL
+  !is.null(input$new_player_role_away),
+  # Cannot be empty
+  input$new_player_role_away != ""
+ )
+ 
+ if (!all(is_new_away_num_ok, is_new_away_name_ok, is_new_away_role_ok)) {
+  shinyjs::disable("add_player_away")
+ } else {
+  shinyjs::enable("add_player_away")
+ }
+})
+
+# When all conditions are met, enable the "validate home players" button
+observe({
+ n_players <- nrow(players$away_team)
+ n_liberos <- sum(players$away_team[["Role"]] == "Libero")
+ 
+ is_n_enough <- (n_players - n_liberos) >= 6
+ is_n_not_too_many <- (n_players + n_liberos) <= 14
+ 
+ if (all(is_n_enough, is_n_not_too_many)) {
+  shinyjs::enable("validate_player_away")
+ } else {
+  shinyjs::disable("validate_player_away")
+ }
+})
+
+# When all conditions are met, enable the "validate away players" button
+observe({
+ n_players <- nrow(players$home_team)
+ n_liberos <- sum(players$home_team[["Role"]] == "Libero")
+ 
+ is_n_enough <- (n_players - n_liberos) >= 6
+ is_n_not_too_many <- (n_players + n_liberos) <= 14
+ 
+ if (all(is_n_enough, is_n_not_too_many)) {
+  shinyjs::enable("validate_player_home")
+ } else {
+  shinyjs::disable("validate_player_home")
+ }
+})
+
+# When the home players are validated, then all the buttons in the corresponding
+# card and the table with the list of players are disabled.
+observeEvent(input$validate_player_home, {
+ shinyjs::disable("new_player_name_home")
+ shinyjs::disable("new_player_role_home")
+ shinyjs::disable("new_player_num_home")
+ shinyjs::disable("remove_player_home")
+ shinyjs::disable("home_players_tbl")
+ 
+ output$home_players_tbl <- renderDataTable({
+  datatable(
+   players$home_team,
+   options = list(paging = FALSE, searching = FALSE),
+   selection = "none"
+  )
+ })
+ 
+ are_players_validated$home <- TRUE
+})
+
+# When the away players are validated, then all the buttons in the corresponding
+# card and the table with the list of players are disabled.
+observeEvent(input$validate_player_away, {
+ shinyjs::disable("new_player_name_away")
+ shinyjs::disable("new_player_role_away")
+ shinyjs::disable("new_player_num_away")
+ shinyjs::disable("remove_player_away")
+ shinyjs::disable("away_players_tbl")
+ 
+ output$away_players_tbl <- renderDataTable({
+  datatable(
+   players$away_team,
+   options = list(paging = FALSE, searching = FALSE),
+   selection = "none"
+  )
+ })
+ 
+ are_players_validated$away <- TRUE
+})
+
+# When the away and home players are validated, the "set 1" tab appears in the
+# top navbar.
+observe({
+ if (any(!are_players_validated$home, !are_players_validated$away)) {
+  shinyjs::hideElement("tab-set-1")
+ } else {
+  shinyjs::showElement("tab-set-1", anim = TRUE, animType = "fade")
+ }
+})
+
+# When adding a new player for the home team, the list of player is updated,
+# the player table, and the input fields are emptied.
+observeEvent(input$add_player_home, {
+ players$home_team <- rbind(
+  players$home_team,
+  data.frame(
+   Number = as.character(input$new_player_num_home),
+   Name = input$new_player_name_home,
+   Role = input$new_player_role_home
+  )
+ )
+ output$home_players_tbl <- renderDataTable({
+  tbl <- players$home_team
+  tbl[["Number"]] <- as.character(tbl[["Number"]])
+  datatable(
+   tbl,
+   options = list(paging = FALSE, searching = FALSE),
+   selection = "single"
+  )
+ })
+ 
+ updateNumericInput(
+  inputId = "new_player_num_home",
+  value = ""
+ )
+ updateSelectInput(
+  inputId = "new_player_role_home",
+  selected = ""
+ )
+ updateTextInput(
+  inputId = "new_player_name_home",
+  value = ""
+ )
+})
+
+# When no player is listed in the home team, the table listing them is not shown
+observe({
+ if (is.null(input$home_players_tbl_rows_selected)) {
+  shinyjs::disable("remove_player_home")
+ } else {
+  shinyjs::enable("remove_player_home")
+ }
+})
+
+# Take care to remove from the home players table the one(s) selected when the
+# remove button is hit.
+observeEvent(input$remove_player_home, {
+ tbl <- players$home_team
+ to_rmv <- as.numeric(input$home_players_tbl_rows_selected)
+ players$home_team <- tbl[-to_rmv, ]
+ 
+ if (nrow(players$home_team) == 0) {
+  output$home_players_tbl <- renderDataTable({
+   NULL
+  })
+ } else {
+  output$home_players_tbl <- renderDataTable({
+   datatable(
+    players$home_team,
+    options = list(paging = FALSE, searching = FALSE),
+    selection = "single"
+   )
+  })
+ }
+})
+
+# When adding a new player for the away team, the list of player is updated,
+# the player table, and the input fields are emptied.
+observeEvent(input$add_player_away, {
+ players$away_team <- rbind(
+  players$away_team,
+  data.frame(
+   Number = as.character(input$new_player_num_away),
+   Name = input$new_player_name_away,
+   Role = "a"
+  )
+ )
+ output$away_players_tbl <- renderDataTable({
+  tbl <- players$away_team
+  tbl[["Number"]] <- as.character(tbl[["Number"]])
+  datatable(tbl, options = list(paging = FALSE, searching = FALSE))
+ })
+ 
+ updateNumericInput(
+  inputId = "new_player_num_away",
+  value = ""
+ )
+ updateSelectInput(
+  inputId = "new_player_role_away",
+  selected = ""
+ )
+ updateTextInput(
+  inputId = "new_player_name_away",
+  value = ""
+ )
+})
+
+# When no player is listed in the away team, the table listing them is not shown
+observe({
+ if (is.null(input$away_players_tbl_rows_selected)) {
+  shinyjs::disable("remove_player_away")
+ } else {
+  shinyjs::enable("remove_player_away")
+ }
+})
+
+# Take care to remove from the away players table the one(s) selected when the
+# remove button is hit.
+observeEvent(input$remove_player_away, {
+ tbl <- players$away_team
+ to_rmv <- as.numeric(input$away_players_tbl_rows_selected)
+ players$away_team <- tbl[-to_rmv, ]
+ 
+ if (nrow(players$away_team) == 0) {
+  output$away_players_tbl <- renderDataTable({
+   NULL
+  })
+ } else {
+  output$away_players_tbl <- renderDataTable({
+   datatable(
+    players$away_team,
+    options = list(paging = FALSE, searching = FALSE),
+    selection = "single"
+   )
+  })
+ }
+})
+
+#==============================================================================#
+#                         ---- "Set 1" tab events ----                         
+#==============================================================================#
+
+observe({
+ all_home_pos <- unlist(lapply(1:6, \(x) input[[paste0("set_1_home_p", x)]]))
+ if (any(!nzchar(all_home_pos))) {
+  lapply(1:6, \(x) shinyjs::disable(paste0("set_1_home_p", x, "_sub")))
+ } else {
+  lapply(1:6, \(x) shinyjs::enable(paste0("set_1_home_p", x, "_sub")))
+ }
+})
+
+observe({
+ all_away_pos <- unlist(lapply(1:6, \(x) input[[paste0("set_1_away_p", x)]]))
+ if (any(!nzchar(all_away_pos))) {
+  lapply(1:6, \(x) shinyjs::disable(paste0("set_1_away_p", x, "_sub")))
+ } else {
+  lapply(1:6, \(x) shinyjs::enable(paste0("set_1_away_p", x, "_sub")))
+ }
+})
+
+observe({
+  lapply(
+    1:6,
+    \(x) {
+      if (!nzchar(input[[paste0("set_1_home_p", x, "_sub")]])) {
+        shinyjs::disable(paste0("set_1_home_p", x, "_sub_1_score"))
+        shinyjs::disable(paste0("set_1_home_p", x, "_sub_2_score"))
+      } else {
+        shinyjs::enable(paste0("set_1_home_p", x, "_sub_1_score"))
+        shinyjs::enable(paste0("set_1_home_p", x, "_sub_2_score"))
+      }
+      if (!nzchar(input[[paste0("set_1_away_p", x, "_sub")]])) {
+        shinyjs::disable(paste0("set_1_away_p", x, "_sub_1_score"))
+        shinyjs::disable(paste0("set_1_away_p", x, "_sub_2_score"))
+      } else {
+        shinyjs::enable(paste0("set_1_away_p", x, "_sub_1_score"))
+        shinyjs::enable(paste0("set_1_away_p", x, "_sub_2_score"))
+      }
+    }
+  )
+})
+
+# Set the list of available players when "pressing" the validate button for each
+# team.
+observeEvent(
+  list(
+    input$validate_player_away,
+    input$validate_player_home,
+    input$set_1_home_p1,
+    input$set_1_home_p2,
+    input$set_1_home_p3,
+    input$set_1_home_p4,
+    input$set_1_home_p5,
+    input$set_1_home_p6,
+    input$set_1_home_p1_sub,
+    input$set_1_home_p2_sub,
+    input$set_1_home_p3_sub,
+    input$set_1_home_p4_sub,
+    input$set_1_home_p5_sub,
+    input$set_1_home_p6_sub
+  ),
+  {
+    lapply(
+      c(1:6),
+      \(x) {
+        current_p <- paste0("set_1_home_p", x)
+        current_p_sub <- paste0("set_1_home_p", x, "_sub")
+        updateSelectInput(
+          inputId = current_p,
+          choices = c(input[[current_p]], sort(available_players$set_1$home)),
+          selected = input[[current_p]]
+        )
+        if (!is.null(input[[current_p]]) && nzchar(input[[current_p]])) {
+          updateSelectInput(
+            inputId = current_p_sub,
+            choices = c(
+              input[[current_p_sub]],
+              sort(available_players$set_1$home)
+            ),
+            selected = input[[current_p_sub]]
+          )
+        }
+      }
+    )
+  }
+)
+
+observeEvent(
+  list(
+    input$validate_player_away,
+    input$validate_player_home,
+    input$set_1_away_p1,
+    input$set_1_away_p2,
+    input$set_1_away_p3,
+    input$set_1_away_p4,
+    input$set_1_away_p5,
+    input$set_1_away_p6,
+    input$set_1_away_p1_sub,
+    input$set_1_away_p2_sub,
+    input$set_1_away_p3_sub,
+    input$set_1_away_p4_sub,
+    input$set_1_away_p5_sub,
+    input$set_1_away_p6_sub
+  ),
+  {
+    lapply(
+      c(1:6),
+      \(x) {
+        current_p <- paste0("set_1_away_p", x)
+        current_p_sub <- paste0("set_1_away_p", x, "_sub")
+        updateSelectInput(
+          inputId = current_p,
+          choices = c(input[[current_p]], sort(available_players$set_1$away)),
+          selected = input[[current_p]]
+        )
+        if (!is.null(input[[current_p]]) && nzchar(input[[current_p]])) {
+          updateSelectInput(
+            inputId = current_p_sub,
+            choices = c(
+              input[[current_p_sub]],
+              sort(available_players$set_1$away)
+            ),
+            selected = input[[current_p_sub]]
+          )
+        }
+      }
+    )
+  }
+)
+
+observe({
+  home_score_set_1 <- unlist(
+    lapply(
+      1:8,
+      \(x) unlist(
+       lapply(1:6, \(y) input[[paste0("set_1_r_", x, "_p_", y, "_home")]])
+      )
+    )
+  )
+  
+  away_score_set_1 <- unlist(
+    lapply(
+      1:8,
+      \(x) unlist(
+       lapply(1:6, \(y) input[[paste0("set_1_r_", x, "_p_", y, "_away")]])
+      )
+    )
+  )
+  
+  home_length <- length(home_score_set_1[!is.na(home_score_set_1)])
+  away_length <- length(away_score_set_1[!is.na(away_score_set_1)])
+
+  away_home_diff <- abs(
+    max(home_score_set_1, na.rm = TRUE) - max(away_score_set_1, na.rm = TRUE)
+  )
+  max_score <- max(
+    c(max(home_score_set_1, na.rm = TRUE), max(away_score_set_1, na.rm = TRUE))
+  )
+  
+  length_diff <- abs(home_length - away_length)
+
+  if (away_home_diff >= 2 && max_score >= 25 && length_diff <= 1) {
+    shinyjs::showElement("tab-set-2", anim = TRUE, animType = "fade")
+  } else {
+    shinyjs::hideElement("tab-set-2")
+  }
+})
+
+```

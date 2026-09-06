@@ -12,8 +12,12 @@ fontsize: "14px"
 #| include: false
 library(shiny)
 library(shinyjs)
+library(shinyvalidate)
 library(DT)
 library(fontawesome)
+library(dplyr)
+library(purrr)
+library(jsonlite)
 useShinyjs(rmd = TRUE)
 source("R/utils_players.R")
 ```

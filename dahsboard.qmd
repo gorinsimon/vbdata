@@ -862,7 +862,17 @@ import_player_dt_tbl <- reactiveVal(NULL)
 # players_in_import_df <- reactiveVal(NULL)
 # n_players_in_import <- reactiveVal(0)
 
-#==============================================================================#
+# Reactive values with:
+#   - the number of set completed (based on scores only)
+#   - whether game is over (based on the scores only)
+#   - if the data are ready to export
+# The values are updated any time there is an interaction with the app.
+n_sets <- reactiveVal(0)
+is_game_over <- reactiveVal(FALSE)
+data_ready_for_export <- reactiveVal(FALSE)
+
+
+#==============================================================================|
 #                          ---- "Game" tab events ----
 #==============================================================================#
 

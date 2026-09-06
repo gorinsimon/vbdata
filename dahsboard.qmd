@@ -1518,6 +1518,19 @@ observeEvent(input$serving_set_1, {
   }
 })
 
+# Enable or disable the first score input of the first rotation in set 5 for the
+# team receiving the service.
+observeEvent(input$serving_set_5, {
+  if (input$home_team == input$serving_set_5) {
+    shinyjs::disable("set_5_r_1_p_1_away")
+  }
+  if (input$away_team == input$serving_set_5) {
+    shinyjs::disable("set_5_r_1_p_1_home")
+  }
+})
+
+# Disable all the substitution player input when not all base rotation positions
+# have a player assigned (and enable them when starting players are all set).
 observe({
   # Loop across the five sets
   for (set in 1:5) {

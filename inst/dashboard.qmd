@@ -27,77 +27,98 @@ shinyjs::useShinyjs(rmd = TRUE)
 # Game
 
 ```{r}
-#| layout: "[[1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1,1], [1,1,1]]"
+#| layout: "[[3,6,-3], [-1], [-11], [-3,6,-3], [-1], [-1], [-5,2,-5]]"
+#| fill: false
 #| classes: no-border
 # Must be called from the UI side to use `shinyjs` functions from an Rmd file
 shinyjs::useShinyjs(rmd = TRUE)
+
 # Input to indicate the name of the "home" team
-textInput(
-  "home_team",
-  value = "LVBC", # TO_REMOVE
-  label = tags$p(icon("house"), "Home team")
+bslib::card(
+  bslib::card_header("Teams"),
+  bslib::card_body(
+    bslib::layout_columns(
+      textInput(
+        "home_team",
+        value = "LVBC", # TO_REMOVE
+        label = tags$p(icon("house"), "Home")
+      ),
+      # Input to indicate the name of the "away" (or visiting) team
+      textInput(
+        "away_team",
+        value = "LUC", # TO_REMOVE
+        label = tags$p(icon("suitcase-rolling"), "Away")
+      )
+    ),
+    bslib::layout_columns(
+      selectizeInput(
+        "my_team",
+        label = "Your team?",
+        choices = "",
+        options = list(dropdownParent = "body")
+      ),
+      # Input to indicate which team started to serve
+      selectizeInput(
+        "serving_set_1",
+        label = tags$p(icon("volleyball"), "Which team started to serve?"),
+        choices = "",
+        options = list(dropdownParent = "body")
+      )
+    )
+  )
 )
-# Input to indicate the name of the "away" (or visiting) team
-textInput(
-  "away_team",
-  value = "LUC", # TO_REMOVE
-  label = tags$p(icon("suitcase-rolling"), "Away team")
-)
-br()
 
-br()
+bslib::card(
+  bslib::card_header("Game details"),
+  bslib::card_body(
+    bslib::layout_columns(
+      # Input to indicate the place the game took place
+      textInput(
+        "game_location",
+        label = tags$p(
+          fontawesome::fa("location-dot", fill = "#020618"),
+          "Location"
+        ),
+        value = "here" # TO_REMOVE
+      ),
+      # Input to indicate the date the game took place
+      dateInput(
+        "game_date",
+        label = tags$p(fontawesome::fa("calendar", fill = "#020618"), "Date"),
+        format = "dd-mm-yyyy",
+        value = "2026-02-01" # TO_REMOVE
+      )
+    ),
+    bslib::layout_columns(
+      # Input to indicate the season during which the game was played
+      selectizeInput(
+        "season",
+        label = tags$p(
+          fontawesome::fa("location-dot", fill = "#020618"),
+          "Season"
+        ),
+        # choices = c(
+        #  "", vapply(2025:2000, \(x) paste0(x + 1, " - ", x), FUN.VALUE = "character")
+        # ),
+        options = list(dropdownParent = "body"),
+        choices = c(
+          vapply(
+            2025:2000,
+            \(x) paste0(x + 1, " - ", x + 2),
+            FUN.VALUE = "character"
+          )
+        ) # TO_REMOVE
+      ),
+      # Input to indicate the division/league of the two teams
+      textInput(
+        "division",
+        label = tags$p(icon("layer-group"), "Division"),
+        value = "1", # TO_REMOVE
+      )
+    )
+  )
+)
 
-# Input to let the user indicate which of the two teams is her/his
-selectInput(
-  "my_team",
-  label = "Your team?",
-  choices = ""
-)
-# Input to indicate which team started to serve
-selectInput(
-  "serving_set_1",
-  label = "Which team won the service after the toss?",
-  choices = ""
-)
-br()
-
-br()
-# Input to indicate the place the game took place
-textInput(
-  "game_location",
-  label = tags$p(fontawesome::fa("location-dot", fill = "#020618"), "Location"),
-  value = "here" # TO_REMOVE
-)
-# Input to indicate the date the game took place
-dateInput(
-  "game_date",
-  label = tags$p(fontawesome::fa("calendar", fill = "#020618"), "Date"),
-  format = "dd-mm-yyyy",
-  value = "2026-02-01" # TO_REMOVE
-)
-br()
-
-br()
-# Input to indicate the season during which the game was played
-selectInput(
-  "season",
-  label = tags$p(fontawesome::fa("location-dot", fill = "#020618"), "Season"),
-  # choices = c(
-  #  "", vapply(2025:2000, \(x) paste0(x + 1, " - ", x), FUN.VALUE = "character")
-  # ),
-  choices = c(
-    vapply(2025:2000, \(x) paste0(x + 1, " - ", x), FUN.VALUE = "character")
-  ) # TO_REMOVE
-)
-# Input to indicate the division/league of the two teams
-textInput(
-  "division",
-  label = tags$p(icon("layer-group"), "Division"),
-  value = "1", # TO_REMOVE
-)
-br()
-
-br()
 # Action button to lock the data entered on the "Game" page. This is the only
 # way to allow the user continuing.
 actionButton(
@@ -105,7 +126,6 @@ actionButton(
   label = "Lock game details",
   icon = icon("lock")
 )
-br()
 ```
 
 # Player

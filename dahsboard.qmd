@@ -827,7 +827,7 @@ shinyjs::hide("tab-set-2")
 shinyjs::hide("tab-set-3")
 shinyjs::hide("tab-set-4")
 shinyjs::hide("tab-set-5")
-# shinyjs::hidden("tab-summary")
+shinyjs::hidden("tab-summary")
 
 shinyjs::disable("next_to_set_2")
 shinyjs::disable("next_to_set_3")

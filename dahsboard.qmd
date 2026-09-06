@@ -1816,7 +1816,87 @@ iv_to_set_4 <- set_validator_time_out(4)
 iv_sub_set_5 <- set_validator_substitution(5)
 iv_to_set_5 <- set_validator_time_out(5)
 
+# Observer running different check when the "next set" button is clicked after
+# the set 2.
+observeEvent(input$next_to_set_2, {
+  # Check that the scores by rotation are valid
+  scores_rotations_valid <- check_scores_rotations(1, input)
+  # Run the check of the format of time-outs and substitutions scores
+  iv_sub_set_1$enable()
+  iv_to_set_1$enable()
+  # Check that a player has been assigned to each position in the base rotation
+  has_base_rotation_home_6 <- check_rotation_completeness(1, "home", input)
+  has_base_rotation_away_6 <- check_rotation_completeness(1, "away", input)
+  
+  # If all the checks ran above returned `TRUE`, the message asking
+  # confirmation to switch to the next set is displayed.
+  if (
+    all(
+      iv_sub_set_1$is_valid(),
+      iv_to_set_1$is_valid(),
+      !is_sub_score_missing("home", 1, input),
+      !is_sub_score_missing("away", 1, input),
+      has_base_rotation_home_6,
+      has_base_rotation_away_6,
+      scores_rotations_valid
     )
+  ) {
+    next_set_message(2)
+  }
+  # If at least one player in the home team base rotation is missing, an error
+  # notification is displayed.
+  if (!has_base_rotation_home_6) {
+    showNotification(
+      "There is at least one missing player in the home team rotation.",
+      type = "error"
+    )
+  }
+  # If at least one player in the away team base rotation is missing, an error
+  # notification is displayed.
+  if (!has_base_rotation_away_6) {
+    showNotification(
+      "There is at least one missing player in the away team rotation.",
+      type = "error"
+    )
+  }
+  # If the format of at least one substitution score for any team is incorrect,
+  # an error notification is displayed.
+  if (!iv_sub_set_1$is_valid()) {
+    showNotification(
+      "Substitution inputs have invalid format.",
+      type = "error"
+    )
+  }
+  # If the format of at least one time-out score for any team is incorrect, an
+  # error notification is displayed.
+  if (!iv_to_set_1$is_valid()) {
+    showNotification(
+      "Time-out inputs have invalid format.",
+      type = "error"
+    )
+  }
+  # If for the home team there is at least one substitution, but the score is
+  # missing, an error notification is displayed.
+  if (is_sub_score_missing("home", 1, input)) {
+    showNotification(
+      "There are substitutions for the home team without score.",
+      type = "error"
+    )
+  }
+  # If for the away team there is at least one substitution, but the score is
+  # missing, an error notification is displayed.
+  if (is_sub_score_missing("away", 1, input)) {
+    showNotification(
+      "There are substitutions for the away team without score.",
+      type = "error"
+    )
+  }
+  # If the rotation score of any team is invalid (e.g. 10-25-15), an error
+  # notification is displayed.
+  if (!scores_rotations_valid) {
+    showNotification("Score inputs are not valid.", type = "error")
+  }
+})
   
     )
   

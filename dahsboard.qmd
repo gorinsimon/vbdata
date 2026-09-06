@@ -1145,39 +1145,39 @@ observeEvent(input$validate_player_away, {
   shinyjs::disable("validate_player_away")
 })
 
-# When adding a new player for the home team, the list of player is updated,
-# the player table, and the input fields are emptied.
+## Home team players table -----------------------------------------------------
+
+# When adding a new player for the home team, the list of player is updated in
+# the player table and the input fields are emptied.
 observeEvent(input$add_player_home, {
- players$home_team <- rbind(
-  players$home_team,
-  data.frame(
-   Number = as.character(input$new_player_num_home),
-   Name = input$new_player_name_home,
-   Role = input$new_player_role_home
+  # Create a data frame with the info of the player added and bind to the
+  # already existing table of players.
+  players$home_team <- rbind(
+    players$home_team,
+    data.frame(
+      Number = as.character(input$new_player_num_home),
+      Name = input$new_player_name_home,
+      Role = input$new_player_role_home
+    )
   )
- )
- output$home_players_tbl <- renderDataTable({
-  tbl <- players$home_team
-  tbl[["Number"]] <- as.character(tbl[["Number"]])
-  datatable(
-   tbl,
-   options = list(paging = FALSE, searching = FALSE),
-   selection = "single"
-  )
- })
- 
- updateNumericInput(
-  inputId = "new_player_num_home",
-  value = ""
- )
- updateSelectInput(
-  inputId = "new_player_role_home",
-  selected = ""
- )
- updateTextInput(
-  inputId = "new_player_name_home",
-  value = ""
- )
+  # Once the new player is added to the table, the new table is rendered
+  output$home_players_tbl <- renderDataTable({
+    tbl <- players$home_team
+    tbl[["Number"]] <- as.character(tbl[["Number"]])
+    datatable(
+      tbl,
+      # Since the number of players should be up to 14, we disable paging. We
+      # also do not need the searching option
+      options = list(paging = FALSE, searching = FALSE),
+      # Allow selection of multiple rows (useful to remove more than one player
+      # at once from the table.)
+      selection = "multiple"
+    )
+  })
+  # Empty the three player's input by updating their value with an empty string
+  updateNumericInput(inputId = "new_player_num_home", value = "")
+  updateSelectInput(inputId = "new_player_role_home", selected = "")
+  updateTextInput(inputId = "new_player_name_home", value = "")
 })
 
 # When no player is listed in the home team, the table listing them is not shown
@@ -1211,35 +1211,39 @@ observeEvent(input$remove_player_home, {
  }
 })
 
+## Away team players table -----------------------------------------------------
+
 # When adding a new player for the away team, the list of player is updated,
 # the player table, and the input fields are emptied.
 observeEvent(input$add_player_away, {
- players$away_team <- rbind(
-  players$away_team,
-  data.frame(
-   Number = as.character(input$new_player_num_away),
-   Name = input$new_player_name_away,
-   Role = "a"
+  # Create a data frame with the info of the player added and bind to the
+  # already existing table of players.
+  players$away_team <- rbind(
+    players$away_team,
+    data.frame(
+      Number = as.character(input$new_player_num_away),
+      Name = input$new_player_name_away,
+      Role = "a"
+    )
   )
- )
- output$away_players_tbl <- renderDataTable({
-  tbl <- players$away_team
-  tbl[["Number"]] <- as.character(tbl[["Number"]])
-  datatable(tbl, options = list(paging = FALSE, searching = FALSE))
- })
- 
- updateNumericInput(
-  inputId = "new_player_num_away",
-  value = ""
- )
- updateSelectInput(
-  inputId = "new_player_role_away",
-  selected = ""
- )
- updateTextInput(
-  inputId = "new_player_name_away",
-  value = ""
- )
+  # Once the new player is added to the table, the new table is rendered
+  output$away_players_tbl <- renderDataTable({
+    tbl <- players$away_team
+    tbl[["Number"]] <- as.character(tbl[["Number"]])
+    datatable(
+      tbl,
+      # Since the number of players should be up to 14, we disable paging. We
+      # also do not need the searching option
+      options = list(paging = FALSE, searching = FALSE),
+      # Allow selection of multiple rows (useful to remove more than one player
+      # at once from the table.)
+      selection = "multiple"
+    )
+  })
+  # Empty the three player's input by updating their value with an empty string
+  updateNumericInput(inputId = "new_player_num_away", value = "")
+  updateSelectInput(inputId = "new_player_role_away", selected = "")
+  updateTextInput(inputId = "new_player_name_away", value = "")
 })
 
 # When no player is listed in the away team, the table listing them is not shown

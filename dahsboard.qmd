@@ -2252,7 +2252,24 @@ observeEvent(input$to_summary_confirm, {
 #                         ---- "Summary" tab events ----                        
 #==============================================================================|
 
-  } else {
+# Observer extracting, when a set is over (based on scores only), the score,
+# the number of substitutions, the number of time-outs for team in each set.
+# Then, it renders the different text element displayed in the summary tab.
+observe({
+  {
+  # Extract the score for each team and each set
+  home_score_sets <- get_set_scores("home", input)
+  away_score_sets <- get_set_scores("away", input)
+  # Check that the scores for each set are valid
+  scores <- validate_set_scores(home_score_sets, away_score_sets)
+  # Get the number of substitutions and time-outs
+  substitutions <- get_n_substitutions(input)
+  time_outs <- get_n_time_out(input)
+  # Determine if the game is over (i.e. when a team has win 3 sets)
+  is_game_over(attr(scores, "is_over"))
+  # Get the number of sets played
+  n_sets(attr(scores, "n_sets"))
+  
   }
 })
 

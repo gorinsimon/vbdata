@@ -116,8 +116,6 @@ validate_set_scores <- function(home, away) {
     }
     # Break the loop is there is a team with 3 sets won
     if (max(home_set, away_set) == 3) {
-      # If a team won the game, we indicate it is over
-      attr(scores, "is_over") <- TRUE
       break
     }
   }
@@ -129,6 +127,8 @@ validate_set_scores <- function(home, away) {
   )
   # If we made it so far, then the scores are valid
   attr(scores, "is_valid") <- TRUE
+  attr(scores, "is_over") <- max(home_set, away_set) == 3
+  attr(scores, "n_sets") <- sum(home_set, away_set)
   return(scores)
 }
 

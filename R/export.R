@@ -567,6 +567,189 @@ get_player <- function(team, substitutions, position, rotations) {
   )
 }
 
+#' Prepare and wrangle the data extracted from the app for a given set
+#'
+#' Based on scores, time-outs and substitutions data extracted from the app for
+#' a given set, the functions wrangle and prepare the data for further analysis.
+#'
+#' @param set The set number
+#' @param scores A named list of length 2 where names are "home" and "away".
+#' Each element in the list is a vector with the score at the end of each
+#' rotation for the corresponding team.
+#' @param time_outs A named list of length 2, the two elements must be named
+#' "home" and "away". Each element must be a list containing exactly two
+#' vectors, each containing the score when the team requested a time-out. If a
+#' team did not request any time-out, the two vectors must be NA's of length 2.
+#' If only one time-out was asked, only the second vectors is composed of NA's.
+#' The score in the vectors is always indicated with the score of the
+#' requesting team first. For example, if `time_outs$home[1]` is `c(12, 16)`,
+#' this means that the "home" team requested a time-out when they got 12 points
+#' and the "away" got 16 points.
+#' @param substitutions A named list of length 2, the two elements must be named
+#' "home" and "away". Each of these elements must contains a vector with the
+#' base rotation (beginning of the set), a vector with the substitutions (player
+#' numbers), a list with the scores for the first substitution per position, and
+#' a list with the score for the second substitution per position. For the
+#' substitution scores, each element is a vector of length 2 where the first
+#' element is the score of the team when the substitution happened, and the
+#' second element the score of the opponent team.
+#'
+#' @returns A data frame with the data for a given set extracted from the app
+#' and prepared for further analysis.
+#' @keywords internal
+
+wrangle_set_data <- function(set, scores, time_outs, substitutions) {
+  # Based on attributes present in the "score" object, define the home and
+  # away team.
+  home_t <- attr(scores$home, "team")
+  away_t <- attr(scores$away, "team")
+
+  # Create the full sequences of scores, based on the scores by rotation for the
+  # home and way teams. Since the creation of the full score evolution sequence
+  # for serving and receiving team is handled differently, we need to identify
+  # first if the "home" or "away" team started to serve.
+  # Note that the returned sequences are still lists. Each element in the list
+  # contains the full sequence by rotation.
+  #
+  # Since the creation of the full score sequences for serving and receiving
+  # teams is handled differently, we need to define which team is the receiving
+  # and serving one.
+  if (attr(scores, "serving") == "home") {
+    # "serving team" = "home team" / "receiving team" = "away team"
+    team_s <- list(name = home_t, loc = "home")
+    team_r <- list(name = away_t, loc = "away")
+  } else if (attr(scores, "serving") == "away") {
+    #  "serving team" = "away team" / "receiving team" = "home team"
+    team_s <- list(name = away_t, loc = "away")
+    team_r <- list(name = home_t, loc = "home")
+  }
+
+  # Create the full sequences of scores, based on the scores by rotation for the
+  # serving and receiving teams.
+  team_scores <- extract_score_series(
+    serving = scores[[team_s$loc]],
+    receiving = scores[[team_r$loc]]
+  )
+  team_s_scores <- team_scores[[1]]
+  team_r_scores <- team_scores[[2]]
+
+  # We replace the first NA of the receiving team with 0
+  scores[[team_r$loc]][1] <- 0
+  # We determine how many rotations we played in the set
+  max_rotations <- length(scores[[team_r$loc]])
+
+  # Initiate an empty vector for rotations. The vector will have a length equal
+  # to the number of points scored in a set.
+  rotations <- vector("numeric", length = 0L)
+
+  # Loop over the number of rotations for the receiving team (the one that can
+  # reach the highest number of rotation).
+  for (i in seq_len(max_rotations)) {
+    # For the first rotation, we repeat "1" as many time sas points scored in
+    # first rotation.
+    if (i == 1) {
+      rotations <- c(
+        rotations,
+        rep(i, (scores[[team_s$loc]][i]))
+      )
+      # If the serving team had less rotations than "i", then we only repeat "i"
+      # as many times as the receiving scored in the rotation "i". Note that
+      # there are two different statements depending whether the receiving team
+      # was the home or away team.
+    } else if (i > length(scores[[team_s$loc]])) {
+      rotations <- c(
+        rotations,
+        rep(i, (scores[[team_r$loc]][i] - scores[[team_r$loc]][i - 1]))
+      )
+      # For rotations after the first one and when the two teams scored on that
+      # rotation, we take the difference in score between the current rotation
+      # and the previous one, and we sum that difference and repeat "i" as many
+      # times as that sum.
+    } else {
+      rotations <- c(
+        rotations,
+        rep(
+          i,
+          (scores[[team_s$loc]][i] - scores[[team_s$loc]][i - 1]) +
+            (scores[[team_r$loc]][i] - scores[[team_r$loc]][i - 1])
+        )
+      )
+    }
+  }
+
+  # We combine the "home" and "away" full sequence of score in a tibble. Since
+  # Since scores are still organized "by rotation", for each rotation we create
+  # a column with the score of the home team, and another with the score of the
+  # receiving team. Then, everything is bound by row to create a single tibble
+  # with the score evolution of the entire set.
+  dat <- pmap(
+    list(
+      team_s_scores,
+      team_r_scores,
+      rotations
+    ),
+    \(a, b, c, d) tibble(serving = a, receiving = b, rotation = c)
+  ) |>
+    list_rbind() |>
+    # Add additional data:
+    #   - point number
+    #   - point winner
+    #   - serving team
+    #   - time / substitutions data (empty for now)
+    mutate(
+      set = set,
+      point = row_number(),
+      won = case_when(
+        serving > lag(serving, default = 0) ~ team_s$name,
+        receiving > lag(receiving, default = 0) ~ team_r$name
+      ),
+      service = lag(won, default = team_s$name),
+      time_out = FALSE,
+      asked_time_out = NA,
+      substitution = NA,
+      asked_substitution = NA
+    ) |>
+    # Add the real team names
+    rename_with(
+      \(x) {
+        case_when(
+          x == "serving" ~ team_s$name,
+          x == "receiving" ~ team_r$name,
+        )
+      },
+      .cols = c(serving, receiving)
+    )
+
+  dat <- dat |>
+    # Bind empty columns with the "home team" players' positions
+    bind_cols(
+      tribble(
+        ~"_P1" , ~"_P2" , ~"_P3" , ~"_P4" , ~"_P5" , ~"_P6" ,
+        NA     , NA     , NA     , NA     , NA     , NA
+      ) |>
+        rename_with(\(x) paste0("home", x))
+    ) |>
+    # Bind empty columns with the "away team" players' positions
+    bind_cols(
+      tribble(
+        ~"_P1" , ~"_P2" , ~"_P3" , ~"_P4" , ~"_P5" , ~"_P6" ,
+        NA     , NA     , NA     , NA     , NA     , NA
+      ) |>
+        rename_with(\(x) paste0("away", x))
+    )
+
+  # Add the player at their respective position for each rotation, but without
+  # including substitutions yet.
+  # Adding time-out and substitutions information (when and which time asked)
+  dat <- dat |>
+    add_rotations(substitutions, rotations) |>
+    add_time_out(time_outs) |>
+    add_substitutions(substitutions) |>
+    relocate(set, point, rotation)
+
+  return(dat)
+}
+
 # This file contains functions to easily access the inputs available in the app.
 # They behaviour is too simply extract the information, with only a minimum of
 # extra cleaning.

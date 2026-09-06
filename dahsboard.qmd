@@ -1218,12 +1218,6 @@ observeEvent(input$validate_player_home, {
   
 })
 
-observeEvent(list(are_players_validated$home, are_players_validated$away), {
-  if (all(are_players_validated$home, are_players_validated$away)) {
-    shinyjs::disable("import_players_file")
-    shinyjs::disable("import_players")
-  }
-})
 
 
 ## Adding new home team player -------------------------------------------------
@@ -1371,6 +1365,7 @@ observeEvent(input$remove_player_home, {
   }
 })
 
+
 ## Away team players table -----------------------------------------------------
 
 # When adding a new player for the away team, the list of player is updated,
@@ -1443,6 +1438,49 @@ observeEvent(input$remove_player_away, {
         selection = "multiple"
       )
     })
+  }
+})
+
+
+## Move to Set 1 when players are validated ------------------------------------
+
+observeEvent(list(are_players_validated$home, are_players_validated$away), {
+  # When the players of the two teams are validated, the logic is to enable all
+  # the UI elements of the Player page, then to display the modal dialogue
+  # requesting confirmation to go to set 1. This will allow continue
+  # modifications if the user would cancel moving to Set 1.
+  if (all(are_players_validated$home, are_players_validated$away)) {
+    # Set the players list as not validated
+    are_players_validated$home <- FALSE
+    are_players_validated$away <- FALSE
+    # Enable selecting a file for import and importing the file
+    shinyjs::enable("import_players_file")
+    shinyjs::enable("import_players")
+    # Enable the two teams UI elements
+    enable_players_ui("home")
+    enable_players_ui("away")
+    # Allow selection in the home players table
+    output$home_players_tbl <- renderDataTable({
+      datatable(
+        players$home_team,
+        options = list(paging = FALSE, searching = FALSE),
+        # Deactivate selection in the table
+        selection = "multiple"
+      )
+    })
+    # Allow selection in the away players table
+    output$away_players_tbl <- renderDataTable({
+      datatable(
+        players$away_team,
+        options = list(paging = FALSE, searching = FALSE),
+        # Deactivate selection in the table
+        selection = "multiple"
+      )
+    })
+    # Display the modal dialogue asking the user to confirm (if no confirmation,
+    # then everything has been enabled above so further modifications are still
+    # possible).
+    go_to_set_1_tab_message()
   }
 })
 

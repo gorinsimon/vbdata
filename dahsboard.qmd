@@ -1775,22 +1775,30 @@ observe({
   # continue is provided, the "Set 2" tab is displayed. Then the next set
   # button is disabled, as well as all the element on "Set 1" page.
   if (!is.null(input$next_to_set_2_confirm) && input$next_to_set_2_confirm) {
-    shinyjs::showElement("tab-set-2", anim = TRUE, animType = "fade")
+    shinyjs::showElement("tab-set-2")
+    shinyjs::hideElement("tab-set-1")
+    shinyjs::click("tab-set-2")
     shinyjs::disable("next_to_set_2")
+    
   }
   # When after set 2 the next set button is pressed and confirmation to
   # continue is provided, the "Set 3" tab is displayed. Then the next set
   # button is disabled, as well as all the element on "Set 2" page.
   if (!is.null(input$next_to_set_3_confirm) && input$next_to_set_3_confirm) {
-    shinyjs::showElement("tab-set-3", anim = TRUE, animType = "fade")
+    shinyjs::showElement("tab-set-3")
+    shinyjs::hideElement("tab-set-2")
+    shinyjs::click("tab-set-3")
     shinyjs::disable("next_to_set_3")
+    
   }
   # When after set 3 the next set button is pressed and confirmation to
   # continue is provided, whether the "Set 4" tab is displayed if the game is
   # not over yet or the "Summary" tab is displayed if the game is over. Then the
   # next set button is disabled, as well as all the element on the "Set 3" tab.
   if (!is.null(input$next_to_set_4_confirm) && input$next_to_set_4_confirm) {
-    shinyjs::showElement("tab-set-4", anim = TRUE, animType = "fade")
+    shinyjs::showElement("tab-set-4")
+    shinyjs::hideElement("tab-set-3")
+    shinyjs::click("tab-set-4")
     shinyjs::disable("next_to_set_4")
   }
   # When after set 4 the next set button is pressed and confirmation to
@@ -1798,7 +1806,9 @@ observe({
   # not over yet or the "Summary" tab is displayed if the game is over. Then the
   # next set button is disabled, as well as all the element on the "Set 4" tab.
   if (!is.null(input$next_to_set_5_confirm) && input$next_to_set_5_confirm) {
-    shinyjs::showElement("tab-set-5", anim = TRUE, animType = "fade")
+    shinyjs::showElement("tab-set-5")
+    shinyjs::hideElement("tab-set-4")
+    shinyjs::click("tab-set-5")
     shinyjs::disable("next_to_set_5")
   }
   # When after set 5 the next set button is pressed and confirmation to
@@ -1808,6 +1818,10 @@ observe({
   # and 5.
   if (!is.null(input$to_summary_confirm) && input$to_summary_confirm) {
     shinyjs::showElement("tab-summary", anim = TRUE, animType = "fade")
+    shinyjs::hideElement("tab-set-3")
+    shinyjs::hideElement("tab-set-4")
+    shinyjs::hideElement("tab-set-5")
+    shinyjs::click("tab-summary")
     shinyjs::disable("next_to_set_3")
     shinyjs::disable("next_to_set_4")
     shinyjs::disable("next_to_set_5")

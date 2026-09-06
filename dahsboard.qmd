@@ -1192,23 +1192,32 @@ observe({
 # Take care to remove from the home players table the one(s) selected when the
 # remove button is hit.
 observeEvent(input$remove_player_home, {
- tbl <- players$home_team
- to_rmv <- as.numeric(input$home_players_tbl_rows_selected)
- players$home_team <- tbl[-to_rmv, ]
- 
- if (nrow(players$home_team) == 0) {
-  output$home_players_tbl <- renderDataTable({
-   NULL
-  })
- } else {
-  output$home_players_tbl <- renderDataTable({
-   datatable(
-    players$home_team,
-    options = list(paging = FALSE, searching = FALSE),
-    selection = "single"
-   )
-  })
- }
+  # List the players in the table
+  tbl <- players$home_team
+  # Identify the players selected in the table when the remove button is hit
+  to_rmv <- as.numeric(input$home_players_tbl_rows_selected)
+  # Remove the selected player(s) from the table
+  players$home_team <- tbl[-to_rmv, ]
+
+  # If all players are removed (table has no row), a NULL table is rendered
+  if (nrow(players$home_team) == 0) {
+    output$home_players_tbl <- renderDataTable({
+      NULL
+    })
+    # If at least one player remains in the table, it is rendered again
+  } else {
+    output$home_players_tbl <- renderDataTable({
+      datatable(
+        players$home_team,
+        # Since the number of players should be up to 14, we disable paging. We
+        # also do not need the searching option
+        options = list(paging = FALSE, searching = FALSE),
+        # Allow selection of multiple rows (useful to remove more than one player
+        # at once from the table.)
+        selection = "multiple"
+      )
+    })
+  }
 })
 
 ## Away team players table -----------------------------------------------------
@@ -1258,23 +1267,32 @@ observe({
 # Take care to remove from the away players table the one(s) selected when the
 # remove button is hit.
 observeEvent(input$remove_player_away, {
- tbl <- players$away_team
- to_rmv <- as.numeric(input$away_players_tbl_rows_selected)
- players$away_team <- tbl[-to_rmv, ]
- 
- if (nrow(players$away_team) == 0) {
-  output$away_players_tbl <- renderDataTable({
-   NULL
-  })
- } else {
-  output$away_players_tbl <- renderDataTable({
-   datatable(
-    players$away_team,
-    options = list(paging = FALSE, searching = FALSE),
-    selection = "single"
-   )
-  })
- }
+  # List the players in the table
+  tbl <- players$away_team
+  # Identify the players selected in the table when the remove button is hit
+  to_rmv <- as.numeric(input$away_players_tbl_rows_selected)
+  # Remove the selected player(s) from the table
+  players$away_team <- tbl[-to_rmv, ]
+
+  # If all players are removed (table has no row), a NULL table is rendered
+  if (nrow(players$away_team) == 0) {
+    output$away_players_tbl <- renderDataTable({
+      NULL
+    })
+    # If at least one player remains in the table, it is rendered again
+  } else {
+    output$away_players_tbl <- renderDataTable({
+      datatable(
+        players$away_team,
+        # Since the number of players should be up to 14, we disable paging. We
+        # also do not need the searching option
+        options = list(paging = FALSE, searching = FALSE),
+        # Allow selection of multiple rows (useful to remove more than one player
+        # at once from the table.)
+        selection = "multiple"
+      )
+    })
+  }
 })
 
 #==============================================================================|

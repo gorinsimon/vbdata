@@ -985,6 +985,75 @@ observeEvent(input$lock_details, {
 #                        ---- "Players" tab events ----
 #==============================================================================|
 
+## Import players -------------------------------------------------------------
+
+observeEvent(input$import_players, {
+  # Read the list of potential players to import from the provided file
+  json_players <- read_json(
+    input$import_players_file$datapath,
+    simplifyVector = TRUE
+  )
+  # Turn the players to import from JSON to data table and assign it to the
+  # reactive.
+  in_import$players <- fromJSON(json_players)
+  
+  # Combine the check buttons and the data frame with players to import and
+  # assign to the reactive with the DT table to render in the import model.
+  # import_player_dt_tbl(cbind(check_buttons, in_import$players))
+  
+  # Render the DT table with the players to import... with some settings
+  output$import_player_dt_out <- renderDataTable(
+    datatable(
+      in_import$players,
+      # We do not need the "check" buttons column to be named, but
+      # zero-character are not allowed so we name it with an unbreakable space.
+      rownames = FALSE,
+      escape = FALSE,
+      # We allow the user to edit the cells except for the first column with the
+      # check buttons.
+      editable = "cell",
+      # Additional options...
+      options = list(
+        # We do not want paging or searching
+        paging = FALSE,
+        searching = FALSE
+      ),
+      selection = "multiple"
+    )
+  )
+  
+  # Once everything has been set up, we show the modal with the table with the
+  # players to import.
+  showModal(
+    modalDialog(
+      title = "Import players from previous games",
+      # Some instructions on how to use the import tab
+      tagList(
+        HTML(
+          "<ul><li><b>Editing players</b>: you can double-click on any ",
+          "field to edit the number, name, and role of the players in the ",
+          "table.</li>",
+          "<li><b>Selecting players</b>: click on a row to select a player ",
+          "(you can select more than one player at a time).</li>",
+          "<li><b>Importing players</b>: click on <code>Import</code> at the ",
+          "bottom to import all the selected players.</li></lu>"
+        )
+      ),
+      footer = tagList(
+        modalButton("Cancel"),
+        actionButton(
+          "import_players_confirm",
+          "Import",
+          style = "background-color: #93c47d"
+        )
+      ),
+      easyClose = FALSE,
+      size = "l",
+      dataTableOutput("import_player_dt_out")
+    )
+  )
+})
+
 ## Adding new home team player -------------------------------------------------
 
 # Define whether the "add_new_player_home" button should be enabled (only when a

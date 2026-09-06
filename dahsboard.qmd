@@ -1064,6 +1064,17 @@ observeEvent(input$import_player_dt_out_cell_edit, {
   in_import$players <- editData(in_import$players, edit_dat)
 })
 
+observeEvent(input$import_players_confirm, {
+  # Get the index of the rows selected when the "Import" button is clicked
+  players_in_import_sel_tmp <- input$import_player_dt_out_rows_selected
+  # Subset the reactive with the data underlying the DT table with the players
+  # to import with only those selected.
+  players_to_import <- in_import$players[players_in_import_sel_tmp, ]
+  # Combine the players already added to the game with the ones currently
+  # selected to import.
+  players_home_tmp <- rbind(players$home_team, players_to_import)
+})
+
 ## Adding new home team player -------------------------------------------------
 
 # Define whether the "add_new_player_home" button should be enabled (only when a

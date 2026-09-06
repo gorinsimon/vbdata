@@ -1,0 +1,40 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# vbdata
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+`vbdata` is an R package that provides an Quarto-powered app allowing to encode data from a volleyball game score sheet and to extract the data as `.csv`.
+
+It is aimed in future development to offer analytics solution for the data extracted with the app.
+
+## Installation
+
+You can install the development version of `vbdata` from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("pak")
+pak::pak("gorinsimon/vbdata")
+```
+
+## Usage
+
+After having installed the package, you need to make sure that Quarto is installed on your machine (see [https://quarto.org/docs/get-started/](https://quarto.org/docs/get-started/)). Next, run the following command to run the app locally.
+
+```{r example, eval=FALSE}
+vbdata::run_vb_game_encoder()
+```

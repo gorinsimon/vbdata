@@ -148,7 +148,7 @@ actionButton(
 ### Column {width=50%}
 
 ```{r}
-#| layout: "[[1], [1,1,1], [1], [1,1,1]]"
+#| layout: "[[1], [1,1,1], [-1], [1,1,1]]"
 # This page allows to enter the players of the two teams registered in the game
 # sheet. For each player, the number must be entered, as well as names and
 # roles (having names and roles mandatory is questioned). A player can be added
@@ -198,8 +198,6 @@ numericInput(
   max = 99
 )
 
-br()
-
 # Action button to add a home player (name, role and number must be valid for
 # the button to be active).
 actionButton(
@@ -236,7 +234,7 @@ DT::DTOutput("home_players_tbl")
 ## Row
 
 ```{r}
-#| layout: "[[1], [1,1,1], [1], [1,1,1]]"
+#| layout: "[[1], [1,1,1], [-1], [1,1,1]]"
 # Same as above but here were are dealing with the UI to add away players
 
 h5(
@@ -271,8 +269,6 @@ numericInput(
   min = 1,
   max = 99
 )
-
-br()
 
 # Action button to add an away player (name, role and number must be valid for
 # the button to be active).

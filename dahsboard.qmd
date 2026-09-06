@@ -981,150 +981,168 @@ observeEvent(input$lock_details, {
   }
 })
 
-#==============================================================================#
+#==============================================================================|
 #                        ---- "Players" tab events ----
-#==============================================================================#
+#==============================================================================|
+
+## Adding new home team player -------------------------------------------------
 
 # Define whether the "add_new_player_home" button should be enabled (only when a
-# number and a name is provided).
+# number, a name, and a role is provided).
 observe({
- is_new_home_num_ok <- all(
-  # Cannot be NULL
-  !is.null(input$new_player_num_home),
-  # Cannot be one already used number
-  !(input$new_player_num_home %in% as.numeric(players$home_team[["Number"]])),
-  # Cannot be outside the 1 to 99 range
-  input$new_player_num_home %in% 1:99
- )
- is_new_home_name_ok <- all(
-  # Cannot be NULL
-  !is.null(input$new_player_name_home),
-  # Cannot be empty
-  input$new_player_name_home != ""
- )
- is_new_home_role_ok <- all(
-  # Cannot be NULL
-  !is.null(input$new_player_role_home),
-  # Cannot be empty
-  input$new_player_role_home != ""
- )
- 
- if (!all(is_new_home_num_ok, is_new_home_name_ok, is_new_home_role_ok)) {
-  shinyjs::disable("add_player_home")
- } else {
-  shinyjs::enable("add_player_home")
- }
+  is_new_home_num_ok <- all(
+    # Cannot be NULL
+    !is.null(input$new_player_num_home),
+    # Cannot be one already used number
+    !(input$new_player_num_home %in% as.numeric(players$home_team[["Number"]])),
+    # Cannot be outside the 1 to 99 range
+    input$new_player_num_home %in% 1:99
+  )
+  is_new_home_name_ok <- all(
+    # Cannot be NULL
+    !is.null(input$new_player_name_home),
+    # Cannot be empty
+    input$new_player_name_home != ""
+  )
+  is_new_home_role_ok <- all(
+    # Cannot be NULL
+    !is.null(input$new_player_role_home),
+    # Cannot be empty
+    input$new_player_role_home != ""
+  )
+  # Enable or disable the button accordingly
+  if (!all(is_new_home_num_ok, is_new_home_name_ok, is_new_home_role_ok)) {
+    shinyjs::disable("add_player_home")
+  } else {
+    shinyjs::enable("add_player_home")
+  }
 })
 
-# Define whether the "add_new_player_away" button should be enabled (only when a
-# number and a name is provided).
+# When all conditions are met, enable the "validate home players" button for the
+# home team.
 observe({
- is_new_away_num_ok <- all(
-  # Cannot be NULL
-  !is.null(input$new_player_num_away),
-  # Cannot be one already used number
-  !(input$new_player_num_away %in% as.numeric(players$away_team[["Number"]])),
-  # Cannot be outside the 1 to 99 range
-  input$new_player_num_away %in% 1:99
- )
- is_new_away_name_ok <- all(
-  # Cannot be NULL
-  !is.null(input$new_player_name_away),
-  # Cannot be empty
-  input$new_player_name_away != ""
- )
- is_new_away_role_ok <- all(
-  # Cannot be NULL
-  !is.null(input$new_player_role_away),
-  # Cannot be empty
-  input$new_player_role_away != ""
- )
- 
- if (!all(is_new_away_num_ok, is_new_away_name_ok, is_new_away_role_ok)) {
-  shinyjs::disable("add_player_away")
- } else {
-  shinyjs::enable("add_player_away")
- }
-})
-
-# When all conditions are met, enable the "validate home players" button
-observe({
- n_players <- nrow(players$away_team)
- n_liberos <- sum(players$away_team[["Role"]] == "Libero")
- 
- is_n_enough <- (n_players - n_liberos) >= 6
- is_n_not_too_many <- (n_players + n_liberos) <= 14
- 
- if (all(is_n_enough, is_n_not_too_many)) {
-  shinyjs::enable("validate_player_away")
- } else {
-  shinyjs::disable("validate_player_away")
- }
-})
-
-# When all conditions are met, enable the "validate away players" button
-observe({
- n_players <- nrow(players$home_team)
- n_liberos <- sum(players$home_team[["Role"]] == "Libero")
- 
- is_n_enough <- (n_players - n_liberos) >= 6
- is_n_not_too_many <- (n_players + n_liberos) <= 14
- 
- if (all(is_n_enough, is_n_not_too_many)) {
-  shinyjs::enable("validate_player_home")
- } else {
-  shinyjs::disable("validate_player_home")
- }
+  # Number of players in the home team's list
+  n_players <- nrow(players$home_team)
+  # Number of libero in the home team's list
+  n_liberos <- sum(players$home_team[["Role"]] == "Libero")
+  # Is the number of players in the list (excluding liberos) is at least 6?
+  is_n_enough <- (n_players - n_liberos) >= 6
+  # Is the number of libero not higher than 2?
+  is_libero_not_too_many <- n_liberos <= 2
+  # Is the number of players in the list (including liberos) is not above 14?
+  is_n_not_too_many <- n_players <= 14
+  # Enable or disable the button accordingly
+  if (all(is_n_enough, is_n_not_too_many)) {
+    shinyjs::enable("validate_player_home")
+  } else {
+    shinyjs::disable("validate_player_home")
+  }
 })
 
 # When the home players are validated, then all the buttons in the corresponding
 # card and the table with the list of players are disabled.
 observeEvent(input$validate_player_home, {
- shinyjs::disable("new_player_name_home")
- shinyjs::disable("new_player_role_home")
- shinyjs::disable("new_player_num_home")
- shinyjs::disable("remove_player_home")
- shinyjs::disable("home_players_tbl")
- 
- output$home_players_tbl <- renderDataTable({
-  datatable(
-   players$home_team,
-   options = list(paging = FALSE, searching = FALSE),
-   selection = "none"
+  shinyjs::disable("new_player_name_home")
+  shinyjs::disable("new_player_role_home")
+  shinyjs::disable("new_player_num_home")
+  shinyjs::disable("remove_player_home")
+  shinyjs::disable("home_players_tbl")
+
+  output$home_players_tbl <- renderDataTable({
+    datatable(
+      players$home_team,
+      options = list(paging = FALSE, searching = FALSE),
+      # Deactivate selection in the table
+      selection = "none"
+    )
+  })
+  # Update the "home" element in the reactive value `are_players_validated`
+  are_players_validated$home <- TRUE
+  shinyjs::disable("validate_player_home")
+})
+
+observeEvent(list(are_players_validated$home, are_players_validated$away), {
+  if (all(are_players_validated$home, are_players_validated$away)) {
+    shinyjs::disable("import_players_file")
+    shinyjs::disable("import_players")
+  }
+})
+
+
+## Adding new home team player -------------------------------------------------
+
+# Define whether the "add_new_player_away" button should be enabled (only when a
+# number, a name, and a role is provided).
+observe({
+  is_new_away_num_ok <- all(
+    # Cannot be NULL
+    !is.null(input$new_player_num_away),
+    # Cannot be one already used number
+    !(input$new_player_num_away %in% as.numeric(players$away_team[["Number"]])),
+    # Cannot be outside the 1 to 99 range
+    input$new_player_num_away %in% 1:99
   )
- })
- 
- are_players_validated$home <- TRUE
+  is_new_away_name_ok <- all(
+    # Cannot be NULL
+    !is.null(input$new_player_name_away),
+    # Cannot be empty
+    input$new_player_name_away != ""
+  )
+  is_new_away_role_ok <- all(
+    # Cannot be NULL
+    !is.null(input$new_player_role_away),
+    # Cannot be empty
+    input$new_player_role_away != ""
+  )
+  # Enable or disable the button accordingly
+  if (!all(is_new_away_num_ok, is_new_away_name_ok, is_new_away_role_ok)) {
+    shinyjs::disable("add_player_away")
+  } else {
+    shinyjs::enable("add_player_away")
+  }
+})
+
+# When all conditions are met, enable the "validate home players" button for the
+# away team.
+observe({
+  # Number of players in the away team's list
+  n_players <- nrow(players$away_team)
+  # Number of libero in the away team's list
+  n_liberos <- sum(players$away_team[["Role"]] == "Libero")
+  # Is the number of players in the list (excluding liberos) is at least 6?
+  is_n_enough <- (n_players - n_liberos) >= 6
+  # Is the number of libero not higher than 2?
+  is_libero_not_too_many <- n_liberos <= 2
+  # Is the number of players in the list (including liberos) is not above 14?
+  is_n_not_too_many <- n_players <= 14
+  # Enable or disable the button accordingly
+  if (all(is_n_enough, is_n_not_too_many)) {
+    shinyjs::enable("validate_player_away")
+  } else {
+    shinyjs::disable("validate_player_away")
+  }
 })
 
 # When the away players are validated, then all the buttons in the corresponding
 # card and the table with the list of players are disabled.
 observeEvent(input$validate_player_away, {
- shinyjs::disable("new_player_name_away")
- shinyjs::disable("new_player_role_away")
- shinyjs::disable("new_player_num_away")
- shinyjs::disable("remove_player_away")
- shinyjs::disable("away_players_tbl")
- 
- output$away_players_tbl <- renderDataTable({
-  datatable(
-   players$away_team,
-   options = list(paging = FALSE, searching = FALSE),
-   selection = "none"
-  )
- })
- 
- are_players_validated$away <- TRUE
-})
+  shinyjs::disable("new_player_name_away")
+  shinyjs::disable("new_player_role_away")
+  shinyjs::disable("new_player_num_away")
+  shinyjs::disable("remove_player_away")
+  shinyjs::disable("away_players_tbl")
 
-# When the away and home players are validated, the "set 1" tab appears in the
-# top navbar.
-observe({
- if (any(!are_players_validated$home, !are_players_validated$away)) {
-  shinyjs::hideElement("tab-set-1")
- } else {
-  shinyjs::showElement("tab-set-1", anim = TRUE, animType = "fade")
- }
+  output$away_players_tbl <- renderDataTable({
+    datatable(
+      players$away_team,
+      options = list(paging = FALSE, searching = FALSE),
+      # Deactivate selection in the table
+      selection = "none"
+    )
+  })
+  # Update the "away" element in the reactive value `are_players_validated`
+  are_players_validated$away <- TRUE
+  shinyjs::disable("validate_player_away")
 })
 
 # When adding a new player for the home team, the list of player is updated,

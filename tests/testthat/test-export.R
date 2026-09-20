@@ -208,4 +208,116 @@ for (scenario in as.character(1:4)) {
 
     expect_all_true(unlist(are_time_outs_away_correct))
   })
+
+  test_that("Check wrangling works as expected for substitutions", {
+    # Check that the substitutions indicated in the "score_in" part of the
+    # `substitutions` object are correctly reflect in the wrangled data. The
+    # focus is on the "in" scores.
+    are_sub_in_correct <- lapply(
+      substitutions,
+      \(x) {
+        lapply(
+          x$score_in,
+          \(y) {
+            # If substitution score is not NA, the sum of score + 1 should
+            # correspond to the point where the substitution happened. In the
+            # wrangled data, the point must be marked as with a substitution and
+            # requesting team should be the team in the attribute.
+            if (!is.na(sum(y))) {
+              (isTRUE(wrangled_data$substitution[sum(y) + 1]) &&
+                isTRUE(
+                  wrangled_data$asked_substitution[sum(y) + 1] ==
+                    attr(x, "team")
+                ))
+            } else {
+              TRUE
+            }
+          }
+        )
+      }
+    )
+
+    expect_all_true(unlist(are_sub_in_correct))
+
+    # Same as above but with a focus is on the "in" scores
+    are_sub_out_correct <- lapply(
+      substitutions,
+      \(x) {
+        lapply(
+          x$score_out,
+          \(y) {
+            if (!is.na(sum(y))) {
+              (isTRUE(wrangled_data$substitution[sum(y) + 1]) &&
+                isTRUE(
+                  wrangled_data$asked_substitution[sum(y) + 1] ==
+                    attr(x, "team")
+                ))
+            } else {
+              TRUE
+            }
+          }
+        )
+      }
+    )
+
+    expect_all_true(unlist(are_sub_out_correct))
+
+    # Second check that the substitutions indicated in `substitutions` are
+    # correctly reflected in the wrangled data. Here, we filter the wrangled
+    # data using the exact substitution score instead that the point when it was
+    # requested. The focus in on the "home" team.
+    are_substitution_home_correct <- lapply(
+      c(
+        substitutions[["home"]][["score_in"]],
+        substitutions[["home"]][["score_out"]]
+      ),
+      \(x) {
+        # Here we do the same as above, but we do not select the point based on
+        # the sum of the substitution score, but we select the row based on the
+        # exact score of the two teams.
+        if (!is.na(sum(x))) {
+          pt <- pull(
+            filter(alt_wrangled_data, home == x[1], away == x[2]),
+            point
+          ) +
+            1
+          isTRUE(wrangled_data$substitution[[pt]]) &&
+            isTRUE(
+              wrangled_data$asked_substitution[[pt]] ==
+                attr(time_outs[["home"]], "team")
+            )
+        } else {
+          TRUE
+        }
+      }
+    )
+
+    expect_all_true(unlist(are_substitution_home_correct))
+
+    # Same as above but with a focus in on the "away" team
+    are_substitution_away_correct <- lapply(
+      c(
+        substitutions[["away"]][["score_in"]],
+        substitutions[["away"]][["score_out"]]
+      ),
+      \(x) {
+        if (!is.na(sum(x))) {
+          pt <- pull(
+            filter(alt_wrangled_data, away == x[1], home == x[2]),
+            point
+          ) +
+            1
+          isTRUE(wrangled_data$substitution[[pt]]) &&
+            isTRUE(
+              wrangled_data$asked_substitution[[pt]] ==
+                attr(time_outs[["away"]], "team")
+            )
+        } else {
+          TRUE
+        }
+      }
+    )
+
+    expect_all_true(unlist(are_substitution_away_correct))
+  })
 }

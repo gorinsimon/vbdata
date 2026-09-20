@@ -499,27 +499,38 @@ add_substitutions <- function(dat, substitutions) {
 #' @inheritParams wrangle_set_data
 #' @param rotations An integer vector with the current rotation number for each
 #' point played in the set, as created within the function `wrangle_set_data()`.
+#' @param is_home_serving Logical scalar indicating if the home team started
+#' serving in the current set.
 #'
 #' @returns The data frame passed to the function (`dat`) with new columns
 #' for each time containing the sequence of player numbers at each position for
 #' each point in the set.
 #' @export
 
-add_rotations <- function(dat, substitutions, rotations) {
+add_rotations <- function(dat, substitutions, is_home_serving) {
+
+  if (is_home_serving) {
+    rot_home <- dat$rotations_s
+    rot_away <- dat$rotations_r
+  } else {
+    rot_away <- dat$rotations_s
+    rot_home <- dat$rotations_r
+  }
+
   dat |>
     mutate(
-      home_P1 = get_player("home", substitutions, 1, rotations),
-      home_P2 = get_player("home", substitutions, 2, rotations),
-      home_P3 = get_player("home", substitutions, 3, rotations),
-      home_P4 = get_player("home", substitutions, 4, rotations),
-      home_P5 = get_player("home", substitutions, 5, rotations),
-      home_P6 = get_player("home", substitutions, 6, rotations),
-      away_P1 = get_player("away", substitutions, 1, rotations),
-      away_P2 = get_player("away", substitutions, 2, rotations),
-      away_P3 = get_player("away", substitutions, 3, rotations),
-      away_P4 = get_player("away", substitutions, 4, rotations),
-      away_P5 = get_player("away", substitutions, 5, rotations),
-      away_P6 = get_player("away", substitutions, 6, rotations)
+      home_P1 = get_player("home", substitutions, 1, rot_home),
+      home_P2 = get_player("home", substitutions, 2, rot_home),
+      home_P3 = get_player("home", substitutions, 3, rot_home),
+      home_P4 = get_player("home", substitutions, 4, rot_home),
+      home_P5 = get_player("home", substitutions, 5, rot_home),
+      home_P6 = get_player("home", substitutions, 6, rot_home),
+      away_P1 = get_player("away", substitutions, 1, rot_away),
+      away_P2 = get_player("away", substitutions, 2, rot_away),
+      away_P3 = get_player("away", substitutions, 3, rot_away),
+      away_P4 = get_player("away", substitutions, 4, rot_away),
+      away_P5 = get_player("away", substitutions, 5, rot_away),
+      away_P6 = get_player("away", substitutions, 6, rot_away)
     )
 }
 

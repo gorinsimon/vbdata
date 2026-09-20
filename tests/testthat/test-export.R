@@ -128,6 +128,17 @@ for (scenario in as.character(1:4)) {
     "away" := attr(time_outs$away, "team")
   )
 
+  # Replace the first NA score of the receiving team with 0
+  if (attr(scores, "serving") == "home") {
+    scores[["away"]][1] <- 0
+    serving <- "home"
+    receiving <- "away"
+  } else {
+    scores[["home"]][1] <- 0
+    serving <- "away"
+    receiving <- "home"
+  }
+
   test_that("Check wrangling works as expected for time-outs", {
     # Check that the time-outs indicated in `time_outs-out` are correctly
     # reflected in the wrangled data.
@@ -335,17 +346,6 @@ for (scenario in as.character(1:4)) {
         max(scores$home, na.rm = TRUE) + max(scores$away, na.rm = TRUE)
       )
     )
-
-    # Replace the first NA score of the receiving team with 0
-    if (attr(scores, "serving") == "home") {
-      scores[["away"]][1] <- 0
-      serving <- "home"
-      receiving <- "away"
-    } else {
-      scores[["home"]][1] <- 0
-      serving <- "away"
-      receiving <- "home"
-    }
 
     # Create the sequence of points served by the "serving" team
     service_serving <- scores[[serving]] - lag(scores[[serving]], default = 0)

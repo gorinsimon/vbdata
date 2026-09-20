@@ -320,4 +320,120 @@ for (scenario in as.character(1:4)) {
 
     expect_all_true(unlist(are_substitution_away_correct))
   })
+
+  test_that("Check wrangling works as expected for scores and services", {
+    # The point sequence is as expected
+    expect_identical(
+      wrangled_data$point,
+      seq_len(max(scores$home, na.rm = TRUE) + max(scores$away, na.rm = TRUE))
+    )
+
+    # The number of rows in wrangled data is as expected
+    expect_identical(
+      as.integer(nrow(wrangled_data)),
+      as.integer(
+        max(scores$home, na.rm = TRUE) + max(scores$away, na.rm = TRUE)
+      )
+    )
+
+    # Replace the first NA score of the receiving team with 0
+    if (attr(scores, "serving") == "home") {
+      scores[["away"]][1] <- 0
+      serving <- "home"
+      receiving <- "away"
+    } else {
+      scores[["home"]][1] <- 0
+      serving <- "away"
+      receiving <- "home"
+    }
+
+    # Create the sequence of points served by the "serving" team
+    service_serving <- scores[[serving]] - lag(scores[[serving]], default = 0)
+    service_serving[1] <- service_serving[1] + 1
+    if (max(unlist(scores)) == max(scores[[serving]])) {
+      service_serving[length(service_serving)] <- service_serving[length(
+        service_serving
+      )] -
+        1
+    }
+    # Create the sequence of points served by the "receiving" team
+    service_receiving <- scores[[receiving]] -
+      lag(scores[[receiving]], default = 0)
+    if (max(unlist(scores)) == max(scores[[receiving]])) {
+      service_receiving[length(service_receiving)] <- service_receiving[length(
+        service_receiving
+      )] -
+        1
+    }
+
+    # Initiate an empty vector to create the sequence of serving team
+    vec_service_team <- vector("character")
+    # Filling-in the sequence of serving team
+    for (i in seq_along(service_receiving)) {
+      vec_service_team <- c(
+        vec_service_team,
+        rep("receiving", service_receiving[i])
+      )
+      if (length(service_serving) >= i) {
+        vec_service_team <- c(
+          vec_service_team,
+          rep("serving", service_serving[i])
+        )
+      }
+    }
+
+    # Replace "serving" and "receiving" with the actual teams' name
+    vec_service_team[vec_service_team == "serving"] <- serving
+    vec_service_team[vec_service_team == "receiving"] <- receiving
+    vec_service_team[vec_service_team == "home"] <- attr(scores$home, "team")
+    vec_service_team[vec_service_team == "away"] <- attr(scores$away, "team")
+
+    expect_identical(wrangled_data$service, vec_service_team)
+
+    # Create the sequence of points won by the "serving" team
+    won_serving <- scores[[serving]] - lag(scores[[serving]], default = 0) - 1
+    won_serving[1] <- won_serving[1] + 1
+    # Create the sequence of points won by the "receiving" team
+    won_receiving <- (scores[[receiving]] -
+      lag(scores[[receiving]], default = 0) -
+      1)
+    won_receiving[1] <- won_receiving[1] + 1
+
+    # Initiate an empty vector to create the sequence of winning team
+    vec_won_team <- vector("character")
+    # Filling-in the sequence of winning team
+    for (i in seq_along(won_receiving)) {
+      if (i > 1 && length(won_serving) >= i) {
+        vec_won_team <- c(
+          vec_won_team,
+          rep("receiving", won_receiving[i]),
+          "serving"
+        )
+      } else if (i > 1 && length(won_serving) < i) {
+        vec_won_team <- c(
+          vec_won_team,
+          rep("receiving", won_receiving[i])
+        )
+      }
+      if (i < length(won_receiving)) {
+        vec_won_team <- c(
+          vec_won_team,
+          rep("serving", won_serving[i]),
+          "receiving"
+        )
+      } else if (i > length(won_serving)) {
+        vec_won_team <- vec_won_team
+      } else {
+        vec_won_team <- c(vec_won_team, rep("serving", won_serving[i]))
+      }
+    }
+
+    # Replace "serving" and "receiving" with the actual teams' name
+    vec_won_team[vec_won_team == "serving"] <- serving
+    vec_won_team[vec_won_team == "receiving"] <- receiving
+    vec_won_team[vec_won_team == "home"] <- attr(scores$home, "team")
+    vec_won_team[vec_won_team == "away"] <- attr(scores$away, "team")
+
+    expect_identical(wrangled_data$won, vec_won_team)
+  })
 }

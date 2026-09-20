@@ -497,8 +497,6 @@ add_substitutions <- function(dat, substitutions) {
 #'
 #' @inheritParams add_time_out
 #' @inheritParams wrangle_set_data
-#' @param rotations An integer vector with the current rotation number for each
-#' point played in the set, as created within the function `wrangle_set_data()`.
 #' @param is_home_serving Logical scalar indicating if the home team started
 #' serving in the current set.
 #'
@@ -545,7 +543,9 @@ add_rotations <- function(dat, substitutions, is_home_serving) {
 #' @inheritParams add_substitutions
 #' @param position Integer between 1 and 6 indicating the position for which to
 #' retrieve the player.
-#' @inheritParams add_rotations
+#' @param rotations An integer vector with the current rotation number for
+#' each point played in the set, as created within the function
+#' `wrangle_set_data()`.
 #'
 #' @returns A vector with the player numbers.
 #' @export

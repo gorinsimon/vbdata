@@ -4,7 +4,7 @@
 \alias{add_rotations}
 \title{Add player per position for each rotation in a set data frame}
 \usage{
-add_rotations(dat, substitutions, rotations)
+add_rotations(dat, substitutions, is_home_serving)
 }
 \arguments{
 \item{dat}{Data frame with the evolution of the score for a given set, as
@@ -19,8 +19,8 @@ substitution scores, each element is a vector of length 2 where the first
 element is the score of the team when the substitution happened, and the
 second element the score of the opponent team.}
 
-\item{rotations}{An integer vector with the current rotation number for each
-point played in the set, as created within the function \code{wrangle_set_data()}.}
+\item{is_home_serving}{Logical scalar indicating if the home team started
+serving in the current set.}
 }
 \value{
 The data frame passed to the function (\code{dat}) with new columns

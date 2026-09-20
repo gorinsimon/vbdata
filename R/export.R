@@ -622,8 +622,8 @@ wrangle_set_data <- function(set, scores, time_outs, substitutions) {
     serving = scores[[team_s$loc]],
     receiving = scores[[team_r$loc]]
   )
-  team_s_scores <- team_scores[[1]]
-  team_r_scores <- team_scores[[2]]
+  team_s_scores <- team_scores[["serving"]]
+  team_r_scores <- team_scores[["receiving"]]
 
   # We replace the first NA of the receiving team with 0
   scores[[team_r$loc]][1] <- 0

@@ -500,4 +500,224 @@ for (scenario in as.character(1:4)) {
     expect_identical(wrangled_data$rotations_s, vec_rotation_serving_team)
     expect_identical(wrangled_data$rotations_r, vec_rotation_receiving_team)
   })
+
+  test_that("Check wrangling works as expected for players position", {
+    # Create the sequence of rotations by the "serving" team
+    rotation_serving <- scores[[serving]] - lag(scores[[serving]], default = 0)
+    rotation_serving[1] <- rotation_serving[1] + 1
+    if (max(unlist(scores)) == max(scores[[serving]])) {
+      rotation_serving[length(rotation_serving)] <- rotation_serving[length(
+        rotation_serving
+      )] -
+        1
+    }
+    # Create the sequence of rotations by the "receiving" team
+    rotation_receiving <- scores[[receiving]] -
+      lag(scores[[receiving]], default = 0)
+    if (max(unlist(scores)) == max(scores[[receiving]])) {
+      rotation_receiving[length(
+        rotation_receiving
+      )] <- rotation_receiving[length(
+        rotation_receiving
+      )] -
+        1
+    }
+
+    # Initiate an empty vector to create the sequence of rotations for each team
+    vec_rotation_serving_team <- vector("numeric")
+    vec_rotation_receiving_team <- vector("numeric")
+    # Filling-in the sequence of serving team
+    for (i in seq_along(rotation_receiving)) {
+      if (
+        length(rotation_receiving) == length(rotation_serving) &&
+          i == length(rotation_receiving)
+      ) {
+        vec_rotation_serving_team <- c(
+          vec_rotation_serving_team,
+          rep(i, rotation_serving[i])
+        )
+      } else if (i < length(rotation_receiving)) {
+        vec_rotation_serving_team <- c(
+          vec_rotation_serving_team,
+          rep(i, rotation_serving[i]),
+          rep(i, rotation_receiving[i + 1])
+        )
+      }
+
+      if (
+        length(rotation_receiving) == length(rotation_serving) &&
+          i == length(rotation_receiving)
+      ) {
+        vec_rotation_receiving_team <- c(
+          vec_rotation_receiving_team,
+          rep(i, rotation_serving[i])
+        )
+      } else if (i < length(rotation_receiving)) {
+        vec_rotation_receiving_team <- c(
+          vec_rotation_receiving_team,
+          rep(i, rotation_serving[i]),
+          rep(i + 1, rotation_receiving[i + 1])
+        )
+      }
+    }
+
+    rotations_order <- c(1:6)
+    vec_rotation_serving_team <- ((vec_rotation_serving_team - 1) %% 6) + 1
+
+    vec_p_1_serving_team <- c(
+      substitutions[[serving]]$rotation,
+      substitutions[[serving]]$rotation
+    )[1:6][vec_rotation_serving_team]
+
+    vec_p_2_serving_team <- c(
+      substitutions[[serving]]$rotation,
+      substitutions[[serving]]$rotation
+    )[2:7][vec_rotation_serving_team]
+
+    vec_p_3_serving_team <- c(
+      substitutions[[serving]]$rotation,
+      substitutions[[serving]]$rotation
+    )[3:8][vec_rotation_serving_team]
+
+    vec_p_4_serving_team <- c(
+      substitutions[[serving]]$rotation,
+      substitutions[[serving]]$rotation
+    )[4:9][vec_rotation_serving_team]
+
+    vec_p_5_serving_team <- c(
+      substitutions[[serving]]$rotation,
+      substitutions[[serving]]$rotation
+    )[5:10][vec_rotation_serving_team]
+
+    vec_p_6_serving_team <- c(
+      substitutions[[serving]]$rotation,
+      substitutions[[serving]]$rotation
+    )[6:11][vec_rotation_serving_team]
+
+    serving_team_positions <- dplyr::as_tibble(
+      cbind(
+        point = seq_along(vec_p_1_serving_team),
+        P1 = vec_p_1_serving_team,
+        P2 = vec_p_2_serving_team,
+        P3 = vec_p_3_serving_team,
+        P4 = vec_p_4_serving_team,
+        P5 = vec_p_5_serving_team,
+        P6 = vec_p_6_serving_team
+      )
+    )
+
+    for (i in 1:6) {
+      sub_in <- NA
+      sub_out <- NA
+      if (!any(is.na(substitutions[[serving]]$score_in[[i]]))) {
+        sub_in <- sum(substitutions[[serving]]$score_in[[i]]) + 1
+        if (!any(is.na(substitutions[[serving]]$score_out[[i]]))) {
+          sub_out <- sum(substitutions[[serving]]$score_out[[i]])
+        } else {
+          sub_out <- nrow(serving_team_positions)
+        }
+
+        serving_team_positions <- serving_team_positions |>
+          dplyr::mutate(
+            dplyr::across(
+              !point,
+              \(x) {
+                dplyr::if_else(
+                  x == substitutions[[serving]]$rotation[i] &
+                    point >= sub_in &
+                    point <= sub_out,
+                  substitutions[[serving]]$sub[i],
+                  x
+                )
+              }
+            )
+          )
+      }
+    }
+
+    expect_identical(
+      dplyr::select(wrangled_data, dplyr::starts_with(serving)) |>
+        dplyr::rename_with(\(x) gsub(paste0(serving, "_"), "", x)),
+      dplyr::select(serving_team_positions, !point)
+    )
+
+    vec_rotation_receiving_team <- ((vec_rotation_receiving_team - 1) %% 6) + 1
+
+    vec_p_1_receiving_team <- c(
+      substitutions[[receiving]]$rotation,
+      substitutions[[receiving]]$rotation
+    )[1:6][vec_rotation_receiving_team]
+
+    vec_p_2_receiving_team <- c(
+      substitutions[[receiving]]$rotation,
+      substitutions[[receiving]]$rotation
+    )[2:7][vec_rotation_receiving_team]
+
+    vec_p_3_receiving_team <- c(
+      substitutions[[receiving]]$rotation,
+      substitutions[[receiving]]$rotation
+    )[3:8][vec_rotation_receiving_team]
+
+    vec_p_4_receiving_team <- c(
+      substitutions[[receiving]]$rotation,
+      substitutions[[receiving]]$rotation
+    )[4:9][vec_rotation_receiving_team]
+
+    vec_p_5_receiving_team <- c(
+      substitutions[[receiving]]$rotation,
+      substitutions[[receiving]]$rotation
+    )[5:10][vec_rotation_receiving_team]
+
+    vec_p_6_receiving_team <- c(
+      substitutions[[receiving]]$rotation,
+      substitutions[[receiving]]$rotation
+    )[6:11][vec_rotation_receiving_team]
+
+    receiving_team_positions <- dplyr::as_tibble(
+      cbind(
+        point = seq_along(vec_p_1_receiving_team),
+        P1 = vec_p_1_receiving_team,
+        P2= vec_p_2_receiving_team,
+        P3 = vec_p_3_receiving_team,
+        P4 = vec_p_4_receiving_team,
+        P5 = vec_p_5_receiving_team,
+        P6 = vec_p_6_receiving_team
+      )
+    )
+
+    for (i in 1:6) {
+      sub_in <- NA
+      sub_out <- NA
+      if (!any(is.na(substitutions[[receiving]]$score_in[[i]]))) {
+        sub_in <- sum(substitutions[[receiving]]$score_in[[i]]) + 1
+        if (!any(is.na(substitutions[[receiving]]$score_out[[i]]))) {
+          sub_out <- sum(substitutions[[receiving]]$score_out[[i]])
+        } else {
+          sub_out <- nrow(receiving_team_positions)
+        }
+
+        receiving_team_positions <- receiving_team_positions |>
+          dplyr::mutate(
+            dplyr::across(
+              !point,
+              \(x) {
+                dplyr::if_else(
+                  x == substitutions[[receiving]]$rotation[i] &
+                    point >= sub_in &
+                    point <= sub_out,
+                  substitutions[[receiving]]$sub[i],
+                  x
+                )
+              }
+            )
+          )
+      }
+    }
+
+    expect_identical(
+      dplyr::select(wrangled_data, dplyr::starts_with(receiving)) |>
+        dplyr::rename_with(\(x) gsub(paste0(receiving, "_"), "", x)),
+      select(receiving_team_positions, !point)
+    )
+  })
 }

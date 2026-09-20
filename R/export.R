@@ -766,15 +766,14 @@ wrangle_set_data <- function(set, scores, time_outs, substitutions) {
       ) |>
         rename_with(\(x) paste0("away", x))
     )
-
   # Add the player at their respective position for each rotation, but without
   # including substitutions yet.
   # Adding time-out and substitutions information (when and which time asked)
   dat <- dat |>
-    add_rotations(substitutions, rotations) |>
+    add_rotations(substitutions, attr(scores, "serving") == "home") |>
     add_time_out(time_outs) |>
     add_substitutions(substitutions) |>
-    relocate(set, point, rotation)
+    relocate(set, point, rotations_s, rotations_r)
 
   return(dat)
 }

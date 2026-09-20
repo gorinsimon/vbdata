@@ -673,7 +673,7 @@ wrangle_set_data <- function(set, scores, time_outs, substitutions) {
       rotations_s <- c(
         rotations_s,
         rep(
-          i,
+          i - 1,
           (scores[[team_r$loc]][i] - scores[[team_r$loc]][i - 1] - is_last_r)
         )
       )

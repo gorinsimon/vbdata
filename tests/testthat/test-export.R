@@ -127,4 +127,85 @@ for (scenario in as.character(1:4)) {
     "home" := attr(time_outs$home, "team"),
     "away" := attr(time_outs$away, "team")
   )
+
+  test_that("Check wrangling works as expected for time-outs", {
+    # Check that the time-outs indicated in `time_outs-out` are correctly
+    # reflected in the wrangled data.
+    are_time_outs_correct <- lapply(
+      time_outs,
+      \(x) {
+        lapply(
+          x,
+          \(y) {
+            # If time-out score is not NA, the sum of score + 1 should
+            # correspond to the point where the time-out happened. In the
+            # wrangled data, the point must be marked as with a time-out and the
+            # requesting team should be the team in the attribute.
+            if (!is.na(sum(y))) {
+              (isTRUE(wrangled_data$time_out[sum(y) + 1]) &&
+                isTRUE(
+                  wrangled_data$asked_time_out[sum(y) + 1] == attr(x, "team")
+                ))
+            } else {
+              TRUE
+            }
+          }
+        )
+      }
+    )
+
+    expect_all_true(unlist(are_time_outs_correct))
+
+    # Second check that the time-outs indicated in `time_outs-out` are correctly
+    # reflected in the wrangled data. Here, we filter the wrangled data using the
+    # exact time-out score instead that the point when it was requested. The
+    # focus in on the "home" team.
+    are_time_outs_home_correct <- lapply(
+      time_outs[["home"]],
+      \(x) {
+        # Here we do the same as above, but we do not select the point based on
+        # the sum of the time-out score, but we select the row based on the
+        # exact score of the two teams.
+        if (!is.na(sum(x))) {
+          pt <- pull(
+            filter(alt_wrangled_data, home == x[1], away == x[2]),
+            point
+          ) +
+            1
+          isTRUE(wrangled_data$time_out[[pt]]) &&
+            isTRUE(
+              wrangled_data$asked_time_out[[pt]] ==
+                attr(time_outs[["home"]], "team")
+            )
+        } else {
+          TRUE
+        }
+      }
+    )
+
+    expect_all_true(unlist(are_time_outs_home_correct))
+
+    # Same as above but with a focus in on the "away" team
+    are_time_outs_away_correct <- lapply(
+      time_outs[["away"]],
+      \(x) {
+        if (!is.na(sum(x))) {
+          pt <- pull(
+            filter(alt_wrangled_data, away == x[1], home == x[2]),
+            point
+          ) +
+            1
+          isTRUE(wrangled_data$time_out[[pt]]) &&
+            isTRUE(
+              wrangled_data$asked_time_out[[pt]] ==
+                attr(time_outs[["away"]], "team")
+            )
+        } else {
+          TRUE
+        }
+      }
+    )
+
+    expect_all_true(unlist(are_time_outs_away_correct))
+  })
 }

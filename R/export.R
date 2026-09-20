@@ -632,38 +632,63 @@ wrangle_set_data <- function(set, scores, time_outs, substitutions) {
 
   # Initiate an empty vector for rotations. The vector will have a length equal
   # to the number of points scored in a set.
-  rotations <- vector("numeric", length = 0L)
+  rotations_r <- vector("numeric", length = 0L)
+  rotations_s <- vector("numeric", length = 0L)
 
   # Loop over the number of rotations for the receiving team (the one that can
   # reach the highest number of rotation).
   for (i in seq_len(max_rotations)) {
+    is_last_r <- i == max_rotations
     # For the first rotation, we repeat "1" as many time sas points scored in
     # first rotation.
     if (i == 1) {
-      rotations <- c(
-        rotations,
-        rep(i, (scores[[team_s$loc]][i]))
+      rotations_r <- c(
+        rotations_s,
+        rep(i, (scores[[team_s$loc]][i]) + 1)
       )
+      rotations_s <- rotations_r
       # If the serving team had less rotations than "i", then we only repeat "i"
       # as many times as the receiving scored in the rotation "i". Note that
       # there are two different statements depending whether the receiving team
       # was the home or away team.
     } else if (i > length(scores[[team_s$loc]])) {
-      rotations <- c(
-        rotations,
-        rep(i, (scores[[team_r$loc]][i] - scores[[team_r$loc]][i - 1]))
+      rotations_r <- c(
+        rotations_r,
+        rep(
+          i,
+          (scores[[team_r$loc]][i] - scores[[team_r$loc]][i - 1] - is_last_r)
+        )
+      )
+      rotations_s <- c(
+        rotations_s,
+        rep(
+          i,
+          (scores[[team_r$loc]][i] - scores[[team_r$loc]][i - 1] - is_last_r)
+        )
       )
       # For rotations after the first one and when the two teams scored on that
       # rotation, we take the difference in score between the current rotation
       # and the previous one, and we sum that difference and repeat "i" as many
       # times as that sum.
     } else {
-      rotations <- c(
-        rotations,
+      rotations_r <- c(
+        rotations_r,
         rep(
           i,
-          (scores[[team_s$loc]][i] - scores[[team_s$loc]][i - 1]) +
-            (scores[[team_r$loc]][i] - scores[[team_r$loc]][i - 1])
+          (scores[[team_r$loc]][i] - scores[[team_r$loc]][i - 1]) +
+            (scores[[team_s$loc]][i] - scores[[team_s$loc]][i - 1]) -
+            is_last_r
+        )
+      )
+      rotations_s <- c(
+        rotations_s,
+        rep(
+          i - 1,
+          (scores[[team_r$loc]][i] - scores[[team_r$loc]][i - 1])
+        ),
+        rep(
+          i,
+          (scores[[team_s$loc]][i] - scores[[team_s$loc]][i - 1]) - is_last_r
         )
       )
     }
@@ -678,9 +703,10 @@ wrangle_set_data <- function(set, scores, time_outs, substitutions) {
     list(
       team_s_scores,
       team_r_scores,
-      rotations
+      rotations_s,
+      rotations_r
     ),
-    \(a, b, c, d) tibble(serving = a, receiving = b, rotation = c)
+    \(a, b, c, d) tibble(serving = a, receiving = b, rotations_s = c, rotations_r = d)
   ) |>
     purrr::list_rbind() |>
     # Add additional data:

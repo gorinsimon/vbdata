@@ -1,0 +1,18 @@
+Binding: new_season_project
+Title: vbdata season project
+OpenFiles: season.yaml
+
+Parameter: team
+Widget: TextInput
+Label: The name of the team to analyse in the project
+Position: left
+
+Parameter: season
+Widget: TextInput
+Label: The season played (YYYY-YYYY format)
+Position: left
+
+Parameter: use_git
+Widget: CheckboxInput
+Label: Use Git in the project
+Position: left

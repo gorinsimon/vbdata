@@ -497,29 +497,38 @@ add_substitutions <- function(dat, substitutions) {
 #'
 #' @inheritParams add_time_out
 #' @inheritParams wrangle_set_data
-#' @param rotations An integer vector with the current rotation number for each
-#' point played in the set, as created within the function `wrangle_set_data()`.
+#' @param is_home_serving Logical scalar indicating if the home team started
+#' serving in the current set.
 #'
 #' @returns The data frame passed to the function (`dat`) with new columns
 #' for each time containing the sequence of player numbers at each position for
 #' each point in the set.
 #' @export
 
-add_rotations <- function(dat, substitutions, rotations) {
+add_rotations <- function(dat, substitutions, is_home_serving) {
+
+  if (is_home_serving) {
+    rot_home <- dat$rotations_s
+    rot_away <- dat$rotations_r
+  } else {
+    rot_away <- dat$rotations_s
+    rot_home <- dat$rotations_r
+  }
+
   dat |>
     mutate(
-      home_P1 = get_player("home", substitutions, 1, rotations),
-      home_P2 = get_player("home", substitutions, 2, rotations),
-      home_P3 = get_player("home", substitutions, 3, rotations),
-      home_P4 = get_player("home", substitutions, 4, rotations),
-      home_P5 = get_player("home", substitutions, 5, rotations),
-      home_P6 = get_player("home", substitutions, 6, rotations),
-      away_P1 = get_player("away", substitutions, 1, rotations),
-      away_P2 = get_player("away", substitutions, 2, rotations),
-      away_P3 = get_player("away", substitutions, 3, rotations),
-      away_P4 = get_player("away", substitutions, 4, rotations),
-      away_P5 = get_player("away", substitutions, 5, rotations),
-      away_P6 = get_player("away", substitutions, 6, rotations)
+      home_P1 = get_player("home", substitutions, 1, rot_home),
+      home_P2 = get_player("home", substitutions, 2, rot_home),
+      home_P3 = get_player("home", substitutions, 3, rot_home),
+      home_P4 = get_player("home", substitutions, 4, rot_home),
+      home_P5 = get_player("home", substitutions, 5, rot_home),
+      home_P6 = get_player("home", substitutions, 6, rot_home),
+      away_P1 = get_player("away", substitutions, 1, rot_away),
+      away_P2 = get_player("away", substitutions, 2, rot_away),
+      away_P3 = get_player("away", substitutions, 3, rot_away),
+      away_P4 = get_player("away", substitutions, 4, rot_away),
+      away_P5 = get_player("away", substitutions, 5, rot_away),
+      away_P6 = get_player("away", substitutions, 6, rot_away)
     )
 }
 
@@ -534,7 +543,9 @@ add_rotations <- function(dat, substitutions, rotations) {
 #' @inheritParams add_substitutions
 #' @param position Integer between 1 and 6 indicating the position for which to
 #' retrieve the player.
-#' @inheritParams add_rotations
+#' @param rotations An integer vector with the current rotation number for
+#' each point played in the set, as created within the function
+#' `wrangle_set_data()`.
 #'
 #' @returns A vector with the player numbers.
 #' @export
@@ -622,8 +633,8 @@ wrangle_set_data <- function(set, scores, time_outs, substitutions) {
     serving = scores[[team_s$loc]],
     receiving = scores[[team_r$loc]]
   )
-  team_s_scores <- team_scores[[1]]
-  team_r_scores <- team_scores[[2]]
+  team_s_scores <- team_scores[["serving"]]
+  team_r_scores <- team_scores[["receiving"]]
 
   # We replace the first NA of the receiving team with 0
   scores[[team_r$loc]][1] <- 0
@@ -632,38 +643,63 @@ wrangle_set_data <- function(set, scores, time_outs, substitutions) {
 
   # Initiate an empty vector for rotations. The vector will have a length equal
   # to the number of points scored in a set.
-  rotations <- vector("numeric", length = 0L)
+  rotations_r <- vector("numeric", length = 0L)
+  rotations_s <- vector("numeric", length = 0L)
 
   # Loop over the number of rotations for the receiving team (the one that can
   # reach the highest number of rotation).
   for (i in seq_len(max_rotations)) {
+    is_last_r <- i == max_rotations
     # For the first rotation, we repeat "1" as many time sas points scored in
     # first rotation.
     if (i == 1) {
-      rotations <- c(
-        rotations,
-        rep(i, (scores[[team_s$loc]][i]))
+      rotations_r <- c(
+        rotations_s,
+        rep(i, (scores[[team_s$loc]][i]) + 1)
       )
+      rotations_s <- rotations_r
       # If the serving team had less rotations than "i", then we only repeat "i"
       # as many times as the receiving scored in the rotation "i". Note that
       # there are two different statements depending whether the receiving team
       # was the home or away team.
     } else if (i > length(scores[[team_s$loc]])) {
-      rotations <- c(
-        rotations,
-        rep(i, (scores[[team_r$loc]][i] - scores[[team_r$loc]][i - 1]))
+      rotations_r <- c(
+        rotations_r,
+        rep(
+          i,
+          (scores[[team_r$loc]][i] - scores[[team_r$loc]][i - 1] - is_last_r)
+        )
+      )
+      rotations_s <- c(
+        rotations_s,
+        rep(
+          i - 1,
+          (scores[[team_r$loc]][i] - scores[[team_r$loc]][i - 1] - is_last_r)
+        )
       )
       # For rotations after the first one and when the two teams scored on that
       # rotation, we take the difference in score between the current rotation
       # and the previous one, and we sum that difference and repeat "i" as many
       # times as that sum.
     } else {
-      rotations <- c(
-        rotations,
+      rotations_r <- c(
+        rotations_r,
         rep(
           i,
-          (scores[[team_s$loc]][i] - scores[[team_s$loc]][i - 1]) +
-            (scores[[team_r$loc]][i] - scores[[team_r$loc]][i - 1])
+          (scores[[team_r$loc]][i] - scores[[team_r$loc]][i - 1]) +
+            (scores[[team_s$loc]][i] - scores[[team_s$loc]][i - 1]) -
+            is_last_r
+        )
+      )
+      rotations_s <- c(
+        rotations_s,
+        rep(
+          i - 1,
+          (scores[[team_r$loc]][i] - scores[[team_r$loc]][i - 1])
+        ),
+        rep(
+          i,
+          (scores[[team_s$loc]][i] - scores[[team_s$loc]][i - 1]) - is_last_r
         )
       )
     }
@@ -678,9 +714,10 @@ wrangle_set_data <- function(set, scores, time_outs, substitutions) {
     list(
       team_s_scores,
       team_r_scores,
-      rotations
+      rotations_s,
+      rotations_r
     ),
-    \(a, b, c, d) tibble(serving = a, receiving = b, rotation = c)
+    \(a, b, c, d) tibble(serving = a, receiving = b, rotations_s = c, rotations_r = d)
   ) |>
     purrr::list_rbind() |>
     # Add additional data:
@@ -729,15 +766,14 @@ wrangle_set_data <- function(set, scores, time_outs, substitutions) {
       ) |>
         rename_with(\(x) paste0("away", x))
     )
-
   # Add the player at their respective position for each rotation, but without
   # including substitutions yet.
   # Adding time-out and substitutions information (when and which time asked)
   dat <- dat |>
-    add_rotations(substitutions, rotations) |>
+    add_rotations(substitutions, attr(scores, "serving") == "home") |>
     add_time_out(time_outs) |>
     add_substitutions(substitutions) |>
-    relocate(set, point, rotation)
+    relocate(set, point, rotations_s, rotations_r)
 
   return(dat)
 }

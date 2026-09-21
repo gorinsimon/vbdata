@@ -22,8 +22,9 @@ second element the score of the opponent team.}
 \item{position}{Integer between 1 and 6 indicating the position for which to
 retrieve the player.}
 
-\item{rotations}{An integer vector with the current rotation number for each
-point played in the set, as created within the function \code{wrangle_set_data()}.}
+\item{rotations}{An integer vector with the current rotation number for
+each point played in the set, as created within the function
+\code{wrangle_set_data()}.}
 }
 \value{
 A vector with the player numbers.

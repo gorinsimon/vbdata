@@ -8,9 +8,21 @@
 #' run_vb_game_encoder()
 #' }
 
-run_vb_game_encoder <- function() {
+run_vb_game_encoder <- function(params_path = "season.yaml") {
   # Check that Quarto is available before running the app
   invisible(quarto::quarto_available(error = TRUE))
+
+  # Check `params`
+  if (!is.null(params_path) && !grepl("^.+\\.yaml", params_path)) {
+    stop(
+      "`params_path` must indicate the path to a file with a `.yaml` extension."
+    )
+  } else if (!file.exists(params_path)) {
+    stop(sprintf("The file '%s' does not exist.", params_path))
+  } else {
+    params <- yaml::read_yaml(params_path)
+    check_season_params(params, params_path)
+  }
 
   # Locate the vbdata package files
   vbdata_files <- system.file(package = "vbdata")

@@ -1,5 +1,9 @@
 #' Run the `vbdata` game encoding app
 #'
+#' @param params_path The path to the YAML file where the season parameters
+#' (team name, season, players details) are stored. The default is set to
+#' "season.yaml", assuming the file is located at the root of the project.
+#'
 #' @returns Nothing is return, used only for side-effect (running the app)
 #' @export
 #'

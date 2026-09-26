@@ -144,6 +144,7 @@ check_player_params <- function(players, yaml_path) {
   }
 }
 
+#' @keywords internal
 check_player_id <- function(players, yaml_path) {
   players_id <- mapply(\(x) x[["id"]], players)
   has_null_id <- mapply(is.null, players_id)
@@ -172,6 +173,7 @@ check_player_id <- function(players, yaml_path) {
   }
 }
 
+#' @keywords internal
 check_player_role <- function(players, yaml_path) {
   players_role <- mapply(\(x) x[["role"]], players)
   has_null_role <- mapply(is.null, players_role)

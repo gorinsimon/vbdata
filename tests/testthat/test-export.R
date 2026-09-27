@@ -677,7 +677,7 @@ for (scenario in as.character(1:4)) {
       cbind(
         point = seq_along(vec_p_1_receiving_team),
         P1 = vec_p_1_receiving_team,
-        P2= vec_p_2_receiving_team,
+        P2 = vec_p_2_receiving_team,
         P3 = vec_p_3_receiving_team,
         P4 = vec_p_4_receiving_team,
         P5 = vec_p_5_receiving_team,

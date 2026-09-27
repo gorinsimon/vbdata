@@ -900,11 +900,13 @@ players <- reactiveValues(
   home_team = data.frame(
     Number = character(),
     Name = character(),
+    Id = character(),
     Role = character()
   ),
   away_team = data.frame(
     Number = character(),
     Name = character(),
+    Id = character(),
     Role = character()
   )
 )
@@ -1051,10 +1053,12 @@ observeEvent(input$import_players, {
   players_name <- names(players)
   players_number <- mapply(\(x) x[["number"]], players)
   players_role <- mapply(\(x) x[["role"]], players)
+  players_id <- mapply(\(x) x[["id"]], players)
   in_import$players <- data.frame(
     Number = players_number,
     Name = players_name,
     Role = players_role,
+    Id = players_id,
     row.names = NULL
   )
   

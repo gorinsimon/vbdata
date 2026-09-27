@@ -30,9 +30,9 @@ test_that("Test check of season params", {
     team = "Team",
     season = "2026 - 2027",
     players = list(
-      "Player 1" = list(id = 1, role = "Setter"),
-      "Player 2" = list(id = 2, role = "Middle blocker"),
-      "Player 3" = list(id = 3, role = "Opposite")
+      "Player 1" = list(id = 1, role = "Setter", number = 1),
+      "Player 2" = list(id = 2, role = "Middle blocker", number = 2),
+      "Player 3" = list(id = 3, role = "Opposite", number = 3)
     )
   )
 
@@ -67,6 +67,18 @@ test_that("Test check of season params", {
   yaml <- yaml_complete
   yaml$players$`Player 1`$role <- "other"
   expect_error(check_season_params(yaml, "NA.yaml"), ".+role.+is.+not.+valid.+")
+
+  # Check that empty/NA role fields in players throw an error
+  yaml <- yaml_complete
+  yaml$players$`Player 1`$number <- ""
+  expect_error(check_season_params(yaml, "NA.yaml"), "is.+NULL.+NA.+or.+not.+number")
+  yaml <- yaml_complete
+  yaml$players$`Player 1`$number <- NA
+  expect_error(check_season_params(yaml, "NA.yaml"), "is.+NULL.+NA.+or.+not.+number")
+  # Check that not valid roles in players throw an error
+  yaml <- yaml_complete
+  yaml$players$`Player 1`$number <- "other"
+  expect_error(check_season_params(yaml, "NA.yaml"), "is.+NULL.+NA.+or.+not.+number")
 
   # Check that extra fields in players throw an error
   yaml <- yaml_complete

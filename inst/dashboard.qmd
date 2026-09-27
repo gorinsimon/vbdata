@@ -140,7 +140,6 @@ actionButton(
 ::: {style="font-size: 120%;"}
 ```{r}
 # Side panel button to import players (NOT IMPLEMENTED YET)
-fileInput("import_players_file", "Choose a file")
 actionButton(
   "import_players",
   label = "Import players",
@@ -1041,23 +1040,18 @@ observeEvent(input$go_to_player_tab, {
 
 ## Import players -------------------------------------------------------------
 
-observe({
-  if (is.null(input$import_players_file)) {
-    shinyjs::disable("import_players")
-  } else {
-    shinyjs::enable("import_players")
-  }
-})
-
 observeEvent(input$import_players, {
-  # Read the list of potential players to import from the provided file
-  json_players <- jsonlite::read_json(
-    input$import_players_file$datapath,
-    simplifyVector = TRUE
+  
+  players <- yaml::read_yaml("season.yaml")[["players"]]
+  players_name <- names(players)
+  players_number <- mapply(\(x) x[["number"]], players)
+  players_role <- mapply(\(x) x[["role"]], players)
+  in_import$players <- data.frame(
+    Number = players_number,
+    Name = players_name,
+    Role = players_role,
+    row.names = NULL
   )
-  # Turn the players to import from JSON to data table and assign it to the
-  # reactive.
-  in_import$players <- jsonlite::fromJSON(json_players)
   
   # Combine the check buttons and the data frame with players to import and
   # assign to the reactive with the DT table to render in the import model.
@@ -1504,7 +1498,6 @@ observeEvent(list(are_players_validated$home, are_players_validated$away), {
     are_players_validated$home <- FALSE
     are_players_validated$away <- FALSE
     # Enable selecting a file for import and importing the file
-    shinyjs::enable("import_players_file")
     shinyjs::enable("import_players")
     # Enable the two teams UI elements
     enable_players_ui("home")
@@ -1538,7 +1531,6 @@ observeEvent(list(are_players_validated$home, are_players_validated$away), {
 # page is hidden while the set 1 page is shown (then moving there).
 observeEvent(input$go_to_set_1_tab, {
   # Disable import of data
-  shinyjs::disable("import_players_file")
   shinyjs::disable("import_players")
   # Disable the two teams UI elements
   disable_players_ui("home")

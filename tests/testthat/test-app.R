@@ -5,12 +5,12 @@ test_that("Test error when running the app", {
 })
 
 test_that("Test check of season params", {
-  yaml <- list(team = "", season = "", players = "")
+  yaml <- list(team = "", season = "", players = "", division = "")
 
   # Check missing fields throw an error
   expect_error(
     lapply(
-      1:3,
+      1:4,
       \(x) {
         check_season_params(yaml[-x], "NA.yaml")
       }
@@ -19,15 +19,16 @@ test_that("Test check of season params", {
   )
 
   # Check extra fields throw an error
-  yaml <- list(team = "", season = "", players = "", extra = "")
+  yaml <- list(team = "", season = "", players = "", extra = "", division = "")
   expect_error(check_season_params(yaml, "NA.yaml"), ".+not.+a.+recognized.+")
-  yaml <- list(team = "", season = "", players = "", extra1 = "", extra2 = "")
+  yaml <- list(team = "", season = "", players = "", division = "", extra1 = "", extra2 = "")
   expect_error(check_season_params(yaml, "NA.yaml"), ".+not.+a.+recognized.+")
 
   # Valid YAML that will be modified for further checks
   yaml_complete <- list(
-    team = "",
-    season = "",
+    division = "1",
+    team = "Team",
+    season = "2026 - 2027",
     players = list(
       "Player 1" = list(id = 1, role = "Setter"),
       "Player 2" = list(id = 2, role = "Middle blocker"),

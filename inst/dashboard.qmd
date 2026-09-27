@@ -1415,8 +1415,8 @@ observeEvent(input$remove_player_home, {
         # Since the number of players should be up to 14, we disable paging. We
         # also do not need the searching option
         options = list(paging = FALSE, searching = FALSE),
-        # Allow selection of multiple rows (useful to remove more than one player
-        # at once from the table.)
+        # Allow selection of multiple rows (useful to remove more than one
+        # player at once from the table.)
         selection = "multiple"
       )
     })
@@ -1491,8 +1491,8 @@ observeEvent(input$remove_player_away, {
         # Since the number of players should be up to 14, we disable paging. We
         # also do not need the searching option
         options = list(paging = FALSE, searching = FALSE),
-        # Allow selection of multiple rows (useful to remove more than one player
-        # at once from the table.)
+        # Allow selection of multiple rows (useful to remove more than one
+        # player at once from the table.)
         selection = "multiple"
       )
     })

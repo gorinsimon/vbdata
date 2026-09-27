@@ -259,12 +259,14 @@ chk_time_outs <- function(time_outs) {
 
   if (!all(unlist(to_home_num_or_na))) {
     stop(
-      "Vectors in `time_outs$home` can contain only numeric values or only NA's."
+      "Vectors in `time_outs$home` can contain only numeric values ",
+      "or only NA's."
     )
   }
   if (!all(unlist(to_away_num_or_na))) {
     stop(
-      "Vectors in `time_outs$away` can contain only numeric values or only NA's."
+      "Vectors in `time_outs$away` can contain only numeric values ",
+      "or only NA's."
     )
   }
 
@@ -718,7 +720,14 @@ wrangle_set_data <- function(set, scores, time_outs, substitutions) {
       rotations_s,
       rotations_r
     ),
-    \(a, b, c, d) tibble(serving = a, receiving = b, rotations_s = c, rotations_r = d)
+    \(a, b, c, d) {
+      tibble(
+        serving = a,
+        receiving = b,
+        rotations_s = c,
+        rotations_r = d
+      )
+    }
   ) |>
     purrr::list_rbind() |>
     # Add additional data:

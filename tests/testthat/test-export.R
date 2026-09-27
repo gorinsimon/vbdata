@@ -168,8 +168,8 @@ for (scenario in as.character(1:4)) {
     expect_all_true(unlist(are_time_outs_correct))
 
     # Second check that the time-outs indicated in `time_outs-out` are correctly
-    # reflected in the wrangled data. Here, we filter the wrangled data using the
-    # exact time-out score instead that the point when it was requested. The
+    # reflected in the wrangled data. Here, we filter the wrangled data using
+    # the exact time-out score instead that the point when it was requested. The
     # focus in on the "home" team.
     are_time_outs_home_correct <- lapply(
       time_outs[["home"]],

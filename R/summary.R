@@ -75,9 +75,9 @@ get_set_score <- function(set, team, input) {
 #' home team.
 #' @param away An integer vector with the maximum score, for each set, of the
 #' away team.
-#' @returns A named list of length two ("home" and "away") with the current score
-#' by set for the two team. Each element in the list is a vector with the score
-#' by team for the team in the vector name.
+#' @returns A named list of length two ("home" and "away") with the current
+#' score by set for the two team. Each element in the list is a vector with the
+#' score by team for the team in the vector name.
 #' @export
 
 validate_set_scores <- function(home, away) {

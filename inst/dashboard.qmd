@@ -2614,15 +2614,59 @@ observeEvent(input$to_summary_confirm, {
     }
     
     # We bind together the wrangled data for each set
-    export_dat_list <- purrr::list_rbind(export_dat_list)
-    
+    export_dat <- purrr::list_rbind(export_dat_list)
+
+    # Prepare the export of the players in the user team that played the game
+    if (input$home_team == input$user_team) {
+      players_to_export <- lapply(
+        1:nrow(players$home_team),
+        \(x) {
+          list(
+            role = players$home_team[x, "Role"],
+            number = players$home_team[x, "Number"],
+            id = players$home_team[x, "Id"]
+          )
+        }
+      )
+      names(players_to_export) <- players$home_team$Name
+    } else {
+      players_to_export <- lapply(
+        1:nrow(players$away_team),
+        \(x) {
+          list(
+            role = players$away_team[x, "Role"],
+            number = players$away_team[x, "Number"],
+            id = players$away_team[x, "Id"]
+          )
+        }
+      )
+      names(players_to_export) <- players$away_team$Name
+    }
+  
+    # Add game data and metadata to the export list
+    export_list <- list()
+    export_list[["team"]] <- input$user_team
+    export_list[["season"]] <- input$season
+    export_list[["division"]] <- input$division
+    export_list[["home_team"]] <- input$home_team
+    export_list[["away_team"]] <- input$away_team
+    export_list[["game_date"]] <- input$game_date
+    export_list[["game_location"]] <- input$game_location
+    export_list[["players"]] <- players_to_export
+    export_list[["game_data"]] <- export_dat
+
     # We make available for download the wrangled data
     output$export_game_data <- downloadHandler(
       filename = function() {
-        paste0("vbdata-", Sys.Date(), ".csv")
+        paste0("vbdata-", Sys.Date(), ".json")
       },
       content = function(file) {
-        write.csv2(export_dat_list, file)
+        jsonlite::write_json(
+          export_list,
+          path = file,
+          pretty = TRUE,
+          auto_unbox = TRUE
+        )
       }
     )
   }

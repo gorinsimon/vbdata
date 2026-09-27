@@ -10,8 +10,10 @@ new_season_project <- function(path, ...) {
       usethis::proj_set(path, force = TRUE)
       proj_path <- usethis::proj_get()
 
-      # Delete the "R" folder created by default by `usethis`
+      # Delete the "R" folder created by default by `usethis` and create a
+      # "game" folder where the games data will be saved.
       unlink(file.path(proj_path, "R"))
+      dir.create(file.path(proj_path, "games"))
 
       # Write the YAML file with season parameters
       yaml::write_yaml(

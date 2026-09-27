@@ -849,7 +849,6 @@ downloadButton(
 
 ```{r}
 #| context: server
-
 shinyjs::hideElement("tab-player")
 shinyjs::hideElement("tab-set-1")
 shinyjs::hideElement("tab-set-2")
@@ -1007,7 +1006,7 @@ observe({
     elem_to_check,
     \(x) any(is.null(input[[x]]), !nzchar(input[[x]]))
   )))
-  
+
   # Enable the "Lock details" button based on whether there is any element that
   # is empty on the corresponding page or not.
   if (!any_empty && !are_details_locked()) {
@@ -1032,12 +1031,12 @@ observeEvent(input$go_to_player_tab, {
   shinyjs::disable("game_date")
   shinyjs::disable("season")
   shinyjs::disable("division")
-  
+
   shinyjs::hideElement("tab-game")
   shinyjs::showElement("tab-player")
   shinyjs::disable("lock_details")
   shinyjs::click("tab-player")
-  
+
   removeModal()
 })
 
@@ -1048,7 +1047,6 @@ observeEvent(input$go_to_player_tab, {
 ## Import players -------------------------------------------------------------
 
 observeEvent(input$import_players, {
-  
   players <- yaml::read_yaml("season.yaml")[["players"]]
   players_name <- names(players)
   players_number <- mapply(\(x) x[["number"]], players)
@@ -1086,7 +1084,7 @@ observeEvent(input$import_players, {
       selection = "multiple"
     )
   )
-  
+
   # Once everything has been set up, we show the modal with the table with the
   # players to import.
   showModal(
@@ -1143,7 +1141,7 @@ observeEvent(input$import_players_confirm, {
   dup_players_count <- table(players_imp_tmp$Number)
   # Extract the duplicated players (if any)
   dup_players <- names(dup_players_count)[dup_players_count > 1]
-  
+
   # Check if the players to import have liberos and if adding them would lead
   # to having more than 2.
   if (sum(players_imp_tmp$Role == "Libero") > 2) {
@@ -1279,7 +1277,6 @@ observeEvent(input$validate_player_home, {
   })
   # Update the "home" element in the reactive value `are_players_validated`
   are_players_validated$home <- TRUE
-  
 })
 
 
@@ -1345,7 +1342,7 @@ observe({
 # When the away players are validated, then all the buttons in the corresponding
 # card and the table with the list of players are disabled.
 observeEvent(input$validate_player_away, {
-  disable_players_ui("away")  
+  disable_players_ui("away")
   output$away_players_tbl <- DT::renderDT({
     DT::datatable(
       players$away_team,
@@ -1411,7 +1408,7 @@ observeEvent(input$remove_player_home, {
   to_rmv <- as.numeric(input$home_players_tbl_rows_selected)
   # Remove the selected player(s) from the table
   players$home_team <- tbl[-to_rmv, ]
-  
+
   # If all players are removed (table has no row), a NULL table is rendered
   if (nrow(players$home_team) == 0) {
     output$home_players_tbl <- DT::renderDT({
@@ -1487,7 +1484,7 @@ observeEvent(input$remove_player_away, {
   to_rmv <- as.numeric(input$away_players_tbl_rows_selected)
   # Remove the selected player(s) from the table
   players$away_team <- tbl[-to_rmv, ]
-  
+
   # If all players are removed (table has no row), a NULL table is rendered
   if (nrow(players$away_team) == 0) {
     output$away_players_tbl <- DT::renderDT({
@@ -1588,7 +1585,7 @@ observeEvent(input$go_to_set_1_tab, {
 })
 
 #==============================================================================|
-#                           ---- All set events ----                          
+#                           ---- All set events ----
 #==============================================================================|
 
 # Observer updating the list of available players for all sets and the two
@@ -1884,7 +1881,7 @@ observe({
   # skips the "Set 4" and "Set 5" tabs. If the game is not over, the modal
   # displayed is the `next_to_set_4_confirm` and, when confirmed, the "Set 4"
   # tab is shown.
-  
+
   # When the number of sets completed (based on scores) is 1, the "next set"
   # button is enabled.
   if (n_sets() == 1) {
@@ -1910,7 +1907,7 @@ observe({
   if (n_sets() == 5) {
     shinyjs::enable("next_to_summary")
   }
-  
+
   # When after set 1 the next set button is pressed and confirmation to
   # continue is provided, the "Set 2" tab is displayed. Then the next set
   # button is disabled, as well as all the element on "Set 1" page.
@@ -1919,7 +1916,6 @@ observe({
     shinyjs::hideElement("tab-set-1")
     shinyjs::click("tab-set-2")
     shinyjs::disable("next_to_set_2")
-    
   }
   # When after set 2 the next set button is pressed and confirmation to
   # continue is provided, the "Set 3" tab is displayed. Then the next set
@@ -1929,7 +1925,6 @@ observe({
     shinyjs::hideElement("tab-set-2")
     shinyjs::click("tab-set-3")
     shinyjs::disable("next_to_set_3")
-    
   }
   # When after set 3 the next set button is pressed and confirmation to
   # continue is provided, whether the "Set 4" tab is displayed if the game is
@@ -1994,7 +1989,7 @@ observeEvent(input$next_to_set_2, {
   # Check that a player has been assigned to each position in the base rotation
   has_base_rotation_home_6 <- are_base_rotations_complete(input, "home", 1)
   has_base_rotation_away_6 <- are_base_rotations_complete(input, "away", 1)
-  
+
   # If all the checks ran above returned `TRUE`, the message asking
   # confirmation to switch to the next set is displayed.
   if (
@@ -2074,7 +2069,7 @@ observeEvent(input$next_to_set_3, {
   # Check that a player has been assigned to each position in the base rotation
   has_base_rotation_home_6 <- are_base_rotations_complete(input, "home", 2)
   has_base_rotation_away_6 <- are_base_rotations_complete(input, "away", 2)
-  
+
   # If all the checks ran above returned `TRUE`, the message asking
   # confirmation to switch to the next set is displayed.
   if (
@@ -2154,7 +2149,7 @@ observeEvent(input$next_to_set_4, {
   # Check that a player has been assigned to each position in the base rotation
   has_base_rotation_home_6 <- are_base_rotations_complete(input, "home", 3)
   has_base_rotation_away_6 <- are_base_rotations_complete(input, "away", 3)
-  
+
   # If all the checks ran above returned `TRUE`, the message asking
   # confirmation to switch to the next set is displayed.
   if (
@@ -2240,7 +2235,7 @@ observeEvent(input$next_to_set_5, {
   # Check that a player has been assigned to each position in the base rotation
   has_base_rotation_home_6 <- are_base_rotations_complete(input, "home", 4)
   has_base_rotation_away_6 <- are_base_rotations_complete(input, "away", 4)
-  
+
   # If all the checks ran above returned `TRUE`, the message asking
   # confirmation to switch to the next set is displayed.
   if (
@@ -2326,7 +2321,7 @@ observeEvent(input$next_to_summary, {
   # Check that a player has been assigned to each position in the base rotation
   has_base_rotation_home_6 <- are_base_rotations_complete(input, "home", 5)
   has_base_rotation_away_6 <- are_base_rotations_complete(input, "away", 5)
-  
+
   # If all the checks ran above returned `TRUE`, the message asking
   # confirmation to switch to the next set is displayed.
   if (
@@ -2419,7 +2414,7 @@ observeEvent(input$to_summary_confirm, {
 
 
 #==============================================================================|
-#                         ---- "Summary" tab events ----                        
+#                         ---- "Summary" tab events ----
 #==============================================================================|
 
 # Observer extracting, when a set is over (based on scores only), the score,
@@ -2438,44 +2433,44 @@ observe({
   is_game_over(attr(scores, "is_over"))
   # Get the number of sets played
   n_sets(attr(scores, "n_sets"))
-  
+
   # When the scores are valid, the scores, number of substitutions, and number
   # of time-outs for sets 1 to 3 are rendered in the summary tab.
   if (attr(scores, "is_valid")) {
     output$home_score_set_1 <- renderText({ scores$home[1] })
     output$home_score_set_2 <- renderText({ scores$home[2] })
     output$home_score_set_3 <- renderText({ scores$home[3] })
-    
+
     output$away_score_set_1 <- renderText({ scores$away[1] })
     output$away_score_set_2 <- renderText({ scores$away[2] })
     output$away_score_set_3 <- renderText({ scores$away[3] })
-    
+
     output$home_sub_set_1 <- renderText({ substitutions$home[1] })
     output$home_sub_set_2 <- renderText({ substitutions$home[2] })
     output$home_sub_set_3 <- renderText({ substitutions$home[3] })
-    
+
     output$away_sub_set_1 <- renderText({ substitutions$away[1] })
     output$away_sub_set_2 <- renderText({ substitutions$away[2] })
     output$away_sub_set_3 <- renderText({ substitutions$away[3] })
-    
+
     output$home_to_set_1 <- renderText({ time_outs$home[1] })
     output$home_to_set_2 <- renderText({ time_outs$home[2] })
     output$home_to_set_3 <- renderText({ time_outs$home[3] })
-    
+
     output$away_to_set_1 <- renderText({ time_outs$away[1] })
     output$away_to_set_2 <- renderText({ time_outs$away[2] })
     output$away_to_set_3 <- renderText({ time_outs$away[3] })
-    
+
     # If the number of sets if higher than 3, the scores, number of
     # substitutions, and number of time-outs for set 4 are rendered in the
     # summary tab.
     if (n_sets() > 3) {
       output$home_score_set_4 <- renderText({ scores$home[4] })
       output$away_score_set_4 <- renderText({ scores$away[4] })
-      
+
       output$home_sub_set_4 <- renderText({ substitutions$home[4] })
       output$away_sub_set_4 <- renderText({ substitutions$away[4] })
-      
+
       output$home_to_set_4 <- renderText({ time_outs$home[4] })
       output$away_to_set_4 <- renderText({ time_outs$away[4] })
     }
@@ -2485,10 +2480,10 @@ observe({
     if (n_sets() > 4) {
       output$home_score_set_5 <- renderText({ scores$home[5] })
       output$away_score_set_5 <- renderText({ scores$away[5] })
-      
+
       output$home_sub_set_5 <- renderText({ substitutions$home[5] })
       output$away_sub_set_5 <- renderText({ substitutions$away[5] })
-      
+
       output$home_to_set_5 <- renderText({ time_outs$home[5] })
       output$away_to_set_5 <- renderText({ time_outs$away[5] })
     }
@@ -2499,51 +2494,51 @@ observe({
     output$home_sets <- renderText({
       sum(scores$home > scores$away, na.rm = TRUE)
     })
-    
+
     # In case the scores are not valid, all the element on the summary tab are
     # rendered as empty strings.
   } else {
-    
+
     output$home_score_set_1 <- renderText({ "" })
     output$home_score_set_2 <- renderText({ "" })
     output$home_score_set_3 <- renderText({ "" })
     output$home_score_set_4 <- renderText({ "" })
     output$home_score_set_5 <- renderText({ "" })
-    
+
     output$away_score_set_1 <- renderText({ "" })
     output$away_score_set_2 <- renderText({ "" })
     output$away_score_set_3 <- renderText({ "" })
     output$away_score_set_4 <- renderText({ "" })
     output$away_score_set_5 <- renderText({ "" })
-    
+
     output$home_sub_set_1 <- renderText({ "" })
     output$home_sub_set_2 <- renderText({ "" })
     output$home_sub_set_3 <- renderText({ "" })
     output$home_sub_set_4 <- renderText({ "" })
     output$home_sub_set_5 <- renderText({ "" })
-    
+
     output$away_sub_set_1 <- renderText({ "" })
     output$away_sub_set_2 <- renderText({ "" })
     output$away_sub_set_3 <- renderText({ "" })
     output$away_sub_set_4 <- renderText({ "" })
     output$away_sub_set_5 <- renderText({ "" })
-    
+
     output$home_to_set_1 <- renderText({ "" })
     output$home_to_set_2 <- renderText({ "" })
     output$home_to_set_3 <- renderText({ "" })
     output$home_to_set_4 <- renderText({ "" })
     output$home_to_set_5 <- renderText({ "" })
-    
+
     output$away_to_set_1 <- renderText({ "" })
     output$away_to_set_2 <- renderText({ "" })
     output$away_to_set_3 <- renderText({ "" })
     output$away_to_set_4 <- renderText({ "" })
     output$away_to_set_5 <- renderText({ "" })
-    
+
     output$away_sets <- renderText({ "" })
     output$home_sets <- renderText({ "" })
   }
-  
+
   output$home_team_out <- renderText({ input$home_team })
   output$away_team_out <- renderText({ input$away_team })
 })
@@ -2557,7 +2552,7 @@ observeEvent(input$to_summary_confirm, {
   if (data_ready_for_export()) {
     # Create a list that will index the wrangled data for each set
     export_dat_list <- list()
-    
+
     # We loop over each set using the number of sets played stored in the
     # reactive `n_sets()`.
     for (i in 1:n_sets()) {
@@ -2571,7 +2566,7 @@ observeEvent(input$to_summary_confirm, {
       # We set the "serving" attribute with the team (home or away) that started
       # to serve during the set.
       attr(scores, "serving") <- get_set_serving_team(input, i)
-      
+
       # We extract from the app input the scores when time-outs where requested
       # for each team separately (always starting with the requesting team.)
       time_outs <- list(
@@ -2582,7 +2577,7 @@ observeEvent(input$to_summary_confirm, {
       # we can retrieve the name of home and away teams.
       attr(time_outs$home, "team") <- input$home_team
       attr(time_outs$away, "team") <- input$away_team
-      
+
       # We get from the app input all necessary information regarding
       # substitutions. For each team, we get the rotation at the beginning of
       # the set, the substitution rotation (NA when there was no substitution
@@ -2602,12 +2597,12 @@ observeEvent(input$to_summary_confirm, {
           score_out = get_substitution_scores(input, "away", i, "out")
         )
       )
-      
+
       # We set the "home" and "away" attributes to the `substitutions` object so
       # we can retrieve the name of home and away teams.
       attr(substitutions$home, "team") <- input$home_team
       attr(substitutions$away, "team") <- input$away_team
-      
+
       # We prepare the data export for the current set
       export_dat_list[[i]] <- wrangle_set_data(
         i,
@@ -2616,7 +2611,7 @@ observeEvent(input$to_summary_confirm, {
         substitutions
       )
     }
-    
+
     # We bind together the wrangled data for each set
     export_dat <- purrr::list_rbind(export_dat_list)
 
@@ -2646,7 +2641,7 @@ observeEvent(input$to_summary_confirm, {
       )
       names(players_to_export) <- players$away_team$Name
     }
-  
+
     # Add game data and metadata to the export list
     export_list <- list()
     export_list[["team"]] <- input$user_team
@@ -2675,5 +2670,4 @@ observeEvent(input$to_summary_confirm, {
     )
   }
 })
-
 ```

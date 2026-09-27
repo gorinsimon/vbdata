@@ -112,6 +112,7 @@ check_season_params <- function(params, yaml_path) {
   check_player_params(players, yaml_path)
   check_player_id(players, yaml_path)
   check_player_role(players, yaml_path)
+  check_player_number(players, yaml_path)
 }
 
 #' @keywords internal
@@ -200,6 +201,29 @@ check_player_id <- function(players, yaml_path) {
   if (length(unique(players_id)) < length(players_id)) {
     stop(
       sprintf("The player id's in '%s' are not unique.", yaml_path)
+    )
+  }
+}
+
+#' @keywords internal
+check_player_number <- function(players, yaml_path) {
+  players_num <- mapply(\(x) x[["number"]], players)
+  has_null_num <- mapply(is.null, players_num)
+  has_not_num <- !is.numeric(players_num)
+  has_na_num <- is.na(players_num)
+  any_incorrect_id <- has_null_num | has_not_num | has_na_num
+
+  if (any(any_incorrect_id)) {
+    stop(
+      sprintf(
+        "In '%s', the `number` field of the following player%s is ",
+        yaml_path,
+        ifelse(sum(any_incorrect_id) > 1, "s", "")
+      ),
+      "NULL, NA, or not a number: \"",
+      paste0(names(players)[any_incorrect_id], collapse = "\", \""),
+      "\".\nFor each player, the `number` field must be populated with a ",
+      "number."
     )
   }
 }

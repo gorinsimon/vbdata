@@ -2611,7 +2611,7 @@ observeEvent(input$to_summary_confirm, {
     # Prepare the export of the players in the user team that played the game
     if (input$home_team == input$user_team) {
       players_to_export <- lapply(
-        1:nrow(players$home_team),
+        seq_len(nrow(players$home_team)),
         \(x) {
           list(
             role = players$home_team[x, "Role"],
@@ -2623,7 +2623,7 @@ observeEvent(input$to_summary_confirm, {
       names(players_to_export) <- players$home_team$Name
     } else {
       players_to_export <- lapply(
-        1:nrow(players$away_team),
+        seq_len(nrow(players$away_team)),
         \(x) {
           list(
             role = players$away_team[x, "Role"],

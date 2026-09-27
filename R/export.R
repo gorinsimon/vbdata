@@ -62,7 +62,7 @@ extract_score_series <- function(serving, receiving) {
   receiving[1] <- 0
   # Loop over the rotation scores of the receiving team (the one likely to have
   # the most rotations).
-  for (i in 1:length(receiving)) {
+  for (i in seq_along(receiving)) {
     # When this is the first rotation, the serving team has a score series
     # starting from 1 to the number of points scored, or just 0 if it lost the
     # first point. For the receiving team, we repeat 0 as many times the serving

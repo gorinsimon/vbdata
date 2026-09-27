@@ -993,7 +993,12 @@ observeEvent(list(input$user_team, input$opponent_team, input$away_team, input$h
 observe({
   # ID of the elements to check
   elem_to_check <- list(
-    "home_team", "away_team", "user_team", "serving_set_1", "season", "division"
+    "home_team",
+    "away_team",
+    "user_team",
+    "serving_set_1",
+    "season",
+    "division"
   )
   # Check all elements in 
   any_empty <- any(unlist(lapply(
@@ -2162,6 +2167,7 @@ observeEvent(input$next_to_set_4, {
     if (!is_game_over()) {
       next_set_message(4)
     } else {
+      # Use `set = "summary"` to indicate this was the last set
       data_ready_for_export(TRUE)
       next_set_message("summary")
     }
@@ -2247,9 +2253,9 @@ observeEvent(input$next_to_set_5, {
     if (!is_game_over()) {
       next_set_message(5, input)
     } else {
-      # Use `set = NULL` to indicate this was the last set
-      next_set_message(set = NULL)
+      # Use `set = "summary"` to indicate this was the last set
       data_ready_for_export(TRUE)
+      next_set_message(set = "summary")
     }
   }
   # If at least one player in the home team base rotation is missing, an error
@@ -2330,7 +2336,9 @@ observeEvent(input$next_to_summary, {
       scores_rotations_valid
     )
   ) {
-    next_set_message("summary")
+    # Use `set = "summary"` to indicate this was the last set
+    data_ready_for_export(TRUE)
+    next_set_message(set = "summary")
   }
   # If at least one player in the home team base rotation is missing, an error
   # notification is displayed.

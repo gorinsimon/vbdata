@@ -145,14 +145,14 @@ check_player_params <- function(players, yaml_path) {
   }
 
   has_player_number <- mapply(\(x) "number" %in% x, player_names)
-  if (!all(has_player_id)) {
+  if (!all(has_player_number)) {
     stop(
       sprintf(
-        "The following player%s no \"id\" field in '%s': \"",
-        ifelse(sum(!has_player_id) > 1, "s have", " has"),
+        "The following player%s no \"number\" field in '%s': \"",
+        ifelse(sum(!has_player_number) > 1, "s have", " has"),
         yaml_path
       ),
-      paste0(names(player_names)[!has_player_id], collapse = "\", \""),
+      paste0(names(player_names)[!has_player_number], collapse = "\", \""),
       "\"."
     )
   }

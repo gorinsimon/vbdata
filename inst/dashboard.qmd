@@ -1117,7 +1117,7 @@ observeEvent(input$import_player_dt_out_cell_edit, {
   edit_dat[, "col"] <- edit_dat[, "col"] + 1
   # Update the reactive with the data underlying the DT table with players to
   # import to take into consideration the changes.
-  in_import$players <- editData(in_import$players, edit_dat)
+  in_import$players <- DT::editData(in_import$players, edit_dat)
 })
 
 observeEvent(input$import_players_confirm, {
@@ -1128,23 +1128,23 @@ observeEvent(input$import_players_confirm, {
   players_to_import <- in_import$players[players_in_import_sel_tmp, ]
   # Combine the players already added to the game with the ones currently
   # selected to import.
-  players_home_tmp <- rbind(players$home_team, players_to_import)
+  players_imp_tmp <- rbind(players[["user_team"]], players_to_import)
   # From the players already added and those to import, count the number of the
   # players to identify duplicates.
-  dup_players_count <- table(players_home_tmp$Number)
+  dup_players_count <- table(players_imp_tmp$Number)
   # Extract the duplicated players (if any)
   dup_players <- names(dup_players_count)[dup_players_count > 1]
   
   # Check if the players to import have liberos and if adding them would lead
   # to having more than 2.
-  if (sum(players_home_tmp$Role == "Libero") > 2) {
+  if (sum(players_imp_tmp$Role == "Libero") > 2) {
     showNotification(
       "There are already two liberos engaged for the game.",
       type = "error"
     )
     # Check if the players to import would lead to go above 12 field players
     # (excluding liberos).
-  } else if (sum(players_home_tmp$Role != "Libero") > 12) {
+  } else if (sum(players_imp_tmp$Role != "Libero") > 12) {
     showNotification(
       "There are already 12 non-libero players engaged for the game.",
       type = "error"
@@ -1168,13 +1168,18 @@ observeEvent(input$import_players_confirm, {
     )
     showNotification(dup_players_string, type = "error")
   } else {
+    which_team <- ifelse(
+      input$user_team == input$home_team,
+      "home",
+      "away"
+    )
     # If the players to import do not violate the rules above, we then update
     # the DT table with the players in the game with the one to import.
-    players$home_team <- players_home_tmp
+    players[[paste0(which_team, "_team")]] <- players_imp_tmp
     if (sum(players_in_import_sel_tmp) > 0) {
       # Once the new player is added to the table, the new table is rendered
-      output$home_players_tbl <- DT::renderDT({
-        tbl <- players$home_team
+      output[[paste0(which_team, "_players_tbl")]] <- DT::renderDT({
+        tbl <- players[[paste0(which_team, "_team")]]
         tbl[["Number"]] <- as.character(tbl[["Number"]])
         DT::datatable(
           tbl,
@@ -1204,18 +1209,23 @@ observe({
     # Cannot be outside the 1 to 99 range
     input$new_player_num_home %in% 1:99
   )
-  is_new_home_name_ok <- all(
-    # Cannot be NULL
-    !is.null(input$new_player_name_home),
-    # Cannot be empty
-    input$new_player_name_home != ""
-  )
-  is_new_home_role_ok <- all(
-    # Cannot be NULL
-    !is.null(input$new_player_role_home),
-    # Cannot be empty
-    input$new_player_role_home != ""
-  )
+  if (input$home_team == input$opponent_team) {
+    is_new_home_name_ok <- TRUE
+    is_new_home_role_ok <- TRUE
+  } else {
+    is_new_home_name_ok <- all(
+      # Cannot be NULL
+      !is.null(input$new_player_name_home),
+      # Cannot be empty
+      input$new_player_name_home != ""
+    )
+    is_new_home_role_ok <- all(
+      # Cannot be NULL
+      !is.null(input$new_player_role_home),
+      # Cannot be empty
+      input$new_player_role_home != ""
+    )
+  }
   # Enable or disable the button accordingly
   if (!all(is_new_home_num_ok, is_new_home_name_ok, is_new_home_role_ok)) {
     shinyjs::disable("add_player_home")
@@ -1277,18 +1287,23 @@ observe({
     # Cannot be outside the 1 to 99 range
     input$new_player_num_away %in% 1:99
   )
-  is_new_away_name_ok <- all(
-    # Cannot be NULL
-    !is.null(input$new_player_name_away),
-    # Cannot be empty
-    input$new_player_name_away != ""
-  )
-  is_new_away_role_ok <- all(
-    # Cannot be NULL
-    !is.null(input$new_player_role_away),
-    # Cannot be empty
-    input$new_player_role_away != ""
-  )
+  if (input$away_team == input$opponent_team) {
+    is_new_away_name_ok <- TRUE
+    is_new_away_role_ok <- TRUE
+  } else {
+    is_new_away_name_ok <- all(
+      # Cannot be NULL
+      !is.null(input$new_player_name_away),
+      # Cannot be empty
+      input$new_player_name_away != ""
+    )
+    is_new_away_role_ok <- all(
+      # Cannot be NULL
+      !is.null(input$new_player_role_away),
+      # Cannot be empty
+      input$new_player_role_away != ""
+    )
+  }
   # Enable or disable the button accordingly
   if (!all(is_new_away_num_ok, is_new_away_name_ok, is_new_away_role_ok)) {
     shinyjs::disable("add_player_away")

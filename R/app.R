@@ -38,7 +38,6 @@ run_vb_game_encoder <- function(params_path = "season.yaml") {
   # to avoid that the content is rendered where the package is installed.
   vbd_tmp_dir <- file.path(tempdir(), "vbdata_dashboard")
   dir.create(vbd_tmp_dir, showWarnings = FALSE)
-  tmp_app_loc <- tempfile(tmpdir = vbd_tmp_dir, fileext = ".qmd")
 
   # Copy the app to its temporary location
   invisible(file.copy(

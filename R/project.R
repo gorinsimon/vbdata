@@ -16,7 +16,7 @@ new_season_project <- function(path, ...) {
       # Write the YAML file with season parameters
       yaml::write_yaml(
         list(
-          team = dots[["team"]],
+          team = dots[["user_team"]],
           season = dots[["season"]],
           players = list("Player 1" = list(role = "", id = ""))
         ),

@@ -2,12 +2,12 @@ Binding: new_season_project
 Title: vbdata season project
 OpenFiles: season.yaml
 
-Parameter: team
+Parameter: user_team
 Widget: TextInput
-Label: The name of the team to analyse in the project
+Label: Your team
 Position: left
 
 Parameter: season
 Widget: TextInput
-Label: The season played (YYYY-YYYY format)
+Label: Season (format: "YYYY - YYYY")
 Position: left

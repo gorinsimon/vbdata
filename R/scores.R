@@ -206,5 +206,6 @@ is_sub_score_missing <- function(team, set, input) {
         )
     }
   )
-  are_missings <- any(unlist(missings))
+
+  any(unlist(missings))
 }

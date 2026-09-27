@@ -28,16 +28,6 @@ new_season_project <- function(path, ...) {
         "# Start the game encoder app\nvbdata::run_vb_game_encoder()",
         file.path(proj_path, "main.R")
       )
-
-      if (dots[["use_git"]]) {
-        usethis::use_git(
-          message = sprintf(
-            "Initiate project for %s season %s",
-            dots[["team"]],
-            dots[["season"]]
-          )
-        )
-      }
     },
     error = function(e) {
       message(paste("Error:", e$message))

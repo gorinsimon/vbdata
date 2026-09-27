@@ -69,7 +69,7 @@ run_vb_game_encoder <- function(params_path = "season.yaml") {
 #' @keywords internal
 check_season_params <- function(params, yaml_path) {
   # Check that expected fields are present in the season parameters
-  expected_names <- c("team", "season", "players")
+  expected_names <- c("team", "season", "players", "division")
   name_is_missing <- !(expected_names %in% names(params))
   if (any(name_is_missing)) {
     n_miss <- sum(name_is_missing)

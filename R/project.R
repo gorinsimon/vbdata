@@ -27,7 +27,10 @@ new_season_project <- function(path, ...) {
 
       # Create a main script with just the code to run the app
       writeLines(
-        "# Start the game encoder app\nvbdata::run_vb_game_encoder()",
+        paste0(
+          "# Start the game encoder app\n",
+          "vbdata::run_vb_game_encoder(params_path = \"season.yaml\")"
+        ),
         file.path(proj_path, "main.R")
       )
     },

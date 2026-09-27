@@ -4,7 +4,12 @@
 \alias{run_vb_game_encoder}
 \title{Run the \code{vbdata} game encoding app}
 \usage{
-run_vb_game_encoder()
+run_vb_game_encoder(params_path = "season.yaml")
+}
+\arguments{
+\item{params_path}{The path to the YAML file where the season parameters
+(team name, season, players details) are stored. The default is set to
+"season.yaml", assuming the file is located at the root of the project.}
 }
 \value{
 Nothing is return, used only for side-effect (running the app)

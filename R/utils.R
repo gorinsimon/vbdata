@@ -111,7 +111,7 @@ get_substitution_scores <- function(input, team, set, type) {
     )
   }
 
-  return(res)
+  res
 }
 
 #' Extract from the app the score of time-outs
@@ -180,7 +180,7 @@ get_set_serving_team <- function(input, set) {
     serving_team <- serving_set_5
   }
 
-  return(serving_team)
+  serving_team
 }
 
 #' Check that the base rotation for the two teams are complete

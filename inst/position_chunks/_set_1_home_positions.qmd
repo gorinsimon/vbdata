@@ -4,7 +4,7 @@
 h5(
   icon("flag-checkered"),
   "Starting rotation",
-  style="text-align: center;"
+  style = "text-align: center;"
 )
 
 selectInput(
@@ -42,7 +42,7 @@ selectInput(
 h5(
   icon("repeat"),
   "Substitutions",
-  style="text-align: center;"
+  style = "text-align: center;"
 )
 
 p(
@@ -78,7 +78,7 @@ textInput("set_1_home_p6_sub_2_score", label = "")
 h5(
   icon("stopwatch"),
   "Time-out",
-  style="text-align: center;"
+  style = "text-align: center;"
 )
 
 div(

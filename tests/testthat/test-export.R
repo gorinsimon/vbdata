@@ -168,8 +168,8 @@ for (scenario in as.character(1:4)) {
     expect_all_true(unlist(are_time_outs_correct))
 
     # Second check that the time-outs indicated in `time_outs-out` are correctly
-    # reflected in the wrangled data. Here, we filter the wrangled data using the
-    # exact time-out score instead that the point when it was requested. The
+    # reflected in the wrangled data. Here, we filter the wrangled data using
+    # the exact time-out score instead that the point when it was requested. The
     # focus in on the "home" team.
     are_time_outs_home_correct <- lapply(
       time_outs[["home"]],
@@ -394,9 +394,9 @@ for (scenario in as.character(1:4)) {
     won_serving <- scores[[serving]] - lag(scores[[serving]], default = 0) - 1
     won_serving[1] <- won_serving[1] + 1
     # Create the sequence of points won by the "receiving" team
-    won_receiving <- (scores[[receiving]] -
-      lag(scores[[receiving]], default = 0) -
-      1)
+    won_receiving <- (
+      scores[[receiving]] - lag(scores[[receiving]], default = 0) - 1
+    )
     won_receiving[1] <- won_receiving[1] + 1
 
     # Initiate an empty vector to create the sequence of winning team
@@ -677,7 +677,7 @@ for (scenario in as.character(1:4)) {
       cbind(
         point = seq_along(vec_p_1_receiving_team),
         P1 = vec_p_1_receiving_team,
-        P2= vec_p_2_receiving_team,
+        P2 = vec_p_2_receiving_team,
         P3 = vec_p_3_receiving_team,
         P4 = vec_p_4_receiving_team,
         P5 = vec_p_5_receiving_team,

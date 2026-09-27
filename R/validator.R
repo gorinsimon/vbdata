@@ -28,7 +28,8 @@ set_validator_time_out <- function(set) {
       )
     }
   )
-  return(validator)
+
+  validator
 }
 
 #' Create a validator for the substitutions input
@@ -66,5 +67,6 @@ set_validator_substitution <- function(set) {
       )
     }
   )
-  return(validator)
+
+  validator
 }

@@ -39,23 +39,38 @@ bslib::card(
   bslib::card_header("Teams"),
   bslib::card_body(
     bslib::layout_columns(
+      # The user's team (filled in by default if the app is started with season
+      # parameters).
       textInput(
-        "home_team",
-        label = tags$p(icon("house"), "Home")
+        "user_team",
+        label = "My team"
       ),
-      # Input to indicate the name of the "away" (or visiting) team
+      # The opponent team
       textInput(
-        "away_team",
-        label = tags$p(icon("suitcase-rolling"), "Away")
+        "opponent_team",
+        label = "Opponent team"
       )
     ),
     bslib::layout_columns(
+      # Selection list to indicate the "home" team (based on "user_team" and
+      # "opponent_team").
       selectizeInput(
-        "my_team",
-        label = "Your team?",
+        "home_team",
+        label = tags$p(icon("house"), "Home team"),
         choices = "",
         options = list(dropdownParent = "body")
       ),
+      # Selection list to indicate the "away" team (based on "user_team" and
+      # "opponent_team").
+      selectizeInput(
+        "away_team",
+        label = tags$p(icon("suitcase-rolling"), "Away team"),
+        choices = "",
+        options = list(dropdownParent = "body")
+      )
+    ),
+    bslib::layout_columns(
+      col_widths = c(6, -6),
       # Input to indicate which team started to serve
       selectizeInput(
         "serving_set_1",
@@ -125,7 +140,6 @@ actionButton(
 ::: {style="font-size: 120%;"}
 ```{r}
 # Side panel button to import players (NOT IMPLEMENTED YET)
-fileInput("import_players_file", "Choose a file")
 actionButton(
   "import_players",
   label = "Import players",
@@ -333,7 +347,7 @@ h4(textOutput("home_team_out_1"), style = "text-align: center;")
 #| height: 60px
 #| padding: 0px
 #| classes: no-border
-h4(textOutput("away_team_out_1"), style="text-align: center;")
+h4(textOutput("away_team_out_1"), style = "text-align: center;")
 ```
 
 #### Column
@@ -376,7 +390,7 @@ actionButton(
 #| height: 60px
 #| padding: 0px
 #| classes: no-border
-h4(textOutput("home_team_out_2"), style="text-align: center;")
+h4(textOutput("home_team_out_2"), style = "text-align: center;")
 ```
 
 ##### Column
@@ -390,7 +404,7 @@ h4(textOutput("home_team_out_2"), style="text-align: center;")
 #| height: 60px
 #| padding: 0px
 #| classes: no-border
-h4(textOutput("away_team_out_2"), style="text-align: center;")
+h4(textOutput("away_team_out_2"), style = "text-align: center;")
 ```
 
 ##### Column
@@ -425,7 +439,7 @@ actionButton(
 #| height: 60px
 #| padding: 0px
 #| classes: no-border
-h4(textOutput("home_team_out_3"), style="text-align: center;")
+h4(textOutput("home_team_out_3"), style = "text-align: center;")
 ```
 
 ##### Column
@@ -439,7 +453,7 @@ h4(textOutput("home_team_out_3"), style="text-align: center;")
 #| height: 60px
 #| padding: 0px
 #| classes: no-border
-h4(textOutput("away_team_out_3"), style="text-align: center;")
+h4(textOutput("away_team_out_3"), style = "text-align: center;")
 ```
 
 ##### Column
@@ -474,7 +488,7 @@ actionButton(
 #| height: 60px
 #| padding: 0px
 #| classes: no-border
-h4(textOutput("home_team_out_4"), style="text-align: center;")
+h4(textOutput("home_team_out_4"), style = "text-align: center;")
 ```
 
 ##### Column
@@ -488,7 +502,7 @@ h4(textOutput("home_team_out_4"), style="text-align: center;")
 #| height: 60px
 #| padding: 0px
 #| classes: no-border
-h4(textOutput("away_team_out_4"), style="text-align: center;")
+h4(textOutput("away_team_out_4"), style = "text-align: center;")
 ```
 
 ##### Column
@@ -523,7 +537,7 @@ actionButton(
 #| height: 60px
 #| padding: 0px
 #| classes: no-border
-h4(textOutput("home_team_out_5"), style="text-align: center;")
+h4(textOutput("home_team_out_5"), style = "text-align: center;")
 ```
 
 ##### Column
@@ -537,7 +551,7 @@ h4(textOutput("home_team_out_5"), style="text-align: center;")
 #| height: 60px
 #| padding: 0px
 #| classes: no-border
-h4(textOutput("away_team_out_5"), style="text-align: center;")
+h4(textOutput("away_team_out_5"), style = "text-align: center;")
 ```
 
 ##### Column
@@ -835,7 +849,6 @@ downloadButton(
 
 ```{r}
 #| context: server
-
 shinyjs::hideElement("tab-player")
 shinyjs::hideElement("tab-set-1")
 shinyjs::hideElement("tab-set-2")
@@ -860,17 +873,39 @@ are_details_locked <- reactiveVal(FALSE)
 # Define whether home and away players have been validated by the users allowing
 # then to make the "Set 1" tab active.
 are_players_validated <- reactiveValues(home = FALSE, away = FALSE)
+has_season_params <- file.exists("season.yaml")
+# If a season parameter file exist, then update season
+if (has_season_params) {
+  param_season <- yaml::read_yaml("season.yaml")
+  updateSelectizeInput(
+    inputId = "season",
+    choices = param_season$season
+  )
+  updateTextInput(
+    inputId = "user_team",
+    value = param_season$team
+  )
+  updateTextInput(
+    inputId = "division",
+    value = param_season$division
+  )
+  shinyjs::disable("season")
+  shinyjs::disable("user_team")
+  shinyjs::disable("division")
+}
 
 # The data frames with the list of home and away players
 players <- reactiveValues(
   home_team = data.frame(
     Number = character(),
     Name = character(),
+    Id = character(),
     Role = character()
   ),
   away_team = data.frame(
     Number = character(),
     Name = character(),
+    Id = character(),
     Role = character()
   )
 )
@@ -892,9 +927,6 @@ in_import <- reactiveValues(
   selected = NULL
 )
 import_player_dt_tbl <- reactiveVal(NULL)
-# players_in_import_sel <- reactiveValues(NULL)
-# players_in_import_df <- reactiveVal(NULL)
-# n_players_in_import <- reactiveVal(0)
 
 # Reactive values with:
 #   - the number of set completed (based on scores only)
@@ -912,39 +944,60 @@ data_ready_for_export <- reactiveVal(FALSE)
 
 # When any of the two teams' name is updated, it is updated accordingly anywhere
 # the names are used.
-observeEvent(list(input$home_team, input$away_team), {
-  # Update the "my_team" selector
-  updateSelectInput(
-    inputId = "my_team",
-    choices = c("", input$home_team %||% "", input$away_team %||% "")
-  )
-  # Update the output with the name of the teams for each set tab
-  lapply(
-    1:6,
-    \(x) {
-      output[[paste0("home_team_out_", x)]] <- renderText({
-        input$home_team %||% ""
-      })
-      output[[paste0("away_team_out_", x)]] <- renderText({
-        input$away_team %||% ""
-      })
-    }
-  )
-  output$home_team_players_tab <- renderText({ input$home_team %||% "" })
-  output$away_team_players_tab <- renderText({ input$away_team %||% "" })
-  # Update the selector allowing to indicate which team started to serve in the
-  # game.
-  updateSelectInput(
-    inputId = "serving_set_1",
-    choices = c("", input$home_team %||% "", input$away_team %||% "")
-  )
-  # Update the selector allowing to indicate which team started to serve in the
-  # fifth set. The selector is displayed only when a fifth set is played.
-  updateSelectInput(
-    inputId = "serving_set_5",
-    choices = c("", input$home_team %||% "", input$away_team %||% "")
-  )
-})
+observeEvent(
+  list(input$user_team, input$opponent_team, input$away_team, input$home_team),
+  {
+    home_away <- c(input$user_team %||% "", input$opponent_team %||% "")
+
+    # Update the "user_team" selector
+    updateSelectizeInput(
+      inputId = "home_team",
+      choices = c(input$home_team, home_away[!(home_away %in% input$away_team)])
+    )
+    updateSelectizeInput(
+      inputId = "away_team",
+      choices = c(input$away_team, home_away[!(home_away %in% input$home_team)])
+    )
+    # Update the output with the name of the teams for each set tab
+    lapply(
+      1:6,
+      \(x) {
+        output[[paste0("home_team_out_", x)]] <- renderText({
+          input$home_team %||% ""
+        })
+        output[[paste0("away_team_out_", x)]] <- renderText({
+          input$away_team %||% ""
+        })
+      }
+    )
+    output$home_team_players_tab <- renderText({
+      input$home_team %||% ""
+    })
+    output$away_team_players_tab <- renderText({
+      input$away_team %||% ""
+    })
+    # Update the selector allowing to indicate which team started to serve in
+    # the game.
+    updateSelectInput(
+      inputId = "serving_set_1",
+      choices = c(
+        input$serving_set_1,
+        input$user_team %||% "",
+        input$opponent_team %||% ""
+      )
+    )
+    # Update the selector allowing to indicate which team started to serve in
+    # the fifth set. The selector is displayed only when a fifth set is played.
+    updateSelectInput(
+      inputId = "serving_set_5",
+      choices = c(
+        input$serving_set_5,
+        input$user_team %||% "",
+        input$opponent_team %||% ""
+      )
+    )
+  }
+)
 
 # Observer running checks on the "Game" page any time there is an interaction
 # with the app. All the input/selector on the page are checked to see if none
@@ -953,14 +1006,19 @@ observeEvent(list(input$home_team, input$away_team), {
 observe({
   # ID of the elements to check
   elem_to_check <- list(
-    "home_team", "away_team", "my_team", "serving_set_1", "season", "division"
+    "home_team",
+    "away_team",
+    "user_team",
+    "serving_set_1",
+    "season",
+    "division"
   )
-  # Check all elements in 
+  # Check all elements in the "game page"
   any_empty <- any(unlist(lapply(
     elem_to_check,
     \(x) any(is.null(input[[x]]), !nzchar(input[[x]]))
   )))
-  
+
   # Enable the "Lock details" button based on whether there is any element that
   # is empty on the corresponding page or not.
   if (!any_empty && !are_details_locked()) {
@@ -979,18 +1037,18 @@ observeEvent(input$lock_details, {
 observeEvent(input$go_to_player_tab, {
   shinyjs::disable("home_team")
   shinyjs::disable("away_team")
-  shinyjs::disable("my_team")
+  shinyjs::disable("user_team")
   shinyjs::disable("serving_set_1")
   shinyjs::disable("game_location")
   shinyjs::disable("game_date")
   shinyjs::disable("season")
   shinyjs::disable("division")
-  
+
   shinyjs::hideElement("tab-game")
   shinyjs::showElement("tab-player")
   shinyjs::disable("lock_details")
   shinyjs::click("tab-player")
-  
+
   removeModal()
 })
 
@@ -1000,28 +1058,20 @@ observeEvent(input$go_to_player_tab, {
 
 ## Import players -------------------------------------------------------------
 
-observe({
-  if (is.null(input$import_players_file)) {
-    shinyjs::disable("import_players")
-  } else {
-    shinyjs::enable("import_players")
-  }
-})
-
 observeEvent(input$import_players, {
-  # Read the list of potential players to import from the provided file
-  json_players <- jsonlite::read_json(
-    input$import_players_file$datapath,
-    simplifyVector = TRUE
+  players <- yaml::read_yaml("season.yaml")[["players"]]
+  players_name <- names(players)
+  players_number <- mapply(\(x) x[["number"]], players)
+  players_role <- mapply(\(x) x[["role"]], players)
+  players_id <- mapply(\(x) x[["id"]], players)
+  in_import$players <- data.frame(
+    Number = players_number,
+    Name = players_name,
+    Role = players_role,
+    Id = players_id,
+    row.names = NULL
   )
-  # Turn the players to import from JSON to data table and assign it to the
-  # reactive.
-  in_import$players <- jsonlite::fromJSON(json_players)
-  
-  # Combine the check buttons and the data frame with players to import and
-  # assign to the reactive with the DT table to render in the import model.
-  # import_player_dt_tbl(cbind(check_buttons, in_import$players))
-  
+
   # Render the DT table with the players to import... with some settings
   output$import_player_dt_out <- DT::renderDT(
     DT::datatable(
@@ -1042,7 +1092,7 @@ observeEvent(input$import_players, {
       selection = "multiple"
     )
   )
-  
+
   # Once everything has been set up, we show the modal with the table with the
   # players to import.
   showModal(
@@ -1082,7 +1132,7 @@ observeEvent(input$import_player_dt_out_cell_edit, {
   edit_dat[, "col"] <- edit_dat[, "col"] + 1
   # Update the reactive with the data underlying the DT table with players to
   # import to take into consideration the changes.
-  in_import$players <- editData(in_import$players, edit_dat)
+  in_import$players <- DT::editData(in_import$players, edit_dat)
 })
 
 observeEvent(input$import_players_confirm, {
@@ -1093,23 +1143,23 @@ observeEvent(input$import_players_confirm, {
   players_to_import <- in_import$players[players_in_import_sel_tmp, ]
   # Combine the players already added to the game with the ones currently
   # selected to import.
-  players_home_tmp <- rbind(players$home_team, players_to_import)
+  players_imp_tmp <- rbind(players[["user_team"]], players_to_import)
   # From the players already added and those to import, count the number of the
   # players to identify duplicates.
-  dup_players_count <- table(players_home_tmp$Number)
+  dup_players_count <- table(players_imp_tmp$Number)
   # Extract the duplicated players (if any)
   dup_players <- names(dup_players_count)[dup_players_count > 1]
-  
+
   # Check if the players to import have liberos and if adding them would lead
   # to having more than 2.
-  if (sum(players_home_tmp$Role == "Libero") > 2) {
+  if (sum(players_imp_tmp$Role == "Libero") > 2) {
     showNotification(
       "There are already two liberos engaged for the game.",
       type = "error"
     )
     # Check if the players to import would lead to go above 12 field players
     # (excluding liberos).
-  } else if (sum(players_home_tmp$Role != "Libero") > 12) {
+  } else if (sum(players_imp_tmp$Role != "Libero") > 12) {
     showNotification(
       "There are already 12 non-libero players engaged for the game.",
       type = "error"
@@ -1133,13 +1183,18 @@ observeEvent(input$import_players_confirm, {
     )
     showNotification(dup_players_string, type = "error")
   } else {
+    which_team <- ifelse(
+      input$user_team == input$home_team,
+      "home",
+      "away"
+    )
     # If the players to import do not violate the rules above, we then update
     # the DT table with the players in the game with the one to import.
-    players$home_team <- players_home_tmp
+    players[[paste0(which_team, "_team")]] <- players_imp_tmp
     if (sum(players_in_import_sel_tmp) > 0) {
       # Once the new player is added to the table, the new table is rendered
-      output$home_players_tbl <- DT::renderDT({
-        tbl <- players$home_team
+      output[[paste0(which_team, "_players_tbl")]] <- DT::renderDT({
+        tbl <- players[[paste0(which_team, "_team")]]
         tbl[["Number"]] <- as.character(tbl[["Number"]])
         DT::datatable(
           tbl,
@@ -1169,18 +1224,23 @@ observe({
     # Cannot be outside the 1 to 99 range
     input$new_player_num_home %in% 1:99
   )
-  is_new_home_name_ok <- all(
-    # Cannot be NULL
-    !is.null(input$new_player_name_home),
-    # Cannot be empty
-    input$new_player_name_home != ""
-  )
-  is_new_home_role_ok <- all(
-    # Cannot be NULL
-    !is.null(input$new_player_role_home),
-    # Cannot be empty
-    input$new_player_role_home != ""
-  )
+  if (input$home_team == input$opponent_team) {
+    is_new_home_name_ok <- TRUE
+    is_new_home_role_ok <- TRUE
+  } else {
+    is_new_home_name_ok <- all(
+      # Cannot be NULL
+      !is.null(input$new_player_name_home),
+      # Cannot be empty
+      input$new_player_name_home != ""
+    )
+    is_new_home_role_ok <- all(
+      # Cannot be NULL
+      !is.null(input$new_player_role_home),
+      # Cannot be empty
+      input$new_player_role_home != ""
+    )
+  }
   # Enable or disable the button accordingly
   if (!all(is_new_home_num_ok, is_new_home_name_ok, is_new_home_role_ok)) {
     shinyjs::disable("add_player_home")
@@ -1225,7 +1285,6 @@ observeEvent(input$validate_player_home, {
   })
   # Update the "home" element in the reactive value `are_players_validated`
   are_players_validated$home <- TRUE
-  
 })
 
 
@@ -1242,18 +1301,23 @@ observe({
     # Cannot be outside the 1 to 99 range
     input$new_player_num_away %in% 1:99
   )
-  is_new_away_name_ok <- all(
-    # Cannot be NULL
-    !is.null(input$new_player_name_away),
-    # Cannot be empty
-    input$new_player_name_away != ""
-  )
-  is_new_away_role_ok <- all(
-    # Cannot be NULL
-    !is.null(input$new_player_role_away),
-    # Cannot be empty
-    input$new_player_role_away != ""
-  )
+  if (input$away_team == input$opponent_team) {
+    is_new_away_name_ok <- TRUE
+    is_new_away_role_ok <- TRUE
+  } else {
+    is_new_away_name_ok <- all(
+      # Cannot be NULL
+      !is.null(input$new_player_name_away),
+      # Cannot be empty
+      input$new_player_name_away != ""
+    )
+    is_new_away_role_ok <- all(
+      # Cannot be NULL
+      !is.null(input$new_player_role_away),
+      # Cannot be empty
+      input$new_player_role_away != ""
+    )
+  }
   # Enable or disable the button accordingly
   if (!all(is_new_away_num_ok, is_new_away_name_ok, is_new_away_role_ok)) {
     shinyjs::disable("add_player_away")
@@ -1286,7 +1350,7 @@ observe({
 # When the away players are validated, then all the buttons in the corresponding
 # card and the table with the list of players are disabled.
 observeEvent(input$validate_player_away, {
-  disable_players_ui("away")  
+  disable_players_ui("away")
   output$away_players_tbl <- DT::renderDT({
     DT::datatable(
       players$away_team,
@@ -1352,7 +1416,7 @@ observeEvent(input$remove_player_home, {
   to_rmv <- as.numeric(input$home_players_tbl_rows_selected)
   # Remove the selected player(s) from the table
   players$home_team <- tbl[-to_rmv, ]
-  
+
   # If all players are removed (table has no row), a NULL table is rendered
   if (nrow(players$home_team) == 0) {
     output$home_players_tbl <- DT::renderDT({
@@ -1366,8 +1430,8 @@ observeEvent(input$remove_player_home, {
         # Since the number of players should be up to 14, we disable paging. We
         # also do not need the searching option
         options = list(paging = FALSE, searching = FALSE),
-        # Allow selection of multiple rows (useful to remove more than one player
-        # at once from the table.)
+        # Allow selection of multiple rows (useful to remove more than one
+        # player at once from the table.)
         selection = "multiple"
       )
     })
@@ -1428,7 +1492,7 @@ observeEvent(input$remove_player_away, {
   to_rmv <- as.numeric(input$away_players_tbl_rows_selected)
   # Remove the selected player(s) from the table
   players$away_team <- tbl[-to_rmv, ]
-  
+
   # If all players are removed (table has no row), a NULL table is rendered
   if (nrow(players$away_team) == 0) {
     output$away_players_tbl <- DT::renderDT({
@@ -1442,8 +1506,8 @@ observeEvent(input$remove_player_away, {
         # Since the number of players should be up to 14, we disable paging. We
         # also do not need the searching option
         options = list(paging = FALSE, searching = FALSE),
-        # Allow selection of multiple rows (useful to remove more than one player
-        # at once from the table.)
+        # Allow selection of multiple rows (useful to remove more than one
+        # player at once from the table.)
         selection = "multiple"
       )
     })
@@ -1463,7 +1527,6 @@ observeEvent(list(are_players_validated$home, are_players_validated$away), {
     are_players_validated$home <- FALSE
     are_players_validated$away <- FALSE
     # Enable selecting a file for import and importing the file
-    shinyjs::enable("import_players_file")
     shinyjs::enable("import_players")
     # Enable the two teams UI elements
     enable_players_ui("home")
@@ -1497,7 +1560,6 @@ observeEvent(list(are_players_validated$home, are_players_validated$away), {
 # page is hidden while the set 1 page is shown (then moving there).
 observeEvent(input$go_to_set_1_tab, {
   # Disable import of data
-  shinyjs::disable("import_players_file")
   shinyjs::disable("import_players")
   # Disable the two teams UI elements
   disable_players_ui("home")
@@ -1531,7 +1593,7 @@ observeEvent(input$go_to_set_1_tab, {
 })
 
 #==============================================================================|
-#                           ---- All set events ----                          
+#                           ---- All set events ----
 #==============================================================================|
 
 # Observer updating the list of available players for all sets and the two
@@ -1545,73 +1607,73 @@ observe(
   {
     available_players$set_1$home <- players$home_team$Number[
       !(players$home_team$Number %in%
-          c(
-            get_base_rotation(input, "home", 1),
-            get_substitution_players(input, "home", 1)
-          ))
+        c(
+          get_base_rotation(input, "home", 1),
+          get_substitution_players(input, "home", 1)
+        ))
     ]
     available_players$set_2$home <- players$home_team$Number[
       !(players$home_team$Number %in%
-          c(
-            get_base_rotation(input, "home", 2),
-            get_substitution_players(input, "home", 2)
-          ))
+        c(
+          get_base_rotation(input, "home", 2),
+          get_substitution_players(input, "home", 2)
+        ))
     ]
     available_players$set_3$home <- players$home_team$Number[
       !(players$home_team$Number %in%
-          c(
-            get_base_rotation(input, "home", 3),
-            get_substitution_players(input, "home", 3)
-          ))
+        c(
+          get_base_rotation(input, "home", 3),
+          get_substitution_players(input, "home", 3)
+        ))
     ]
     available_players$set_4$home <- players$home_team$Number[
       !(players$home_team$Number %in%
-          c(
-            get_base_rotation(input, "home", 4),
-            get_substitution_players(input, "home", 4)
-          ))
+        c(
+          get_base_rotation(input, "home", 4),
+          get_substitution_players(input, "home", 4)
+        ))
     ]
     available_players$set_5$home <- players$home_team$Number[
       !(players$home_team$Number %in%
-          c(
-            get_base_rotation(input, "home", 5),
-            get_substitution_players(input, "home", 5)
-          ))
+        c(
+          get_base_rotation(input, "home", 5),
+          get_substitution_players(input, "home", 5)
+        ))
     ]
     available_players$set_1$away <- players$away_team$Number[
       !(players$away_team$Number %in%
-          c(
-            get_base_rotation(input, "away", 1),
-            get_substitution_players(input, "away", 1)
-          ))
+        c(
+          get_base_rotation(input, "away", 1),
+          get_substitution_players(input, "away", 1)
+        ))
     ]
     available_players$set_2$away <- players$away_team$Number[
       !(players$away_team$Number %in%
-          c(
-            get_base_rotation(input, "away", 2),
-            get_substitution_players(input, "away", 2)
-          ))
+        c(
+          get_base_rotation(input, "away", 2),
+          get_substitution_players(input, "away", 2)
+        ))
     ]
     available_players$set_3$away <- players$away_team$Number[
       !(players$away_team$Number %in%
-          c(
-            get_base_rotation(input, "away", 3),
-            get_substitution_players(input, "away", 3)
-          ))
+        c(
+          get_base_rotation(input, "away", 3),
+          get_substitution_players(input, "away", 3)
+        ))
     ]
     available_players$set_4$away <- players$away_team$Number[
-      !!(players$away_team$Number %in%
-           c(
-             get_base_rotation(input, "away", 4),
-             get_substitution_players(input, "away", 4)
-           ))
+      !(players$away_team$Number %in%
+        c(
+          get_base_rotation(input, "away", 4),
+          get_substitution_players(input, "away", 4)
+        ))
     ]
     available_players$set_5$away <- players$away_team$Number[
-      !!(players$away_team$Number %in%
-           c(
-             get_base_rotation(input, "away", 5),
-             get_substitution_players(input, "away", 5)
-           ))
+      !(players$away_team$Number %in%
+        c(
+          get_base_rotation(input, "away", 5),
+          get_substitution_players(input, "away", 5)
+        ))
     ]
   }
 )
@@ -1619,13 +1681,13 @@ observe(
 # Enable or disable the first score input of the first rotation in each set
 # (except set 5) for the team receiving the service.
 observeEvent(input$serving_set_1, {
-  if (input$home_team == input$serving_set_1) {
+  if (input$home_team == input$serving_set_1 && nzchar(input$serving_set_1)) {
     shinyjs::disable("set_1_r_1_p_1_away")
     shinyjs::disable("set_2_r_1_p_1_home")
     shinyjs::disable("set_3_r_1_p_1_away")
     shinyjs::disable("set_4_r_1_p_1_home")
   }
-  if (input$away_team == input$serving_set_1) {
+  if (input$away_team == input$serving_set_1 && nzchar(input$serving_set_1)) {
     shinyjs::disable("set_1_r_1_p_1_home")
     shinyjs::disable("set_2_r_1_p_1_away")
     shinyjs::disable("set_3_r_1_p_1_home")
@@ -1728,77 +1790,79 @@ observe({
 observe({
   # Loop across the 5 sets
   lapply(
-    1:5, \(s)
-    lapply(
-      # Loop across the 6 base rotations
-      c(1:6),
-      \(x) {
-        # Create the string to access the current rotation (and the
-        # corresponding substitution position) for the home team in the app
-        # input.
-        current_p_h <- paste0("set_", s, "_home_p", x)
-        current_p_sub_h <- paste0("set_", s, "_home_p", x, "_sub")
-        # Create the string to access the current rotation (and the
-        # corresponding substitution position) for the away team in the app
-        # input.
-        current_p_a <- paste0("set_", s, "_away_p", x)
-        current_p_sub_a <- paste0("set_", s, "_away_p", x, "_sub")
-        
-        # Update input for the current position in the rotation for the home
-        # team.
-        updateSelectInput(
-          # Access the input selector for the current rotation position
-          inputId = current_p_h,
-          # Update for the choices with a vector starting with the current
-          # player selected (can be empty string) and the sorted remaining
-          # players.
-          choices = c(
-            input[[current_p_h]],
-            sort(available_players[[paste0("set_", s)]]$home)
-          ),
-          selected = input[[current_p_h]]
-        )
-        # Same for the corresponding substitution position, but only if the
-        # current position rotation is not empty.
-        if (!is.null(input[[current_p_h]]) && nzchar(input[[current_p_h]])) {
+    1:5,
+    \(s) {
+      lapply(
+        # Loop across the 6 base rotations
+        c(1:6),
+        \(x) {
+          # Create the string to access the current rotation (and the
+          # corresponding substitution position) for the home team in the app
+          # input.
+          current_p_h <- paste0("set_", s, "_home_p", x)
+          current_p_sub_h <- paste0("set_", s, "_home_p", x, "_sub")
+          # Create the string to access the current rotation (and the
+          # corresponding substitution position) for the away team in the app
+          # input.
+          current_p_a <- paste0("set_", s, "_away_p", x)
+          current_p_sub_a <- paste0("set_", s, "_away_p", x, "_sub")
+
+          # Update input for the current position in the rotation for the home
+          # team.
           updateSelectInput(
-            inputId = current_p_sub_h,
+            # Access the input selector for the current rotation position
+            inputId = current_p_h,
+            # Update for the choices with a vector starting with the current
+            # player selected (can be empty string) and the sorted remaining
+            # players.
             choices = c(
-              input[[current_p_sub_h]],
-              sort(available_players[[paste0("set_", s)]]$home)
+              input[[current_p_h]],
+              sort(as.numeric(available_players[[paste0("set_", s)]]$home))
             ),
-            selected = input[[current_p_sub_h]]
+            selected = input[[current_p_h]]
           )
-        }
-        
-        # Update input for the current position in the rotation for the away
-        # team.
-        updateSelectInput(
-          # Access the input selector for the current rotation position
-          inputId = current_p_a,
-          # Update for the choices with a vector starting with the current
-          # player selected (can be empty string) and the sorted remaining
-          # players.
-          choices = c(
-            input[[current_p_a]],
-            sort(available_players[[paste0("set_", s)]]$away)
-          ),
-          selected = input[[current_p_a]]
-        )
-        # Same for the corresponding substitution position, but only if the
-        # current position rotation is not empty.
-        if (!is.null(input[[current_p_a]]) && nzchar(input[[current_p_a]])) {
+          # Same for the corresponding substitution position, but only if the
+          # current position rotation is not empty.
+          if (!is.null(input[[current_p_h]]) && nzchar(input[[current_p_h]])) {
+            updateSelectInput(
+              inputId = current_p_sub_h,
+              choices = c(
+                input[[current_p_sub_h]],
+                sort(as.numeric(available_players[[paste0("set_", s)]]$home))
+              ),
+              selected = input[[current_p_sub_h]]
+            )
+          }
+
+          # Update input for the current position in the rotation for the away
+          # team.
           updateSelectInput(
-            inputId = current_p_sub_a,
+            # Access the input selector for the current rotation position
+            inputId = current_p_a,
+            # Update for the choices with a vector starting with the current
+            # player selected (can be empty string) and the sorted remaining
+            # players.
             choices = c(
-              input[[current_p_sub_a]],
-              sort(available_players[[paste0("set_", s)]]$away)
+              input[[current_p_a]],
+              sort(as.numeric(available_players[[paste0("set_", s)]]$away))
             ),
-            selected = input[[current_p_sub_a]]
+            selected = input[[current_p_a]]
           )
+          # Same for the corresponding substitution position, but only if the
+          # current position rotation is not empty.
+          if (!is.null(input[[current_p_a]]) && nzchar(input[[current_p_a]])) {
+            updateSelectInput(
+              inputId = current_p_sub_a,
+              choices = c(
+                input[[current_p_sub_a]],
+                sort(as.numeric(available_players[[paste0("set_", s)]]$away))
+              ),
+              selected = input[[current_p_sub_a]]
+            )
+          }
         }
-      }
-    )
+      )
+    }
   )
 })
 
@@ -1827,7 +1891,7 @@ observe({
   # skips the "Set 4" and "Set 5" tabs. If the game is not over, the modal
   # displayed is the `next_to_set_4_confirm` and, when confirmed, the "Set 4"
   # tab is shown.
-  
+
   # When the number of sets completed (based on scores) is 1, the "next set"
   # button is enabled.
   if (n_sets() == 1) {
@@ -1853,7 +1917,7 @@ observe({
   if (n_sets() == 5) {
     shinyjs::enable("next_to_summary")
   }
-  
+
   # When after set 1 the next set button is pressed and confirmation to
   # continue is provided, the "Set 2" tab is displayed. Then the next set
   # button is disabled, as well as all the element on "Set 1" page.
@@ -1862,7 +1926,6 @@ observe({
     shinyjs::hideElement("tab-set-1")
     shinyjs::click("tab-set-2")
     shinyjs::disable("next_to_set_2")
-    
   }
   # When after set 2 the next set button is pressed and confirmation to
   # continue is provided, the "Set 3" tab is displayed. Then the next set
@@ -1872,7 +1935,6 @@ observe({
     shinyjs::hideElement("tab-set-2")
     shinyjs::click("tab-set-3")
     shinyjs::disable("next_to_set_3")
-    
   }
   # When after set 3 the next set button is pressed and confirmation to
   # continue is provided, whether the "Set 4" tab is displayed if the game is
@@ -1937,7 +1999,7 @@ observeEvent(input$next_to_set_2, {
   # Check that a player has been assigned to each position in the base rotation
   has_base_rotation_home_6 <- are_base_rotations_complete(input, "home", 1)
   has_base_rotation_away_6 <- are_base_rotations_complete(input, "away", 1)
-  
+
   # If all the checks ran above returned `TRUE`, the message asking
   # confirmation to switch to the next set is displayed.
   if (
@@ -2017,7 +2079,7 @@ observeEvent(input$next_to_set_3, {
   # Check that a player has been assigned to each position in the base rotation
   has_base_rotation_home_6 <- are_base_rotations_complete(input, "home", 2)
   has_base_rotation_away_6 <- are_base_rotations_complete(input, "away", 2)
-  
+
   # If all the checks ran above returned `TRUE`, the message asking
   # confirmation to switch to the next set is displayed.
   if (
@@ -2097,7 +2159,7 @@ observeEvent(input$next_to_set_4, {
   # Check that a player has been assigned to each position in the base rotation
   has_base_rotation_home_6 <- are_base_rotations_complete(input, "home", 3)
   has_base_rotation_away_6 <- are_base_rotations_complete(input, "away", 3)
-  
+
   # If all the checks ran above returned `TRUE`, the message asking
   # confirmation to switch to the next set is displayed.
   if (
@@ -2114,6 +2176,7 @@ observeEvent(input$next_to_set_4, {
     if (!is_game_over()) {
       next_set_message(4)
     } else {
+      # Use `set = "summary"` to indicate this was the last set
       data_ready_for_export(TRUE)
       next_set_message("summary")
     }
@@ -2182,7 +2245,7 @@ observeEvent(input$next_to_set_5, {
   # Check that a player has been assigned to each position in the base rotation
   has_base_rotation_home_6 <- are_base_rotations_complete(input, "home", 4)
   has_base_rotation_away_6 <- are_base_rotations_complete(input, "away", 4)
-  
+
   # If all the checks ran above returned `TRUE`, the message asking
   # confirmation to switch to the next set is displayed.
   if (
@@ -2199,9 +2262,9 @@ observeEvent(input$next_to_set_5, {
     if (!is_game_over()) {
       next_set_message(5, input)
     } else {
-      # Use `set = NULL` to indicate this was the last set
-      next_set_message(set = NULL)
+      # Use `set = "summary"` to indicate this was the last set
       data_ready_for_export(TRUE)
+      next_set_message(set = "summary")
     }
   }
   # If at least one player in the home team base rotation is missing, an error
@@ -2268,7 +2331,7 @@ observeEvent(input$next_to_summary, {
   # Check that a player has been assigned to each position in the base rotation
   has_base_rotation_home_6 <- are_base_rotations_complete(input, "home", 5)
   has_base_rotation_away_6 <- are_base_rotations_complete(input, "away", 5)
-  
+
   # If all the checks ran above returned `TRUE`, the message asking
   # confirmation to switch to the next set is displayed.
   if (
@@ -2282,7 +2345,9 @@ observeEvent(input$next_to_summary, {
       scores_rotations_valid
     )
   ) {
-    next_set_message("summary")
+    # Use `set = "summary"` to indicate this was the last set
+    data_ready_for_export(TRUE)
+    next_set_message(set = "summary")
   }
   # If at least one player in the home team base rotation is missing, an error
   # notification is displayed.
@@ -2359,7 +2424,7 @@ observeEvent(input$to_summary_confirm, {
 
 
 #==============================================================================|
-#                         ---- "Summary" tab events ----                        
+#                         ---- "Summary" tab events ----
 #==============================================================================|
 
 # Observer extracting, when a set is over (based on scores only), the score,
@@ -2378,44 +2443,44 @@ observe({
   is_game_over(attr(scores, "is_over"))
   # Get the number of sets played
   n_sets(attr(scores, "n_sets"))
-  
+
   # When the scores are valid, the scores, number of substitutions, and number
   # of time-outs for sets 1 to 3 are rendered in the summary tab.
   if (attr(scores, "is_valid")) {
     output$home_score_set_1 <- renderText({ scores$home[1] })
     output$home_score_set_2 <- renderText({ scores$home[2] })
     output$home_score_set_3 <- renderText({ scores$home[3] })
-    
+
     output$away_score_set_1 <- renderText({ scores$away[1] })
     output$away_score_set_2 <- renderText({ scores$away[2] })
     output$away_score_set_3 <- renderText({ scores$away[3] })
-    
+
     output$home_sub_set_1 <- renderText({ substitutions$home[1] })
     output$home_sub_set_2 <- renderText({ substitutions$home[2] })
     output$home_sub_set_3 <- renderText({ substitutions$home[3] })
-    
+
     output$away_sub_set_1 <- renderText({ substitutions$away[1] })
     output$away_sub_set_2 <- renderText({ substitutions$away[2] })
     output$away_sub_set_3 <- renderText({ substitutions$away[3] })
-    
+
     output$home_to_set_1 <- renderText({ time_outs$home[1] })
     output$home_to_set_2 <- renderText({ time_outs$home[2] })
     output$home_to_set_3 <- renderText({ time_outs$home[3] })
-    
+
     output$away_to_set_1 <- renderText({ time_outs$away[1] })
     output$away_to_set_2 <- renderText({ time_outs$away[2] })
     output$away_to_set_3 <- renderText({ time_outs$away[3] })
-    
+
     # If the number of sets if higher than 3, the scores, number of
     # substitutions, and number of time-outs for set 4 are rendered in the
     # summary tab.
     if (n_sets() > 3) {
       output$home_score_set_4 <- renderText({ scores$home[4] })
       output$away_score_set_4 <- renderText({ scores$away[4] })
-      
+
       output$home_sub_set_4 <- renderText({ substitutions$home[4] })
       output$away_sub_set_4 <- renderText({ substitutions$away[4] })
-      
+
       output$home_to_set_4 <- renderText({ time_outs$home[4] })
       output$away_to_set_4 <- renderText({ time_outs$away[4] })
     }
@@ -2425,10 +2490,10 @@ observe({
     if (n_sets() > 4) {
       output$home_score_set_5 <- renderText({ scores$home[5] })
       output$away_score_set_5 <- renderText({ scores$away[5] })
-      
+
       output$home_sub_set_5 <- renderText({ substitutions$home[5] })
       output$away_sub_set_5 <- renderText({ substitutions$away[5] })
-      
+
       output$home_to_set_5 <- renderText({ time_outs$home[5] })
       output$away_to_set_5 <- renderText({ time_outs$away[5] })
     }
@@ -2439,51 +2504,51 @@ observe({
     output$home_sets <- renderText({
       sum(scores$home > scores$away, na.rm = TRUE)
     })
-    
+
     # In case the scores are not valid, all the element on the summary tab are
     # rendered as empty strings.
   } else {
-    
+
     output$home_score_set_1 <- renderText({ "" })
     output$home_score_set_2 <- renderText({ "" })
     output$home_score_set_3 <- renderText({ "" })
     output$home_score_set_4 <- renderText({ "" })
     output$home_score_set_5 <- renderText({ "" })
-    
+
     output$away_score_set_1 <- renderText({ "" })
     output$away_score_set_2 <- renderText({ "" })
     output$away_score_set_3 <- renderText({ "" })
     output$away_score_set_4 <- renderText({ "" })
     output$away_score_set_5 <- renderText({ "" })
-    
+
     output$home_sub_set_1 <- renderText({ "" })
     output$home_sub_set_2 <- renderText({ "" })
     output$home_sub_set_3 <- renderText({ "" })
     output$home_sub_set_4 <- renderText({ "" })
     output$home_sub_set_5 <- renderText({ "" })
-    
+
     output$away_sub_set_1 <- renderText({ "" })
     output$away_sub_set_2 <- renderText({ "" })
     output$away_sub_set_3 <- renderText({ "" })
     output$away_sub_set_4 <- renderText({ "" })
     output$away_sub_set_5 <- renderText({ "" })
-    
+
     output$home_to_set_1 <- renderText({ "" })
     output$home_to_set_2 <- renderText({ "" })
     output$home_to_set_3 <- renderText({ "" })
     output$home_to_set_4 <- renderText({ "" })
     output$home_to_set_5 <- renderText({ "" })
-    
+
     output$away_to_set_1 <- renderText({ "" })
     output$away_to_set_2 <- renderText({ "" })
     output$away_to_set_3 <- renderText({ "" })
     output$away_to_set_4 <- renderText({ "" })
     output$away_to_set_5 <- renderText({ "" })
-    
+
     output$away_sets <- renderText({ "" })
     output$home_sets <- renderText({ "" })
   }
-  
+
   output$home_team_out <- renderText({ input$home_team })
   output$away_team_out <- renderText({ input$away_team })
 })
@@ -2497,7 +2562,7 @@ observeEvent(input$to_summary_confirm, {
   if (data_ready_for_export()) {
     # Create a list that will index the wrangled data for each set
     export_dat_list <- list()
-    
+
     # We loop over each set using the number of sets played stored in the
     # reactive `n_sets()`.
     for (i in 1:n_sets()) {
@@ -2511,7 +2576,7 @@ observeEvent(input$to_summary_confirm, {
       # We set the "serving" attribute with the team (home or away) that started
       # to serve during the set.
       attr(scores, "serving") <- get_set_serving_team(input, i)
-      
+
       # We extract from the app input the scores when time-outs where requested
       # for each team separately (always starting with the requesting team.)
       time_outs <- list(
@@ -2522,7 +2587,7 @@ observeEvent(input$to_summary_confirm, {
       # we can retrieve the name of home and away teams.
       attr(time_outs$home, "team") <- input$home_team
       attr(time_outs$away, "team") <- input$away_team
-      
+
       # We get from the app input all necessary information regarding
       # substitutions. For each team, we get the rotation at the beginning of
       # the set, the substitution rotation (NA when there was no substitution
@@ -2542,12 +2607,12 @@ observeEvent(input$to_summary_confirm, {
           score_out = get_substitution_scores(input, "away", i, "out")
         )
       )
-      
+
       # We set the "home" and "away" attributes to the `substitutions` object so
       # we can retrieve the name of home and away teams.
       attr(substitutions$home, "team") <- input$home_team
       attr(substitutions$away, "team") <- input$away_team
-      
+
       # We prepare the data export for the current set
       export_dat_list[[i]] <- wrangle_set_data(
         i,
@@ -2556,20 +2621,69 @@ observeEvent(input$to_summary_confirm, {
         substitutions
       )
     }
-    
+
     # We bind together the wrangled data for each set
-    export_dat_list <- purrr::list_rbind(export_dat_list)
-    
+    export_dat <- purrr::list_rbind(export_dat_list)
+
+    # Prepare the export of the players in the user team that played the game
+    if (input$home_team == input$user_team) {
+      players_to_export <- lapply(
+        seq_len(nrow(players$home_team)),
+        \(x) {
+          list(
+            role = players$home_team[x, "Role"],
+            number = players$home_team[x, "Number"],
+            id = players$home_team[x, "Id"]
+          )
+        }
+      )
+      names(players_to_export) <- players$home_team$Name
+    } else {
+      players_to_export <- lapply(
+        seq_len(nrow(players$away_team)),
+        \(x) {
+          list(
+            role = players$away_team[x, "Role"],
+            number = players$away_team[x, "Number"],
+            id = players$away_team[x, "Id"]
+          )
+        }
+      )
+      names(players_to_export) <- players$away_team$Name
+    }
+
+    # Add game data and metadata to the export list
+    export_list <- list()
+    export_list[["team"]] <- input$user_team
+    export_list[["season"]] <- input$season
+    export_list[["division"]] <- input$division
+    export_list[["home_team"]] <- input$home_team
+    export_list[["away_team"]] <- input$away_team
+    export_list[["game_date"]] <- input$game_date
+    export_list[["game_location"]] <- input$game_location
+    export_list[["players"]] <- players_to_export
+    export_list[["game_data"]] <- export_dat
+
     # We make available for download the wrangled data
     output$export_game_data <- downloadHandler(
       filename = function() {
-        paste0("vbdata-", Sys.Date(), ".csv")
+        file <- paste(
+          gsub("-|\\s", "_", input$game_date),
+          gsub("-|\\s", "_", input$home_team),
+          gsub("-|\\s", "_", input$away_team),
+          sep = "-"
+        )
+        paste0(file, ".json")
       },
       content = function(file) {
-        write.csv2(export_dat_list, file)
+        jsonlite::write_json(
+          export_list,
+          path = file,
+          pretty = TRUE,
+          auto_unbox = TRUE
+        )
       }
     )
   }
 })
-
 ```

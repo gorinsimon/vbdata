@@ -37,7 +37,7 @@ get_rotation_scores_input <- function(set, input) {
   attr(scores$home, "team") <- input$home_team
   attr(scores$away, "team") <- input$away_team
 
-  return(scores)
+  scores
 }
 
 #' Extract score series from rotation scores
@@ -62,7 +62,7 @@ extract_score_series <- function(serving, receiving) {
   receiving[1] <- 0
   # Loop over the rotation scores of the receiving team (the one likely to have
   # the most rotations).
-  for (i in 1:length(receiving)) {
+  for (i in seq_along(receiving)) {
     # When this is the first rotation, the serving team has a score series
     # starting from 1 to the number of points scored, or just 0 if it lost the
     # first point. For the receiving team, we repeat 0 as many times the serving
@@ -106,7 +106,7 @@ extract_score_series <- function(serving, receiving) {
     }
   }
 
-  return(list(serving = team_s, receiving = team_r))
+  list(serving = team_s, receiving = team_r)
 }
 
 
@@ -209,7 +209,7 @@ add_time_out <- function(dat, time_outs) {
     }
   }
 
-  return(dat)
+  dat
 }
 
 #' Checker function for time-out lists
@@ -259,12 +259,14 @@ chk_time_outs <- function(time_outs) {
 
   if (!all(unlist(to_home_num_or_na))) {
     stop(
-      "Vectors in `time_outs$home` can contain only numeric values or only NA's."
+      "Vectors in `time_outs$home` can contain only numeric values ",
+      "or only NA's."
     )
   }
   if (!all(unlist(to_away_num_or_na))) {
     stop(
-      "Vectors in `time_outs$away` can contain only numeric values or only NA's."
+      "Vectors in `time_outs$away` can contain only numeric values ",
+      "or only NA's."
     )
   }
 
@@ -485,7 +487,8 @@ add_substitutions <- function(dat, substitutions) {
       }
     }
   }
-  return(dat)
+
+  dat
 }
 
 #' Add player per position for each rotation in a set data frame
@@ -717,7 +720,14 @@ wrangle_set_data <- function(set, scores, time_outs, substitutions) {
       rotations_s,
       rotations_r
     ),
-    \(a, b, c, d) tibble(serving = a, receiving = b, rotations_s = c, rotations_r = d)
+    \(a, b, c, d) {
+      tibble(
+        serving = a,
+        receiving = b,
+        rotations_s = c,
+        rotations_r = d
+      )
+    }
   ) |>
     purrr::list_rbind() |>
     # Add additional data:
@@ -753,16 +763,16 @@ wrangle_set_data <- function(set, scores, time_outs, substitutions) {
     # Bind empty columns with the "home team" players' positions
     bind_cols(
       tribble(
-        ~"_P1" , ~"_P2" , ~"_P3" , ~"_P4" , ~"_P5" , ~"_P6" ,
-        NA     , NA     , NA     , NA     , NA     , NA
+        ~"_P1", ~"_P2", ~"_P3", ~"_P4", ~"_P5", ~"_P6",
+        NA, NA, NA, NA, NA, NA
       ) |>
         rename_with(\(x) paste0("home", x))
     ) |>
     # Bind empty columns with the "away team" players' positions
     bind_cols(
       tribble(
-        ~"_P1" , ~"_P2" , ~"_P3" , ~"_P4" , ~"_P5" , ~"_P6" ,
-        NA     , NA     , NA     , NA     , NA     , NA
+        ~"_P1", ~"_P2", ~"_P3", ~"_P4", ~"_P5", ~"_P6",
+        NA, NA, NA, NA, NA, NA
       ) |>
         rename_with(\(x) paste0("away", x))
     )
@@ -775,7 +785,7 @@ wrangle_set_data <- function(set, scores, time_outs, substitutions) {
     add_substitutions(substitutions) |>
     relocate(set, point, rotations_s, rotations_r)
 
-  return(dat)
+  dat
 }
 
 # This file contains functions to easily access the inputs available in the app.

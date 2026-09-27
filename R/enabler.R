@@ -33,6 +33,7 @@ disable_players_ui <- function(team) {
 
 
 #' @rdname disable_players_ui
+#' @export
 
 enable_players_ui <- function(team) {
   if (team == "home") {

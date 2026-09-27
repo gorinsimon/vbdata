@@ -1,0 +1,13 @@
+Binding: new_season_project
+Title: vbdata season project
+OpenFiles: season.yaml
+
+Parameter: user_team
+Widget: TextInput
+Label: Your team
+Position: left
+
+Parameter: season
+Widget: TextInput
+Label: Season (format: "YYYY - YYYY")
+Position: left

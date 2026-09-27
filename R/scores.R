@@ -64,7 +64,7 @@ check_scores_rotations <- function(set, input) {
     are_rotations_valid
   )
 
-  return(are_all_valid)
+  are_all_valid
 }
 
 #' Check if the scores entered in the UI are valid
@@ -101,9 +101,13 @@ is_scores_seq_valid <- function(set, team, input) {
   # If the team started receiving during the set, we remove the first element
   # of "scores" as it should be empty (not available in the UI).
   if (
-    ((input[[paste0(team, "_team")]] != input$serving_set_1) &&
-     (set %in% c(1, 3))) ||
-    ((input[[paste0(team, "_team")]] == input$serving_set_1) && (set %in% c(2, 4)))
+    (
+      (input[[paste0(team, "_team")]] != input$serving_set_1)
+      && (set %in% c(1, 3))
+    ) || (
+      (input[[paste0(team, "_team")]] == input$serving_set_1)
+      && (set %in% c(2, 4))
+    )
   ) {
     scores <- scores[-1]
   }
@@ -158,9 +162,13 @@ is_scores_seq_valid <- function(set, team, input) {
   # beginning of the set, we need to add one additional rotation to compensate
   # for that before returning `res`.
   if (
-    ((input[[paste0(team, "_team")]] != input$serving_set_1) &&
-     (set %in% c(1, 3))) ||
-    ((input[[paste0(team, "_team")]] == input$serving_set_1) && (set %in% c(2, 4)))
+    (
+      (input[[paste0(team, "_team")]] != input$serving_set_1)
+      && (set %in% c(1, 3))
+    ) || (
+      (input[[paste0(team, "_team")]] == input$serving_set_1)
+      && (set %in% c(2, 4))
+    )
   ) {
     attr(res, "len") <- attr(res, "len") + 1
   }
@@ -168,7 +176,7 @@ is_scores_seq_valid <- function(set, team, input) {
     attr(res, "len") <- attr(res, "len") + 1
   }
 
-  return(res)
+  res
 }
 
 #' Verify scores for a substitution are not missing
@@ -198,5 +206,6 @@ is_sub_score_missing <- function(team, set, input) {
         )
     }
   )
-  are_missings <- any(unlist(missings))
+
+  any(unlist(missings))
 }

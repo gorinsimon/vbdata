@@ -14,9 +14,9 @@ home team.}
 away team.}
 }
 \value{
-A named list of length two ("home" and "away") with the current score
-by set for the two team. Each element in the list is a vector with the score
-by team for the team in the vector name.
+A named list of length two ("home" and "away") with the current
+score by set for the two team. Each element in the list is a vector with the
+score by team for the team in the vector name.
 }
 \description{
 Make sure that the scores of the game are valid. This is used to define

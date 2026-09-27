@@ -754,16 +754,16 @@ wrangle_set_data <- function(set, scores, time_outs, substitutions) {
     # Bind empty columns with the "home team" players' positions
     bind_cols(
       tribble(
-        ~"_P1" , ~"_P2" , ~"_P3" , ~"_P4" , ~"_P5" , ~"_P6" ,
-        NA     , NA     , NA     , NA     , NA     , NA
+        ~"_P1", ~"_P2", ~"_P3", ~"_P4", ~"_P5", ~"_P6",
+        NA, NA, NA, NA, NA, NA
       ) |>
         rename_with(\(x) paste0("home", x))
     ) |>
     # Bind empty columns with the "away team" players' positions
     bind_cols(
       tribble(
-        ~"_P1" , ~"_P2" , ~"_P3" , ~"_P4" , ~"_P5" , ~"_P6" ,
-        NA     , NA     , NA     , NA     , NA     , NA
+        ~"_P1", ~"_P2", ~"_P3", ~"_P4", ~"_P5", ~"_P6",
+        NA, NA, NA, NA, NA, NA
       ) |>
         rename_with(\(x) paste0("away", x))
     )

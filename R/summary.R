@@ -61,7 +61,7 @@ get_set_score <- function(set, team, input) {
   }
 
   # Return the maximum score for the team during the set
-  return(score)
+  score
 }
 
 
@@ -129,7 +129,8 @@ validate_set_scores <- function(home, away) {
   attr(scores, "is_valid") <- TRUE
   attr(scores, "is_over") <- max(home_set, away_set) == 3
   attr(scores, "n_sets") <- sum(home_set, away_set)
-  return(scores)
+
+  scores
 }
 
 
@@ -170,7 +171,7 @@ get_n_time_out <- function(input) {
   # Create a named list with the number of time-out per set for the two teams
   time_outs <- list(home = unlist(home), away = unlist(away))
 
-  return(time_outs)
+  time_outs
 }
 
 ## Substitutions ---------------------------------------------------------------
@@ -253,5 +254,5 @@ get_n_substitutions <- function(input) {
   # teams.
   subs <- list(home = unlist(home), away = unlist(away))
 
-  return(subs)
+  subs
 }

@@ -64,7 +64,7 @@ check_scores_rotations <- function(set, input) {
     are_rotations_valid
   )
 
-  return(are_all_valid)
+  are_all_valid
 }
 
 #' Check if the scores entered in the UI are valid
@@ -168,7 +168,7 @@ is_scores_seq_valid <- function(set, team, input) {
     attr(res, "len") <- attr(res, "len") + 1
   }
 
-  return(res)
+  res
 }
 
 #' Verify scores for a substitution are not missing

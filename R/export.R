@@ -37,7 +37,7 @@ get_rotation_scores_input <- function(set, input) {
   attr(scores$home, "team") <- input$home_team
   attr(scores$away, "team") <- input$away_team
 
-  return(scores)
+  scores
 }
 
 #' Extract score series from rotation scores
@@ -106,7 +106,7 @@ extract_score_series <- function(serving, receiving) {
     }
   }
 
-  return(list(serving = team_s, receiving = team_r))
+  list(serving = team_s, receiving = team_r)
 }
 
 
@@ -209,7 +209,7 @@ add_time_out <- function(dat, time_outs) {
     }
   }
 
-  return(dat)
+  dat
 }
 
 #' Checker function for time-out lists
@@ -485,7 +485,8 @@ add_substitutions <- function(dat, substitutions) {
       }
     }
   }
-  return(dat)
+
+  dat
 }
 
 #' Add player per position for each rotation in a set data frame
@@ -775,7 +776,7 @@ wrangle_set_data <- function(set, scores, time_outs, substitutions) {
     add_substitutions(substitutions) |>
     relocate(set, point, rotations_s, rotations_r)
 
-  return(dat)
+  dat
 }
 
 # This file contains functions to easily access the inputs available in the app.

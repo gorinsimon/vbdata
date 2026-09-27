@@ -875,6 +875,26 @@ are_details_locked <- reactiveVal(FALSE)
 # Define whether home and away players have been validated by the users allowing
 # then to make the "Set 1" tab active.
 are_players_validated <- reactiveValues(home = FALSE, away = FALSE)
+has_season_params <- file.exists("season.yaml")
+# If a season parameter file exist, then update season
+if (has_season_params) {
+  param_season <- yaml::read_yaml("season.yaml")
+  updateSelectizeInput(
+    inputId = "season",
+    choices = param_season$season
+  )
+  updateTextInput(
+    inputId = "user_team",
+    value = param_season$team
+  )
+  updateTextInput(
+    inputId = "division",
+    value = param_season$division
+  )
+  shinyjs::disable("season")
+  shinyjs::disable("user_team")
+  shinyjs::disable("division")
+}
 
 # The data frames with the list of home and away players
 players <- reactiveValues(
@@ -927,11 +947,17 @@ data_ready_for_export <- reactiveVal(FALSE)
 
 # When any of the two teams' name is updated, it is updated accordingly anywhere
 # the names are used.
-observeEvent(list(input$home_team, input$away_team), {
-  # Update the "my_team" selector
-  updateSelectInput(
-    inputId = "my_team",
-    choices = c("", input$home_team %||% "", input$away_team %||% "")
+observeEvent(list(input$user_team, input$opponent_team, input$away_team, input$home_team), {
+  home_away <- c(input$user_team %||% "", input$opponent_team %||% "")
+  
+  # Update the "user_team" selector
+  updateSelectizeInput(
+    inputId = "home_team",
+    choices = c(input$home_team, home_away[!(home_away %in% input$away_team)])
+  )
+  updateSelectizeInput(
+    inputId = "away_team",
+    choices = c(input$away_team, home_away[!(home_away %in% input$home_team)])
   )
   # Update the output with the name of the teams for each set tab
   lapply(
@@ -951,13 +977,13 @@ observeEvent(list(input$home_team, input$away_team), {
   # game.
   updateSelectInput(
     inputId = "serving_set_1",
-    choices = c("", input$home_team %||% "", input$away_team %||% "")
+    choices = c(input$serving_set_1, input$user_team %||% "", input$opponent_team %||% "")
   )
   # Update the selector allowing to indicate which team started to serve in the
   # fifth set. The selector is displayed only when a fifth set is played.
   updateSelectInput(
     inputId = "serving_set_5",
-    choices = c("", input$home_team %||% "", input$away_team %||% "")
+    choices = c(input$serving_set_5, input$user_team %||% "", input$opponent_team %||% "")
   )
 })
 
@@ -968,7 +994,7 @@ observeEvent(list(input$home_team, input$away_team), {
 observe({
   # ID of the elements to check
   elem_to_check <- list(
-    "home_team", "away_team", "my_team", "serving_set_1", "season", "division"
+    "home_team", "away_team", "user_team", "serving_set_1", "season", "division"
   )
   # Check all elements in 
   any_empty <- any(unlist(lapply(
@@ -994,7 +1020,7 @@ observeEvent(input$lock_details, {
 observeEvent(input$go_to_player_tab, {
   shinyjs::disable("home_team")
   shinyjs::disable("away_team")
-  shinyjs::disable("my_team")
+  shinyjs::disable("user_team")
   shinyjs::disable("serving_set_1")
   shinyjs::disable("game_location")
   shinyjs::disable("game_date")
@@ -1634,13 +1660,13 @@ observe(
 # Enable or disable the first score input of the first rotation in each set
 # (except set 5) for the team receiving the service.
 observeEvent(input$serving_set_1, {
-  if (input$home_team == input$serving_set_1) {
+  if (input$home_team == input$serving_set_1 && nzchar(input$serving_set_1)) {
     shinyjs::disable("set_1_r_1_p_1_away")
     shinyjs::disable("set_2_r_1_p_1_home")
     shinyjs::disable("set_3_r_1_p_1_away")
     shinyjs::disable("set_4_r_1_p_1_home")
   }
-  if (input$away_team == input$serving_set_1) {
+  if (input$away_team == input$serving_set_1 && nzchar(input$serving_set_1)) {
     shinyjs::disable("set_1_r_1_p_1_home")
     shinyjs::disable("set_2_r_1_p_1_away")
     shinyjs::disable("set_3_r_1_p_1_home")

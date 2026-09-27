@@ -1812,7 +1812,7 @@ observe({
             inputId = current_p_sub_h,
             choices = c(
               input[[current_p_sub_h]],
-              sort(available_players[[paste0("set_", s)]]$home)
+              sort(as.numeric(available_players[[paste0("set_", s)]]$home))
             ),
             selected = input[[current_p_sub_h]]
           )
@@ -1839,7 +1839,7 @@ observe({
             inputId = current_p_sub_a,
             choices = c(
               input[[current_p_sub_a]],
-              sort(available_players[[paste0("set_", s)]]$away)
+              sort(as.numeric(available_players[[paste0("set_", s)]]$away))
             ),
             selected = input[[current_p_sub_a]]
           )

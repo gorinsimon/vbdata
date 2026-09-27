@@ -39,23 +39,38 @@ bslib::card(
   bslib::card_header("Teams"),
   bslib::card_body(
     bslib::layout_columns(
+      # The user's team (filled in by default if the app is started with season
+      # parameters).
       textInput(
-        "home_team",
-        label = tags$p(icon("house"), "Home")
+        "user_team",
+        label = "My team"
       ),
-      # Input to indicate the name of the "away" (or visiting) team
+      # The opponent team
       textInput(
-        "away_team",
-        label = tags$p(icon("suitcase-rolling"), "Away")
+        "opponent_team",
+        label = "Opponent team"
       )
     ),
     bslib::layout_columns(
+      # Selection list to indicate the "home" team (based on "user_team" and
+      # "opponent_team").
       selectizeInput(
-        "my_team",
-        label = "Your team?",
+        "home_team",
+        label = tags$p(icon("house"), "Home team"),
         choices = "",
         options = list(dropdownParent = "body")
       ),
+      # Selection list to indicate the "away" team (based on "user_team" and
+      # "opponent_team").
+      selectizeInput(
+        "away_team",
+        label = tags$p(icon("suitcase-rolling"), "Away team"),
+        choices = "",
+        options = list(dropdownParent = "body")
+      )
+    ),
+    bslib::layout_columns(
+      col_widths = c(6, -6),
       # Input to indicate which team started to serve
       selectizeInput(
         "serving_set_1",

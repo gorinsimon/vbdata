@@ -36,25 +36,32 @@ run_vb_game_encoder <- function(params_path = "season.yaml") {
 
   # Create a temporary .qmd file where the vbdata encoding app will be copied
   # to avoid that the content is rendered where the package is installed.
-  tmp_app_loc <- tempfile(fileext = ".qmd")
+  vbd_tmp_dir <- file.path(tempdir(), "vbdata_dashboard")
+  dir.create(vbd_tmp_dir, showWarnings = FALSE)
+  tmp_app_loc <- tempfile(tmpdir = vbd_tmp_dir, fileext = ".qmd")
 
   # Copy the app to its temporary location
-  invisible(file.copy(file.path(vbdata_files, "dashboard.qmd"), tmp_app_loc))
+  invisible(file.copy(
+    file.path(vbdata_files, "dashboard.qmd"),
+    vbd_tmp_dir,
+    overwrite = TRUE
+  ))
+  invisible(file.copy(params_path, vbd_tmp_dir, overwrite = TRUE))
   # Move also the .qmd files that are included with the app because they need
   # to be available.
   invisible(file.copy(
     file.path(vbdata_files, "position_chunks"),
     recursive = TRUE,
-    tempdir()
+    vbd_tmp_dir
   ))
   invisible(file.copy(
     file.path(vbdata_files, "score_rotations_chunks"),
     recursive = TRUE,
-    tempdir()
+    vbd_tmp_dir
   ))
 
   # Render and serve the app
-  quarto::quarto_serve(tmp_app_loc, render = TRUE)
+  quarto::quarto_serve(file.path(vbd_tmp_dir, "dashboard.qmd"), render = TRUE)
 
   invisible()
 }

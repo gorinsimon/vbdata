@@ -394,9 +394,9 @@ for (scenario in as.character(1:4)) {
     won_serving <- scores[[serving]] - lag(scores[[serving]], default = 0) - 1
     won_serving[1] <- won_serving[1] + 1
     # Create the sequence of points won by the "receiving" team
-    won_receiving <- (scores[[receiving]] -
-      lag(scores[[receiving]], default = 0) -
-      1)
+    won_receiving <- (
+      scores[[receiving]] - lag(scores[[receiving]], default = 0) - 1
+    )
     won_receiving[1] <- won_receiving[1] + 1
 
     # Initiate an empty vector to create the sequence of winning team

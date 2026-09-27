@@ -1592,73 +1592,73 @@ observe(
   {
     available_players$set_1$home <- players$home_team$Number[
       !(players$home_team$Number %in%
-          c(
-            get_base_rotation(input, "home", 1),
-            get_substitution_players(input, "home", 1)
-          ))
+        c(
+          get_base_rotation(input, "home", 1),
+          get_substitution_players(input, "home", 1)
+        ))
     ]
     available_players$set_2$home <- players$home_team$Number[
       !(players$home_team$Number %in%
-          c(
-            get_base_rotation(input, "home", 2),
-            get_substitution_players(input, "home", 2)
-          ))
+        c(
+          get_base_rotation(input, "home", 2),
+          get_substitution_players(input, "home", 2)
+        ))
     ]
     available_players$set_3$home <- players$home_team$Number[
       !(players$home_team$Number %in%
-          c(
-            get_base_rotation(input, "home", 3),
-            get_substitution_players(input, "home", 3)
-          ))
+        c(
+          get_base_rotation(input, "home", 3),
+          get_substitution_players(input, "home", 3)
+        ))
     ]
     available_players$set_4$home <- players$home_team$Number[
       !(players$home_team$Number %in%
-          c(
-            get_base_rotation(input, "home", 4),
-            get_substitution_players(input, "home", 4)
-          ))
+        c(
+          get_base_rotation(input, "home", 4),
+          get_substitution_players(input, "home", 4)
+        ))
     ]
     available_players$set_5$home <- players$home_team$Number[
       !(players$home_team$Number %in%
-          c(
-            get_base_rotation(input, "home", 5),
-            get_substitution_players(input, "home", 5)
-          ))
+        c(
+          get_base_rotation(input, "home", 5),
+          get_substitution_players(input, "home", 5)
+        ))
     ]
     available_players$set_1$away <- players$away_team$Number[
       !(players$away_team$Number %in%
-          c(
-            get_base_rotation(input, "away", 1),
-            get_substitution_players(input, "away", 1)
-          ))
+        c(
+          get_base_rotation(input, "away", 1),
+          get_substitution_players(input, "away", 1)
+        ))
     ]
     available_players$set_2$away <- players$away_team$Number[
       !(players$away_team$Number %in%
-          c(
-            get_base_rotation(input, "away", 2),
-            get_substitution_players(input, "away", 2)
-          ))
+        c(
+          get_base_rotation(input, "away", 2),
+          get_substitution_players(input, "away", 2)
+        ))
     ]
     available_players$set_3$away <- players$away_team$Number[
       !(players$away_team$Number %in%
-          c(
-            get_base_rotation(input, "away", 3),
-            get_substitution_players(input, "away", 3)
-          ))
+        c(
+          get_base_rotation(input, "away", 3),
+          get_substitution_players(input, "away", 3)
+        ))
     ]
     available_players$set_4$away <- players$away_team$Number[
-      !!(players$away_team$Number %in%
-           c(
-             get_base_rotation(input, "away", 4),
-             get_substitution_players(input, "away", 4)
-           ))
+      !(players$away_team$Number %in%
+        c(
+          get_base_rotation(input, "away", 4),
+          get_substitution_players(input, "away", 4)
+        ))
     ]
     available_players$set_5$away <- players$away_team$Number[
-      !!(players$away_team$Number %in%
-           c(
-             get_base_rotation(input, "away", 5),
-             get_substitution_players(input, "away", 5)
-           ))
+      !(players$away_team$Number %in%
+        c(
+          get_base_rotation(input, "away", 5),
+          get_substitution_players(input, "away", 5)
+        ))
     ]
   }
 )

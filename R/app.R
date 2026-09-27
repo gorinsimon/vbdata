@@ -104,7 +104,7 @@ check_season_params <- function(params, yaml_path) {
   if (!grepl("^\\d{4}\\s-\\s\\d{4}$", params$season)) {
     stop(
       "The field `season` is not properly formatted. It should follow the ",
-      "fornat: \"YYYY - YYYY\"."
+      "format: \"YYYY - YYYY\"."
     )
   }
    # Extract the players for the season YAML then check their formatting

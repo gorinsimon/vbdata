@@ -2667,7 +2667,13 @@ observeEvent(input$to_summary_confirm, {
     # We make available for download the wrangled data
     output$export_game_data <- downloadHandler(
       filename = function() {
-        paste0("vbdata-", Sys.Date(), ".json")
+        file <- paste(
+          gsub("-|\\s", "_", input$game_date),
+          gsub("-|\\s", "_", input$home_team),
+          gsub("-|\\s", "_", input$away_team),
+          sep = "-"
+        )
+        paste0(file, ".json")
       },
       content = function(file) {
         jsonlite::write_json(

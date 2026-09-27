@@ -1013,7 +1013,7 @@ observe({
     "season",
     "division"
   )
-  # Check all elements in 
+  # Check all elements in the "game page"
   any_empty <- any(unlist(lapply(
     elem_to_check,
     \(x) any(is.null(input[[x]]), !nzchar(input[[x]]))
